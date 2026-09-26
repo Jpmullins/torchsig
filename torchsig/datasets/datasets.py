@@ -827,10 +827,14 @@ class TorchSigIterableDataset(HierarchicalMetadataObject, IterableDataset):
             generator = self._random_signal_generator()
         signal = generator()
 
+        # Set SNR and bandwidth on the clean burst, before the component (TX)
+        # impairments. Measured afterwards, a strong spur takes over the peak-bin
+        # SNR reference and spurs, IMD and nonlinear regrowth widen the 3 dB box;
+        # measured here, those artifacts are added on top as unlabelled background.
+        update_signal_snr_bandwidth(self, signal)
+
         for component_transform in self.component_transforms:
             signal = component_transform(signal)
-
-        update_signal_snr_bandwidth(self, signal)
 
         return frequency_shift_signal(
             signal,
