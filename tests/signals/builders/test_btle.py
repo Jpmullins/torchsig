@@ -8,9 +8,14 @@ import scipy.signal as sp
 from test_builders_utils import estimate_symbol_rate
 
 from torchsig.signals.builders.btle import (
+    _AA_BITS,
+    _BLE_GFSK_BT,
+    _BLE_MOD_INDEX,
+    _PREAMBLE_BITS,
     BTLE_ACCESS_ADDRESS,
     BTLE_SYMBOL_RATE_HZ,
     BTLESignalGenerator,
+    _gaussian_pulse,
     btle_modulator,
     build_btle_bit_stream,
 )
@@ -91,8 +96,15 @@ def test_btle_registered_and_in_signal_lists():
 
 
 # ---------------------------------------------------------------------------
-# Timing modes: default output unchanged, standard symbol rate
+# Timing modes: default output unchanged, standard symbol rate, inter-frame gaps
 # ---------------------------------------------------------------------------
+
+# Preamble plus access address, the first 40 symbols of every packet.
+HEADER_SYMBOLS = 2.0 * np.concatenate([_PREAMBLE_BITS, _AA_BITS]) - 1.0
+
+# Shortest packet: preamble, access address, 2-byte PDU header and CRC.
+MIN_PACKET_SYMBOLS = 8 + 32 + 16 + 24
+
 
 # Golden reference for criterion 1: the default code path exactly as released in
 # TorchSig 2.2.0 (commit 1197261), with its constants frozen. A stored golden array
@@ -152,6 +164,27 @@ def _btle_modulator_2_2_0(bandwidth, sample_rate, num_samples, rng):
     return correct_bw.astype(TorchSigComplexDataType)
 
 
+def _header_template(samples_per_symbol):
+    """GFSK waveform of the 40 header symbols at an integer number of samples per symbol."""
+    pulse = np.convolve(_gaussian_pulse(samples_per_symbol, _BLE_GFSK_BT), np.ones(samples_per_symbol))
+    phase = np.cumsum(sp.upfirdn(pulse, HEADER_SYMBOLS, up=samples_per_symbol)) * (np.pi * _BLE_MOD_INDEX / samples_per_symbol)
+    # The Gaussian pulse reaches two symbols ahead, so symbol k starts at sample (k + 2) * samples_per_symbol.
+    first = 2 * samples_per_symbol
+    return np.exp(1j * phase[first : first + len(HEADER_SYMBOLS) * samples_per_symbol])
+
+
+def _packet_starts(num_symbols, seed, inter_frame_gap_symbols):
+    """Symbol indices at which packets start in the stream drawn for ``seed``.
+
+    btle_modulator draws its packets from rng through build_btle_bit_stream alone, and
+    the packet sequence does not depend on the requested length, so the same seed
+    reproduces the packets of any btle_modulator call.
+    """
+    stream = build_btle_bit_stream(num_symbols, np.random.default_rng(seed), inter_frame_gap_symbols=inter_frame_gap_symbols)
+    windows = np.lib.stride_tricks.sliding_window_view(stream, len(HEADER_SYMBOLS))
+    return np.flatnonzero(np.all(windows == HEADER_SYMBOLS, axis=1))
+
+
 @pytest.mark.parametrize(
     ("bandwidth", "sample_rate", "num_samples"),
     [
@@ -168,7 +201,7 @@ def test_default_output_unchanged(bandwidth, sample_rate, num_samples, seed):
     """Criterion 1: the default output is bit-identical to TorchSig 2.2.0 for a fixed seed."""
     golden = _btle_modulator_2_2_0(bandwidth, sample_rate, num_samples, np.random.default_rng(seed))
     omitted = btle_modulator(bandwidth, sample_rate, num_samples, np.random.default_rng(seed))
-    explicit = btle_modulator(bandwidth, sample_rate, num_samples, np.random.default_rng(seed), pin_rate_to_standard=False)
+    explicit = btle_modulator(bandwidth, sample_rate, num_samples, np.random.default_rng(seed), pin_rate_to_standard=False, inter_frame_gap_symbols=0)
     for iq in (omitted, explicit):
         assert iq.dtype == golden.dtype
         # Compare bit patterns rather than values, so that -0.0 and 0.0 differ.
@@ -211,7 +244,82 @@ def test_standard_rate_unrepresentable_raises(sample_rate):
     assert len(btle_modulator(bandwidth, sample_rate, 1024, np.random.default_rng(0))) == 1024
 
 
-@pytest.mark.parametrize("pin_rate_to_standard", [False, True])
+@pytest.mark.parametrize(("sample_rate", "pin_rate_to_standard"), [(10_000_000, True), (7_680_000, True), (10_000_000, False)])
+@pytest.mark.parametrize("inter_frame_gap_symbols", [16, 150])
+def test_inter_frame_gap_duty_cycle(sample_rate, pin_rate_to_standard, inter_frame_gap_symbols):
+    """Criterion 4: the silent fraction is within 20 % of g / (g + frame length).
+
+    The expected fraction is the share of gap symbols in the stream drawn for this
+    seed, which is g / (g + frame length) averaged over the packet lengths drawn.
+    The shaped envelope stays above 1 % of its peak for about 0.6 symbol at each end
+    of a gap (2.3 standard deviations of the BT = 0.5 Gaussian pulse, whose standard
+    deviation is 0.265 symbol), so the measured fraction falls short by about 1.2 / g:
+    under 8 % at g = 16 and under 1 % at g = 150. Gaps of 150 symbols at 1 Msym/s
+    are the standard's 150 microsecond inter frame space.
+    """
+    num_samples = 2**16
+    bandwidth = 250_000
+    seed = 3
+    iq = btle_modulator(
+        bandwidth,
+        sample_rate,
+        num_samples,
+        np.random.default_rng(seed),
+        pin_rate_to_standard=pin_rate_to_standard,
+        inter_frame_gap_symbols=inter_frame_gap_symbols,
+    )
+    envelope = np.abs(iq)
+    burst_rms = np.sqrt(np.mean(envelope**2))
+    measured = np.mean(envelope < 0.01 * burst_rms)
+
+    symbol_rate = BTLE_SYMBOL_RATE_HZ if pin_rate_to_standard else bandwidth
+    num_symbols = round(num_samples * symbol_rate / sample_rate)
+    stream = build_btle_bit_stream(num_symbols, np.random.default_rng(seed), inter_frame_gap_symbols=inter_frame_gap_symbols)
+    expected = np.mean(stream == 0)
+    assert abs(measured - expected) <= 0.2 * expected, f"silent fraction {measured:.4f}, expected {expected:.4f}"
+
+
+@pytest.mark.parametrize("sample_rate", [10_000_000, 20_000_000])
+@pytest.mark.parametrize("inter_frame_gap_symbols", [0, 16, 150])
+def test_frame_period_matches_standard(sample_rate, inter_frame_gap_symbols):
+    """Criterion 5: successive preamble correlation peaks are one packet plus gap apart.
+
+    Each interval must equal (preamble + access address + PDU + CRC + gap) symbols
+    divided by BTLE_SYMBOL_RATE_HZ, within one symbol; the packet lengths come from
+    the stream drawn for the same seed. The correlation with the 40 header symbols is
+    scaled so that a matching header reads 1. Each header symbol that differs shifts
+    the phase difference by pi, flipping the sign of every later contribution, so
+    random data reads about |sum of 40 random signs| / 40. Reaching the 0.8 threshold
+    takes 36 agreeing symbols out of 40, with probability 1.9e-7 per position, or
+    about 6e-4 per record here.
+    """
+    samples_per_symbol = round(sample_rate / BTLE_SYMBOL_RATE_HZ)
+    num_symbols = 3000
+    seed = 4
+    iq = btle_modulator(
+        250_000,
+        sample_rate,
+        num_symbols * samples_per_symbol,
+        np.random.default_rng(seed),
+        pin_rate_to_standard=True,
+        inter_frame_gap_symbols=inter_frame_gap_symbols,
+    )
+
+    envelope = np.abs(iq)
+    amplitude = np.median(envelope[envelope > 0.5 * envelope.max()])
+    template = _header_template(samples_per_symbol)
+    correlation = np.abs(np.correlate(iq, template, mode="valid")) / (amplitude * len(template))
+    peaks, _ = sp.find_peaks(correlation, height=0.8, distance=MIN_PACKET_SYMBOLS * samples_per_symbol)
+    assert len(peaks) >= 5, f"found only {len(peaks)} packet headers"
+
+    starts = _packet_starts(num_symbols + 1000, seed, inter_frame_gap_symbols)
+    first = int(np.argmin(np.abs(starts * samples_per_symbol - peaks[0])))
+    measured = np.diff(peaks) / sample_rate
+    expected = np.diff(starts)[first : first + len(measured)] / BTLE_SYMBOL_RATE_HZ
+    np.testing.assert_allclose(measured, expected, rtol=0, atol=1 / BTLE_SYMBOL_RATE_HZ)
+
+
+@pytest.mark.parametrize(("pin_rate_to_standard", "inter_frame_gap_symbols"), [(False, 0), (True, 0), (False, 16), (True, 150)])
 @pytest.mark.parametrize(
     ("bandwidth", "sample_rate", "num_samples"),
     [
@@ -222,7 +330,7 @@ def test_standard_rate_unrepresentable_raises(sample_rate):
         (400_000, 4_000_000, 7),
     ],
 )
-def test_dtype_length_finite(pin_rate_to_standard, bandwidth, sample_rate, num_samples):
+def test_dtype_length_finite(pin_rate_to_standard, inter_frame_gap_symbols, bandwidth, sample_rate, num_samples):
     """Every mode returns finite complex IQ of exactly the requested length."""
     iq = btle_modulator(
         bandwidth,
@@ -230,7 +338,34 @@ def test_dtype_length_finite(pin_rate_to_standard, bandwidth, sample_rate, num_s
         num_samples,
         np.random.default_rng(11),
         pin_rate_to_standard=pin_rate_to_standard,
+        inter_frame_gap_symbols=inter_frame_gap_symbols,
     )
     assert iq.dtype == TorchSigComplexDataType
     assert iq.shape == (num_samples,)
     assert np.all(np.isfinite(iq))
+
+
+def test_bit_stream_inter_frame_gap():
+    """Gap zeros follow every packet and leave the packets themselves unchanged."""
+    gap = 7
+    plain = build_btle_bit_stream(3000, np.random.default_rng(3))
+    gapped = build_btle_bit_stream(3000, np.random.default_rng(3), inter_frame_gap_symbols=gap)
+    assert len(gapped) == 3000
+
+    packets = gapped[gapped != 0]
+    np.testing.assert_array_equal(packets, plain[: len(packets)])
+
+    is_gap = np.concatenate(([0], (gapped == 0).astype(np.int8), [0]))
+    edges = np.flatnonzero(np.diff(is_gap))
+    run_starts, run_ends = edges[0::2], edges[1::2]
+    assert np.all(run_ends[:-1] - run_starts[:-1] == gap)
+    assert 0 < run_ends[-1] - run_starts[-1] <= gap
+    for end in run_ends[run_ends + len(HEADER_SYMBOLS) <= len(gapped)]:
+        np.testing.assert_array_equal(gapped[end : end + len(HEADER_SYMBOLS)], HEADER_SYMBOLS)
+
+
+@pytest.mark.parametrize(("gap", "error"), [(-1, ValueError), (2.5, TypeError), (True, TypeError)])
+def test_inter_frame_gap_invalid_raises(gap, error):
+    """A negative or non-integer gap is rejected."""
+    with pytest.raises(error, match="inter_frame_gap_symbols"):
+        btle_modulator(1_000_000, 10_000_000, 4096, np.random.default_rng(0), inter_frame_gap_symbols=gap)
