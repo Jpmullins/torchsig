@@ -5,18 +5,35 @@ feature is a fixed 4-byte Access Address — 0x8E89BED6 for advertising — that
 follows a short preamble, making BLE packets immediately identifiable by their
 autocorrelation with the known access address sequence.
 
-Physical layer (Bluetooth Core Spec 5.x, Vol 6, Part B):
+Physical layer (Bluetooth Core Spec 5.x, Vol 6, Part A):
     * Modulation   : GFSK, BT = 0.5, modulation index h = 0.5
     * Symbol rate  : 1 Msymbol/s
     * Occupied BW  : ~1 MHz
 
-Advertising packet structure:
+Advertising packet structure (Vol 6, Part B, Section 2.1):
     8-bit preamble (0xAA) | 32-bit access address | PDU (2–39 bytes) | 24-bit CRC
 
-Toy simplifications:
+Symbol timing (selected by ``btle_modulator``):
+    * Scaled (default): the symbol rate equals the requested bandwidth, one
+      symbol per second per hertz, as in the other TorchSig builders. Packets
+      are correct in symbols, but their duration scales with the bandwidth.
+    * Standard (``pin_rate_to_standard=True``): the symbol rate is
+      ``BTLE_SYMBOL_RATE_HZ`` whatever the bandwidth, so symbol and packet
+      durations are those of the LE 1M PHY.
+
+Toy simplifications (both timing modes):
     * Access address fixed to the advertising channel value (0x8E89BED6).
     * PDU type, payload, and CRC are random bits.
+    * Fields are sent most significant bit first. The standard sends the least
+      significant bit first (Vol 6, Part B, Section 1.2), so the on-air
+      preamble and access address bit patterns differ from real packets.
     * Packets are concatenated without inter-frame gaps.
+    * Only the LE 1M PHY is modeled, with the modulation index fixed at 0.5
+      (the standard allows 0.45 to 0.55).
+    * The symbol clock has no drift or jitter. In standard mode the realized
+      rate differs from ``BTLE_SYMBOL_RATE_HZ`` only by the quantization of
+      the fractional resampling stage: at most 100 ppm, and none at 10 MS/s,
+      whereas the standard requires symbol timing better than 50 ppm.
 """
 
 from __future__ import annotations
@@ -36,6 +53,14 @@ from torchsig.utils.dsp import (
 
 # Advertising channel access address (Bluetooth Core Spec 5.x, §2.1.2)
 BTLE_ACCESS_ADDRESS: int = 0x8E89BED6
+
+BTLE_SYMBOL_RATE_HZ: float = 1.0e6
+"""LE 1M PHY symbol rate, in symbols per second.
+
+Bluetooth Core Specification v5.4, Vol 6 (Low Energy Controller), Part A
+(Physical Layer Specification), Section 1: "The symbol rate is 1 Msym/s."
+Section 3.1 requires a symbol timing accuracy better than +/-50 ppm.
+"""
 
 _PREAMBLE_BITS: np.ndarray = np.array([1, 0, 1, 0, 1, 0, 1, 0], dtype=np.float64)  # 0xAA, MSB first
 
@@ -135,21 +160,38 @@ def btle_modulator(
     sample_rate: float,
     num_samples: int,
     rng: np.random.Generator | None = None,
+    *,
+    pin_rate_to_standard: bool = False,
 ) -> np.ndarray:
-    """BLE GFSK modulator: builds packet stream and resamples to target bandwidth.
+    """BLE GFSK modulator: builds packet stream and resamples to the target symbol rate.
+
+    By default the symbol rate equals ``bandwidth`` (one symbol per second per
+    hertz), so the waveform scales with the requested bandwidth. With
+    ``pin_rate_to_standard=True`` the symbol rate is ``BTLE_SYMBOL_RATE_HZ``
+    and ``bandwidth`` does not affect the waveform.
+
+    The standard rate is representable when it meets the rule this builder
+    applies to ``bandwidth``: ``BTLE_SYMBOL_RATE_HZ <= sample_rate / 2``, that
+    is, ``sample_rate >= 2 MHz``. The multistage polyphase resampler accepts
+    any positive rate change, so it adds no further constraint.
 
     Args:
-        bandwidth: Desired signal bandwidth (Hz).
+        bandwidth: Desired signal bandwidth (Hz). Validated in both modes; it
+            sets the symbol rate only when pin_rate_to_standard is False.
         sample_rate: Capture sampling rate (Hz).
         num_samples: Number of IQ samples to produce.
         rng: Random number generator.
+        pin_rate_to_standard: If True, generate at the standard LE 1M symbol
+            rate, ``BTLE_SYMBOL_RATE_HZ``, instead of deriving the rate from
+            ``bandwidth``. Defaults to False.
 
     Returns:
-        np.ndarray: BLE IQ at the requested bandwidth, length num_samples.
+        np.ndarray: BLE IQ at the scaled or standard symbol rate, length num_samples.
 
     Raises:
         ValueError: If bandwidth or sample_rate are not positive, bandwidth > sample_rate/2,
-            or num_samples is not positive.
+            num_samples is not positive, or pin_rate_to_standard is True and
+            BTLE_SYMBOL_RATE_HZ > sample_rate/2.
     """
     if bandwidth <= 0:
         raise ValueError("bandwidth must be positive")
@@ -159,12 +201,18 @@ def btle_modulator(
         raise ValueError("bandwidth must be less than sample_rate/2")
     if num_samples <= 0:
         raise ValueError("num_samples must be positive")
+    if pin_rate_to_standard and sample_rate < 2 * BTLE_SYMBOL_RATE_HZ:
+        raise ValueError(
+            f"btle: pin_rate_to_standard=True requires the standard symbol rate of {BTLE_SYMBOL_RATE_HZ} Hz "
+            f"to be at most sample_rate/2, but sample_rate is {sample_rate} Hz (need sample_rate >= {2 * BTLE_SYMBOL_RATE_HZ} Hz)"
+        )
 
     if rng is None:
         rng = np.random.default_rng()
 
+    symbol_rate = BTLE_SYMBOL_RATE_HZ if pin_rate_to_standard else bandwidth
     oversampling_rate_nominal = 4
-    oversampling_rate = sample_rate / bandwidth
+    oversampling_rate = sample_rate / symbol_rate
     resample_rate_ideal = oversampling_rate / oversampling_rate_nominal
     max_num_samples = max(oversampling_rate_nominal, int(np.floor(num_samples / resample_rate_ideal)))
 
