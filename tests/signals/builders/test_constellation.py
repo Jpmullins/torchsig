@@ -4,15 +4,26 @@ from unittest.mock import MagicMock, call, patch
 
 import numpy as np
 import pytest
+import scipy.signal as sp
 
 from torchsig.signals.builders.constellation import (
     ConstellationSignalGenerator,
     constellation_modulator,
     constellation_modulator_baseband,
 )
+from torchsig.signals.signal_types import Signal
+from torchsig.utils.abstractions import HierarchicalMetadataObject
 from torchsig.utils.dsp import TorchSigComplexDataType
 
 MODULE_PATH = "torchsig.signals.builders.constellation"
+
+PINNING_METADATA = {
+    "sample_rate": 10_000_000,
+    "bandwidth_min": 500_000,
+    "bandwidth_max": 2_000_000,
+    "signal_duration_in_samples_min": 2048,
+    "signal_duration_in_samples_max": 4096,
+}
 
 
 @pytest.mark.parametrize("max_num_samples", [0, -1, -100])
@@ -962,3 +973,405 @@ def test_constellation_signal_generator_generate_with_rectangular():
     )
 
     assert result is expected_signal
+
+
+def _generate_2_2_0(generator):
+    """Return ConstellationSignalGenerator.generate() as released in TorchSig 2.2.0.
+
+    Kept verbatim (commit 1197261) as the golden reference for the default path:
+    without the optional pulse-shape keys, generate() must make the same draws
+    and return the same signal.
+    """
+    sample_rate = generator["sample_rate"]
+    num_iq_samples_signal = generator.random_generator.integers(
+        low=generator["signal_duration_in_samples_min"],
+        high=generator["signal_duration_in_samples_max"] + 1,
+    )
+    bandwidth = generator.random_generator.integers(low=generator["bandwidth_min"], high=generator["bandwidth_max"] + 1)
+    constellation_name = generator["constellation_name"]
+
+    if generator.random_generator.integers(0, 2) == 0:
+        pulse_shape_name = "srrc"
+        alpha_rolloff = generator.random_generator.uniform(0.1, 0.5)
+    else:
+        pulse_shape_name = "rectangular"
+        alpha_rolloff = None
+
+    signal_data = constellation_modulator(
+        constellation_name,
+        pulse_shape_name,
+        bandwidth,
+        sample_rate,
+        num_iq_samples_signal,
+        alpha_rolloff,
+        generator.random_generator,
+    )
+
+    return Signal(
+        data=signal_data,
+        center_freq=0,
+        bandwidth=bandwidth,
+        pulse_shape_name=pulse_shape_name,
+        alpha_rolloff=alpha_rolloff,
+        pulse_shape_index=int(pulse_shape_name == "srrc"),
+        alpha_rolloff_target=(float(alpha_rolloff) if alpha_rolloff is not None else 0.0),
+    )
+
+
+def _draw_duration_and_bandwidth(rng, metadata):
+    """Make the two draws that open every generate() call."""
+    num_samples = rng.integers(
+        low=metadata["signal_duration_in_samples_min"],
+        high=metadata["signal_duration_in_samples_max"] + 1,
+    )
+    bandwidth = rng.integers(low=metadata["bandwidth_min"], high=metadata["bandwidth_max"] + 1)
+    return num_samples, bandwidth
+
+
+def _occupied_bandwidth(iq, sample_rate, nperseg):
+    """Return the 99% occupied bandwidth (Hz), between the 0.5% and 99.5% points of the power."""
+    freqs, psd = sp.welch(iq, fs=sample_rate, nperseg=nperseg, return_onesided=False, detrend=False)
+    order = np.argsort(freqs)
+    freqs, psd = freqs[order], psd[order]
+    cumulative = np.cumsum(psd) / np.sum(psd)
+    return freqs[np.searchsorted(cumulative, 0.995)] - freqs[np.searchsorted(cumulative, 0.005)]
+
+
+@pytest.mark.parametrize(
+    "constellation_name",
+    ["ook", "bpsk", "qpsk", "16qam", "64ask", "32apsk", "128qam_cross"],
+)
+def test_constellation_signal_generator_default_matches_2_2_0(constellation_name):
+    """Without the optional keys, output and metadata are bit-identical to 2.2.0."""
+    metadata = {"constellation_name": constellation_name, **PINNING_METADATA}
+    pulse_shapes = set()
+
+    for seed in (0, 1, 7, 42, 2026):
+        generator = ConstellationSignalGenerator(metadata=metadata, seed=seed)
+        reference = ConstellationSignalGenerator(metadata=metadata, seed=seed)
+
+        # Consecutive signals share one stream, so every draw must line up.
+        for _ in range(4):
+            signal = generator.generate()
+            expected = _generate_2_2_0(reference)
+
+            assert signal.data.dtype == expected.data.dtype
+            assert signal.data.tobytes() == expected.data.tobytes()
+            assert signal.to_dict() == expected.to_dict()
+            pulse_shapes.add(signal["pulse_shape_name"])
+
+        assert generator.random_generator.bit_generator.state == reference.random_generator.bit_generator.state
+
+    assert pulse_shapes == {"srrc", "rectangular"}
+
+
+@pytest.mark.parametrize("seed", [0, 1, 2, 3, 4, 5])
+def test_constellation_signal_generator_pinned_srrc(seed):
+    """A pinned SRRC pulse skips the pulse-shape draw and draws the rolloff from the pinned range."""
+    metadata = {
+        "constellation_name": "qpsk",
+        **PINNING_METADATA,
+        "pulse_shape_name": "srrc",
+        "alpha_rolloff_min": 0.2,
+        "alpha_rolloff_max": 0.3,
+    }
+    generator = ConstellationSignalGenerator(metadata=metadata, seed=seed)
+
+    signal = generator()
+
+    assert signal["pulse_shape_name"] == "srrc"
+    assert signal["pulse_shape_index"] == 1
+    assert 0.2 <= signal["alpha_rolloff"] <= 0.3
+    assert signal["alpha_rolloff_target"] == signal["alpha_rolloff"]
+
+    # Replay the expected draws: duration, bandwidth, rolloff and symbols, with no pulse-shape draw.
+    rng = np.random.default_rng(seed)
+    num_samples, bandwidth = _draw_duration_and_bandwidth(rng, metadata)
+    alpha_rolloff = rng.uniform(0.2, 0.3)
+    expected = constellation_modulator("qpsk", "srrc", bandwidth, metadata["sample_rate"], num_samples, alpha_rolloff, rng)
+
+    assert signal["alpha_rolloff"] == alpha_rolloff
+    np.testing.assert_array_equal(signal.data, expected)
+    assert generator.random_generator.bit_generator.state == rng.bit_generator.state
+
+
+@pytest.mark.parametrize("seed", [0, 1, 2, 3, 4, 5])
+def test_constellation_signal_generator_pinned_rectangular(seed):
+    """A pinned rectangular pulse has no rolloff, makes neither pulse-shape nor rolloff draw, and ignores a rolloff range."""
+    metadata = {"constellation_name": "16qam", **PINNING_METADATA, "pulse_shape_name": "rectangular"}
+    generator = ConstellationSignalGenerator(metadata=metadata, seed=seed)
+    with_rolloff_range = ConstellationSignalGenerator(
+        metadata={**metadata, "alpha_rolloff_min": 0.2, "alpha_rolloff_max": 0.3},
+        seed=seed,
+    )
+
+    signal = generator()
+    signal_with_rolloff_range = with_rolloff_range()
+
+    assert signal["pulse_shape_name"] == "rectangular"
+    assert signal["alpha_rolloff"] is None
+    assert signal["pulse_shape_index"] == 0
+    assert signal["alpha_rolloff_target"] == 0.0
+
+    # Replay the expected draws: duration, bandwidth and symbols only.
+    rng = np.random.default_rng(seed)
+    num_samples, bandwidth = _draw_duration_and_bandwidth(rng, metadata)
+    expected = constellation_modulator("16qam", "rectangular", bandwidth, metadata["sample_rate"], num_samples, None, rng)
+
+    np.testing.assert_array_equal(signal.data, expected)
+    assert generator.random_generator.bit_generator.state == rng.bit_generator.state
+
+    # The rolloff range has no effect on a rectangular pulse.
+    assert signal_with_rolloff_range.data.tobytes() == signal.data.tobytes()
+    assert signal_with_rolloff_range.to_dict() == signal.to_dict()
+
+
+def _replay_pinned_srrc(seed, metadata, alpha_rolloff, *, extra_rolloff_draw):
+    """Replay a pinned-SRRC generate() on a fresh stream; optionally add the rolloff draw that pinning skips."""
+    rng = np.random.default_rng(seed)
+    num_samples, bandwidth = _draw_duration_and_bandwidth(rng, metadata)
+    if extra_rolloff_draw:
+        # uniform(a, a) returns a but still advances the stream.
+        assert rng.uniform(alpha_rolloff, alpha_rolloff) == alpha_rolloff
+    data = constellation_modulator(
+        metadata["constellation_name"],
+        "srrc",
+        bandwidth,
+        metadata["sample_rate"],
+        num_samples,
+        alpha_rolloff,
+        rng,
+    )
+    return data, rng.bit_generator.state
+
+
+@pytest.mark.parametrize("seed", [0, 1, 2, 3])
+def test_constellation_signal_generator_equal_rolloff_bounds_pin_exact_value_without_a_draw(seed):
+    """alpha_rolloff_min == alpha_rolloff_max gives exactly that rolloff and consumes no draw.
+
+    The generator's stream must end where a replay of the expected draws
+    (duration, bandwidth, symbols) ends. A replay that also makes the skipped
+    rolloff draw must end elsewhere and produce other samples, which shows the
+    comparison detects a single extra draw.
+    """
+    alpha_rolloff = 0.35
+    metadata = {
+        "constellation_name": "qpsk",
+        **PINNING_METADATA,
+        "pulse_shape_name": "srrc",
+        "alpha_rolloff_min": alpha_rolloff,
+        "alpha_rolloff_max": alpha_rolloff,
+    }
+    generator = ConstellationSignalGenerator(metadata=metadata, seed=seed)
+
+    signal = generator.generate()
+
+    assert signal["alpha_rolloff"] == alpha_rolloff
+    assert signal["alpha_rolloff_target"] == alpha_rolloff
+
+    expected, expected_state = _replay_pinned_srrc(seed, metadata, alpha_rolloff, extra_rolloff_draw=False)
+    with_extra_draw, with_extra_draw_state = _replay_pinned_srrc(seed, metadata, alpha_rolloff, extra_rolloff_draw=True)
+
+    assert generator.random_generator.bit_generator.state == expected_state
+    np.testing.assert_array_equal(signal.data, expected)
+
+    assert with_extra_draw_state != expected_state
+    assert not np.array_equal(with_extra_draw, expected)
+
+
+@pytest.mark.parametrize(
+    ("alpha_rolloff_min", "alpha_rolloff_max"),
+    [(0.2, 0.3), (0.35, 0.35)],
+)
+def test_constellation_signal_generator_rolloff_range_keeps_pulse_shape_draw(alpha_rolloff_min, alpha_rolloff_max):
+    """Without pulse_shape_name the pulse shape is still drawn, and SRRC takes its rolloff from the pinned range."""
+    metadata = {
+        "constellation_name": "8psk",
+        **PINNING_METADATA,
+        "alpha_rolloff_min": alpha_rolloff_min,
+        "alpha_rolloff_max": alpha_rolloff_max,
+    }
+    pulse_shapes = set()
+
+    for seed in range(8):
+        generator = ConstellationSignalGenerator(metadata=metadata, seed=seed)
+        signal = generator.generate()
+
+        # Replay: duration, bandwidth, pulse shape, then a rolloff draw only for a ranged SRRC.
+        rng = np.random.default_rng(seed)
+        num_samples, bandwidth = _draw_duration_and_bandwidth(rng, metadata)
+        pulse_shape_name = "srrc" if rng.integers(0, 2) == 0 else "rectangular"
+        alpha_rolloff = None
+        if pulse_shape_name == "srrc":
+            alpha_rolloff = alpha_rolloff_min if alpha_rolloff_min == alpha_rolloff_max else rng.uniform(alpha_rolloff_min, alpha_rolloff_max)
+        expected = constellation_modulator("8psk", pulse_shape_name, bandwidth, metadata["sample_rate"], num_samples, alpha_rolloff, rng)
+
+        assert signal["pulse_shape_name"] == pulse_shape_name
+        assert signal["alpha_rolloff"] == alpha_rolloff
+        if alpha_rolloff is not None:
+            assert alpha_rolloff_min <= alpha_rolloff <= alpha_rolloff_max
+        np.testing.assert_array_equal(signal.data, expected)
+        assert generator.random_generator.bit_generator.state == rng.bit_generator.state
+        pulse_shapes.add(pulse_shape_name)
+
+    assert pulse_shapes == {"srrc", "rectangular"}
+
+
+def test_constellation_signal_generator_pinning_keys_resolve_through_metadata_hierarchy():
+    """Keys set on a parent apply to its generators; a child's None restores the default draws."""
+    parent = HierarchicalMetadataObject(
+        metadata={
+            **PINNING_METADATA,
+            "pulse_shape_name": "srrc",
+            "alpha_rolloff_min": 0.25,
+            "alpha_rolloff_max": 0.25,
+        },
+        seed=3,
+    )
+    pinned = ConstellationSignalGenerator(constellation_name="qpsk", parent=parent)
+    unpinned = ConstellationSignalGenerator(
+        constellation_name="qpsk",
+        parent=parent,
+        pulse_shape_name=None,
+        alpha_rolloff_min=None,
+        alpha_rolloff_max=None,
+    )
+
+    pinned_signals = [pinned() for _ in range(8)]
+    unpinned_signals = [unpinned() for _ in range(16)]
+
+    assert {signal["pulse_shape_name"] for signal in pinned_signals} == {"srrc"}
+    assert {signal["alpha_rolloff"] for signal in pinned_signals} == {0.25}
+    assert {signal["pulse_shape_name"] for signal in unpinned_signals} == {"srrc", "rectangular"}
+    for signal in unpinned_signals:
+        if signal["pulse_shape_name"] == "srrc":
+            assert 0.1 <= signal["alpha_rolloff"] <= 0.5
+
+
+def test_constellation_signal_generator_none_values_match_absent_keys():
+    """Keys set to None leave every draw and the output unchanged."""
+    metadata = {"constellation_name": "qpsk", **PINNING_METADATA}
+    for seed in (0, 1, 2):
+        absent = ConstellationSignalGenerator(metadata=metadata, seed=seed)
+        none_valued = ConstellationSignalGenerator(
+            metadata={**metadata, "pulse_shape_name": None, "alpha_rolloff_min": None, "alpha_rolloff_max": None},
+            seed=seed,
+        )
+        for _ in range(4):
+            signal = absent.generate()
+            none_valued_signal = none_valued.generate()
+            assert none_valued_signal.data.tobytes() == signal.data.tobytes()
+            assert none_valued_signal.to_dict() == signal.to_dict()
+
+
+@pytest.mark.parametrize("pulse_shape_name", ["SRRC", "raised_cosine", "", 0])
+def test_constellation_signal_generator_rejects_unknown_pulse_shape_name(pulse_shape_name):
+    """An unknown pulse shape raises ValueError naming the valid values, before any draw."""
+    generator = ConstellationSignalGenerator(
+        metadata={"constellation_name": "qpsk", **PINNING_METADATA, "pulse_shape_name": pulse_shape_name},
+        seed=0,
+    )
+    state = generator.random_generator.bit_generator.state
+
+    with pytest.raises(ValueError, match=r"expected one of \['srrc', 'rectangular'\]"):
+        generator.generate()
+
+    assert generator.random_generator.bit_generator.state == state
+
+
+@pytest.mark.parametrize(
+    ("alpha_rolloff_min", "alpha_rolloff_max"),
+    [
+        (0.0, 0.3),
+        (-0.1, 0.3),
+        (0.3, 0.2),
+        (0.2, 1.0),
+        (0.5, 1.5),
+        (1.0, 1.0),
+        (0.0, 0.0),
+        (float("nan"), 0.3),
+        (0.2, float("nan")),
+    ],
+)
+@pytest.mark.parametrize("pulse_shape_name", ["srrc", "rectangular", None])
+def test_constellation_signal_generator_rejects_invalid_rolloff_range(alpha_rolloff_min, alpha_rolloff_max, pulse_shape_name):
+    """A rolloff range outside 0 < min <= max < 1 raises ValueError before any draw, whatever the pulse shape."""
+    metadata = {
+        "constellation_name": "qpsk",
+        **PINNING_METADATA,
+        "alpha_rolloff_min": alpha_rolloff_min,
+        "alpha_rolloff_max": alpha_rolloff_max,
+    }
+    if pulse_shape_name is not None:
+        metadata["pulse_shape_name"] = pulse_shape_name
+    generator = ConstellationSignalGenerator(metadata=metadata, seed=0)
+    state = generator.random_generator.bit_generator.state
+
+    with pytest.raises(ValueError, match="0 < alpha_rolloff_min <= alpha_rolloff_max < 1"):
+        generator.generate()
+
+    assert generator.random_generator.bit_generator.state == state
+
+
+@pytest.mark.parametrize(
+    "rolloff_keys",
+    [
+        {"alpha_rolloff_min": 0.2},
+        {"alpha_rolloff_max": 0.3},
+        {"alpha_rolloff_min": 0.2, "alpha_rolloff_max": None},
+    ],
+)
+def test_constellation_signal_generator_requires_both_rolloff_bounds(rolloff_keys):
+    """Setting only one rolloff bound raises ValueError."""
+    generator = ConstellationSignalGenerator(
+        metadata={"constellation_name": "qpsk", **PINNING_METADATA, "pulse_shape_name": "srrc", **rolloff_keys},
+        seed=0,
+    )
+
+    with pytest.raises(ValueError, match="alpha_rolloff_min and alpha_rolloff_max must be set together"):
+        generator.generate()
+
+
+@pytest.mark.parametrize("constellation_name", ["bpsk", "qpsk", "16qam", "ook"])
+def test_constellation_signal_generator_pinned_pulse_shape_sets_occupied_bandwidth(constellation_name):
+    """For the same requested bandwidth, the rectangular pulse occupies more spectrum than SRRC.
+
+    Both bounds follow from the pulse spectra, not from observed values. The
+    modulator sets the symbol rate equal to the requested bandwidth, so:
+
+    * SRRC with rolloff alpha is band-limited to (1 + alpha) times the
+      bandwidth; its 99% occupied bandwidth cannot exceed that, apart from one
+      Welch bin of estimator resolution.
+    * The rectangular pulse keeps only about 93% of its power (about 96% for
+      OOK, whose carrier adds power at DC) inside its main lobe, which is twice
+      the bandwidth wide, so its 99% occupied bandwidth must exceed twice the
+      bandwidth.
+
+    Measured here: about 1.2 (SRRC) and 3.3 (rectangular; 3.1 for OOK) times
+    the bandwidth.
+    """
+    sample_rate = 10_000_000
+    bandwidth = 1_000_000
+    alpha_rolloff = 0.35
+    nperseg = 1024
+    metadata = {
+        "constellation_name": constellation_name,
+        "sample_rate": sample_rate,
+        "bandwidth_min": bandwidth,
+        "bandwidth_max": bandwidth,
+        "signal_duration_in_samples_min": 16_384,
+        "signal_duration_in_samples_max": 16_384,
+    }
+    srrc = ConstellationSignalGenerator(
+        metadata={**metadata, "pulse_shape_name": "srrc", "alpha_rolloff_min": alpha_rolloff, "alpha_rolloff_max": alpha_rolloff},
+        seed=11,
+    )()
+    rectangular = ConstellationSignalGenerator(metadata={**metadata, "pulse_shape_name": "rectangular"}, seed=11)()
+
+    srrc_occupied = _occupied_bandwidth(srrc.data, sample_rate, nperseg)
+    rectangular_occupied = _occupied_bandwidth(rectangular.data, sample_rate, nperseg)
+
+    assert srrc["bandwidth"] == rectangular["bandwidth"] == bandwidth
+    assert srrc_occupied <= (1 + alpha_rolloff) * bandwidth + sample_rate / nperseg
+    assert rectangular_occupied > 2 * bandwidth
+    assert rectangular_occupied > srrc_occupied
