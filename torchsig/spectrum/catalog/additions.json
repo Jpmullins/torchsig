@@ -1,0 +1,427 @@
+{
+  "metadata": {
+    "description": "Technologies added to the compiled catalog for the 2.4 GHz ISM band. The three compiled files (channelization.json, emitter_catalog.json, deployment_density.json) are kept verbatim so their recorded provenance holds; everything added later lives here with its own basis and sources.",
+    "added_utc": "2026-10-16T00:00:00Z",
+    "why": "The compiled catalog models 2400-2483.5 MHz with two entries, 'wifi_2_4' and a single 'bluetooth'. A faithful ISM band needs Bluetooth split into its two incompatible PHYs (LE on a 2 MHz raster, BR/EDR hopping on a 1 MHz raster), IEEE 802.15.4 (which TorchSig renders faithfully and which occupies the band's quiet upper channels), and the unintentional radiator that dominates the band in practice: the microwave oven.",
+    "status": "Channel plans and PHY parameters are [V] verified against the cited standards. Counts, EIRP and activity figures are engineering estimates, like the rest of the catalog, and are to be fitted during calibration.",
+    "supersedes": [
+      "bluetooth"
+    ],
+    "supersedes_note": "The compiled catalog's single 'bluetooth' entry is replaced by 'bluetooth_le' and 'bluetooth_br_edr', which have different channel rasters, activity models and renderers. Its urban-dense count of 60 is split 40/20 between them."
+  },
+  "technologies": {
+    "bluetooth_le": {
+      "technology_id": "bluetooth_le",
+      "name": "Bluetooth Low Energy (LE 1M PHY)",
+      "category": "unlicensed",
+      "tier": 1,
+      "renderer": "btle",
+      "modulation_family": "gfsk",
+      "bands_mhz": [
+        [
+          2400.0,
+          2483.5,
+          "tdd"
+        ]
+      ],
+      "channel_raster_khz": 2000,
+      "channel_bandwidth_khz": [
+        1000
+      ],
+      "channel_plan": {
+        "formula_mhz": "2402 + 2*k for k = 0..39",
+        "advertising_channels": {
+          "37": 2402.0,
+          "38": 2426.0,
+          "39": 2480.0
+        },
+        "n_channels": 40,
+        "note": "Channel index 37/38/39 are the primary advertising channels and sit at the band edges and centre so they dodge Wi-Fi 1/6/11. Data channels 0-36 fill the gaps.",
+        "data_channels": {
+          "formula_mhz": "2404 + 2*k for k = 0..10, then 2428 + 2*(k-11) for k = 11..36",
+          "n_channels": 37,
+          "note": "The 37 data channels are the band minus the three advertising channels. A connection visits them on a hop increment of 5 to 16, one channel per connection event."
+        }
+      },
+      "phy": {
+        "symbol_rate_hz": 1000000.0,
+        "modulation": "GFSK, BT = 0.5, modulation index h = 0.5",
+        "occupied_bandwidth_hz": 1000000.0
+      },
+      "eirp_dbm": {
+        "min": -20,
+        "typical": 0,
+        "max": 10
+      },
+      "hardware_quality": "consumer",
+      "activity_default": {
+        "kind": "ble_advertising",
+        "advertising_interval_s": [
+          0.1,
+          1.28
+        ],
+        "packets_per_event": 3,
+        "packet_duration_s": 0.000376,
+        "connected_fraction": 0.4,
+        "connection_interval_s": [
+          0.0075,
+          0.5
+        ]
+      },
+      "rule_parts": [
+        "15"
+      ],
+      "sources": [
+        "Bluetooth Core Specification 5.4, Vol 6, Part A (LE PHY: GFSK, 1 Msym/s, h = 0.5, BT = 0.5)",
+        "Bluetooth Core Specification 5.4, Vol 6, Part B 1.4 (channel index to frequency mapping; advertising channels 37, 38, 39)",
+        "47 CFR 15.247"
+      ],
+      "basis": "EIRP spans a +0 dBm class-3 wearable to a +10 dBm class-1 radio. The advertising interval range is the span common in shipping devices (100 ms for a device in pairing mode, 1.28 s for a beacon conserving battery); the standard permits 20 ms to 10.24 s. About forty percent of visible devices are in a connection as well as advertising: a connection event is a short master and slave exchange on one data channel, and the channel changes every event, which is what fills the band between the advertising stripes.",
+      "unverified_fields": [
+        "eirp_dbm",
+        "activity_default"
+      ]
+    },
+    "bluetooth_br_edr": {
+      "technology_id": "bluetooth_br_edr",
+      "name": "Bluetooth Basic Rate / Enhanced Data Rate",
+      "category": "unlicensed",
+      "tier": 2,
+      "renderer": "generic_gfsk",
+      "modulation_family": "gfsk",
+      "bands_mhz": [
+        [
+          2400.0,
+          2483.5,
+          "tdd"
+        ]
+      ],
+      "channel_raster_khz": 1000,
+      "channel_bandwidth_khz": [
+        1000
+      ],
+      "channel_plan": {
+        "formula_mhz": "2402 + k for k = 0..78",
+        "n_channels": 79
+      },
+      "phy": {
+        "symbol_rate_hz": 1000000.0,
+        "modulation": "GFSK, BT = 0.5, modulation index h = 0.28-0.35 (BR); pi/4-DQPSK and 8DPSK for EDR",
+        "occupied_bandwidth_hz": 1000000.0,
+        "slot_duration_s": 0.000625,
+        "hop_rate_hz": 1600.0
+      },
+      "eirp_dbm": {
+        "min": -6,
+        "typical": 4,
+        "max": 20
+      },
+      "hardware_quality": "consumer",
+      "activity_default": {
+        "kind": "bt_hopping",
+        "hop_rate_hz": 1600.0,
+        "slot_occupancy": 0.15,
+        "note": "slot_occupancy 0.15 is an idle-to-light link; A2DP audio streaming runs about 0.6."
+      },
+      "rule_parts": [
+        "15"
+      ],
+      "sources": [
+        "Bluetooth Core Specification 5.4, Vol 2, Part A 2 (BR/EDR RF: 79 channels at 1 MHz, 2402 + k MHz)",
+        "Bluetooth Core Specification 5.4, Vol 2, Part B 2 (625 us slots, 1600 hops/s)",
+        "47 CFR 15.247(a)(1) frequency hopping"
+      ],
+      "basis": "Tier 2: rendered as a generic GFSK burst on the correct 1 MHz raster with the correct 625 us slot timing and hop rate, with no packet structure, access code or EDR phase-modulated payload.",
+      "unverified_fields": [
+        "eirp_dbm",
+        "activity_default"
+      ]
+    },
+    "zigbee_2_4": {
+      "technology_id": "zigbee_2_4",
+      "name": "IEEE 802.15.4 / ZigBee (2.4 GHz O-QPSK PHY)",
+      "category": "unlicensed",
+      "tier": 1,
+      "renderer": "zigbee",
+      "modulation_family": "oqpsk_dsss",
+      "bands_mhz": [
+        [
+          2405.0,
+          2480.0,
+          "tdd"
+        ]
+      ],
+      "channel_raster_khz": 5000,
+      "channel_bandwidth_khz": [
+        2000
+      ],
+      "channel_plan": {
+        "formula_mhz": "2405 + 5*(k - 11) for k = 11..26",
+        "n_channels": 16,
+        "centers_mhz": [
+          2405,
+          2410,
+          2415,
+          2420,
+          2425,
+          2430,
+          2435,
+          2440,
+          2445,
+          2450,
+          2455,
+          2460,
+          2465,
+          2470,
+          2475,
+          2480
+        ],
+        "note": "Channels 15, 20, 25 and 26 fall between Wi-Fi 1/6/11 and are the ones deployments are told to prefer."
+      },
+      "phy": {
+        "chip_rate_hz": 2000000.0,
+        "bit_rate_hz": 250000.0,
+        "modulation": "O-QPSK, half-sine pulse shaping, 32-chip DSSS per 4-bit symbol",
+        "occupied_bandwidth_hz": 2000000.0
+      },
+      "eirp_dbm": {
+        "min": -10,
+        "typical": 3,
+        "max": 20
+      },
+      "hardware_quality": "consumer",
+      "activity_default": {
+        "kind": "zigbee_network",
+        "report_interval_s": [
+          1.0,
+          30.0
+        ],
+        "packet_duration_s": [
+          0.00035,
+          0.004
+        ]
+      },
+      "rule_parts": [
+        "15"
+      ],
+      "sources": [
+        "IEEE Std 802.15.4-2015, clause 12 (O-QPSK PHY: 2 Mchip/s, 250 kbps, 32-chip sequences, Table 70)",
+        "IEEE Std 802.15.4-2015, clause 10.1.2.2 (channel numbering, 2405 + 5(k-11) MHz)",
+        "47 CFR 15.247"
+      ],
+      "basis": "A sensor network of a coordinator plus battery-powered end devices reporting every few seconds to tens of seconds. Packet duration spans a bare ACK to a full 127-byte PSDU at 250 kbps.",
+      "unverified_fields": [
+        "eirp_dbm",
+        "activity_default"
+      ]
+    },
+    "microwave_oven": {
+      "technology_id": "microwave_oven",
+      "name": "Microwave oven (unintentional radiator)",
+      "category": "unintentional",
+      "tier": 2,
+      "renderer": "oven_magnetron",
+      "modulation_family": "noise",
+      "bands_mhz": [
+        [
+          2400.0,
+          2483.5,
+          "none"
+        ]
+      ],
+      "channel_raster_khz": null,
+      "channel_bandwidth_khz": [
+        20000
+      ],
+      "channel_plan": {
+        "note": "Not channelized. The magnetron free-runs; its emission centre is drawn near 2450 MHz and sweeps during each on-period."
+      },
+      "phy": {
+        "line_frequency_hz": 60.0,
+        "duty_cycle": 0.5,
+        "on_duration_s": 0.0083,
+        "centre_frequency_hz": [
+          2440000000.0,
+          2465000000.0
+        ],
+        "sweep_span_hz": 15000000.0,
+        "emission_bandwidth_hz": [
+          10000000.0,
+          30000000.0
+        ],
+        "modulation": "Broadband noise from a free-running magnetron, keyed by half-wave-rectified mains"
+      },
+      "eirp_dbm": {
+        "min": -10,
+        "typical": 12,
+        "max": 35
+      },
+      "hardware_quality": "unintentional",
+      "activity_default": {
+        "kind": "mains_keyed",
+        "line_frequency_hz": 60.0,
+        "on_fraction": 0.5
+      },
+      "rule_parts": [
+        "18"
+      ],
+      "sources": [
+        "47 CFR Part 18 (industrial, scientific and medical equipment; 2450 MHz ISM centre frequency)",
+        "Taher, Zaghloul et al., 'Microwave oven signal modelling', IEEE WCNC 2008 (half-wave keyed, swept centre, tens of MHz wide)",
+        "IEEE 802.11-14/0513 and 802.15.2-2003 Annex E (microwave oven interference models for 2.4 GHz coexistence)"
+      ],
+      "basis": "A domestic oven's magnetron conducts only on alternate mains half-cycles, so emission is a 50% duty cycle burst train at the 60 Hz line frequency (8.3 ms on, 8.3 ms off), tens of MHz wide, with the centre sweeping several MHz within each burst as the anode voltage rises and falls. This is the strongest and most distinctive non-communication emitter in the band and the reason 2.4 GHz coexistence testing exists. The EIRP range is leakage, not a transmitter's output: enough to overwhelm Wi-Fi within a few metres and to be plainly visible across a floor of a building, which is what published coexistence measurements show, and negligible beyond about a hundred metres.",
+      "unverified_fields": [
+        "eirp_dbm",
+        "phy.emission_bandwidth_hz",
+        "phy.sweep_span_hz"
+      ]
+    },
+    "video_sender_2_4": {
+      "technology_id": "video_sender_2_4",
+      "name": "Analog video sender / FPV link (2.4 GHz FM video)",
+      "category": "unlicensed",
+      "tier": 2,
+      "renderer": "generic_fm",
+      "modulation_family": "fm",
+      "bands_mhz": [
+        [
+          2400.0,
+          2483.5,
+          "downlink"
+        ]
+      ],
+      "channel_raster_khz": 18000,
+      "channel_bandwidth_khz": [
+        6000
+      ],
+      "channel_plan": {
+        "centers_mhz": [
+          2414,
+          2432,
+          2450,
+          2468
+        ],
+        "n_channels": 4,
+        "note": "The four-channel set used by consumer AV senders and 2.4 GHz FPV transmitters."
+      },
+      "phy": {
+        "modulation": "Wideband FM video with an audio subcarrier",
+        "occupied_bandwidth_hz": 6000000.0
+      },
+      "eirp_dbm": {
+        "min": 10,
+        "typical": 24,
+        "max": 33
+      },
+      "hardware_quality": "consumer",
+      "activity_default": {
+        "kind": "always_on"
+      },
+      "rule_parts": [
+        "15"
+      ],
+      "sources": [
+        "47 CFR 15.247 (2400-2483.5 MHz)",
+        "Consumer 2.4 GHz AV sender and FPV transmitter channel sets (4 channels at 18 MHz spacing)"
+      ],
+      "basis": "A wireless camera, baby monitor or FPV link transmits continuously on one wide FM channel while in use, which makes it the most conspicuous thing in the band when present: an unbroken block tens of times wider than a Bluetooth packet that never stops to let anything else talk. Uncommon, but a band model without one misses the case that most upsets a Wi-Fi network.",
+      "unverified_fields": [
+        "eirp_dbm",
+        "channel_plan"
+      ]
+    }
+  },
+  "density": {
+    "bluetooth_le": {
+      "expected_count": {
+        "urban_dense": 40,
+        "urban": 24,
+        "suburban": 8,
+        "rural": 2,
+        "open": 1,
+        "indoor": 20
+      },
+      "scale_with_observed_bandwidth": false,
+      "reuse_channels": true,
+      "occupied_bandwidth_hz": 1000000.0,
+      "basis": "Two thirds of the compiled catalog's single 'bluetooth' count of 60 urban-dense devices: phones, wearables and tags, most of which are visible only through their advertising."
+    },
+    "bluetooth_br_edr": {
+      "expected_count": {
+        "urban_dense": 20,
+        "urban": 11,
+        "suburban": 4,
+        "rural": 1,
+        "open": 0.5,
+        "indoor": 10
+      },
+      "scale_with_observed_bandwidth": false,
+      "reuse_channels": true,
+      "occupied_bandwidth_hz": 1000000.0,
+      "basis": "The remaining third of the compiled catalog's 'bluetooth' count: active BR/EDR links, mostly audio."
+    },
+    "zigbee_2_4": {
+      "expected_count": {
+        "urban_dense": 10,
+        "urban": 6,
+        "suburban": 4,
+        "rural": 1,
+        "open": 0.2,
+        "indoor": 8
+      },
+      "scale_with_observed_bandwidth": false,
+      "reuse_channels": true,
+      "occupied_bandwidth_hz": 2000000.0,
+      "basis": "Smart-home and building-automation devices: bulbs, sensors and thermostats cluster on one or two channels per network, so the count is devices rather than networks."
+    },
+    "microwave_oven": {
+      "expected_count": {
+        "urban_dense": 1.2,
+        "urban": 0.6,
+        "suburban": 0.3,
+        "rural": 0.1,
+        "open": 0.0,
+        "indoor": 0.5
+      },
+      "scale_with_observed_bandwidth": false,
+      "reuse_channels": false,
+      "occupied_bandwidth_hz": 20000000.0,
+      "basis": "Expected number radiating at any instant within reception range. An apartment block gives a better than even chance of one oven running at a mealtime; the diurnal curve concentrates this at midday and in the evening."
+    },
+    "video_sender_2_4": {
+      "expected_count": {
+        "urban_dense": 0.4,
+        "urban": 0.25,
+        "suburban": 0.15,
+        "rural": 0.05,
+        "open": 0.05,
+        "indoor": 0.3
+      },
+      "scale_with_observed_bandwidth": false,
+      "reuse_channels": false,
+      "occupied_bandwidth_hz": 6000000.0,
+      "basis": "Expected number transmitting within range at any instant: a minority of scenes contain one."
+    }
+  },
+  "activity_overrides": {
+    "_why": "The compiled catalog gives one activity model per technology, which becomes one offered load for every emitter of it. For contention-based technologies that is wrong in an important way: the deployment count is how many emitters are *audible*, and an access point is audible from its beacons alone. In a real 2.4 GHz scan most of the fifty to a hundred and fifty visible BSSIDs carry almost no traffic; a handful nearby carry nearly all of it. Giving all of them the mean load makes a channel permanently saturated and produces roughly five times the bursts a real capture shows. These overrides replace the single load with a per-emitter draw: mostly idle, with a long tail.",
+    "wifi_2_4": {
+      "kind": "csma",
+      "active_fraction": 0.22,
+      "offered_load_median": 0.05,
+      "offered_load_log_sigma": 1.0,
+      "basis": "About a fifth of audible access points carry noticeable traffic at any instant; the rest beacon and little else. The active ones' airtime is lognormal with a 5% median and a long tail, which puts a busy urban channel at roughly 20-40% utilisation and lets a congested one approach the contention cap. Idle access points still beacon every 102.4 ms, which is what makes them audible and countable in the first place.",
+      "sources": [
+        "Measured 2.4 GHz channel utilisation in urban and enterprise deployments is typically 10-40%, reaching 70-90% only in congested venues."
+      ]
+    },
+    "bluetooth_br_edr": {
+      "kind": "bt_hopping",
+      "active_fraction": 0.25,
+      "slot_occupancy_idle": 0.02,
+      "slot_occupancy_active": 0.55,
+      "basis": "Most Bluetooth devices in range are paged or idle, holding a link with sniff-mode polling only. A quarter are in an active link, mostly A2DP audio, which fills a little over half the slots."
+    }
+  }
+}

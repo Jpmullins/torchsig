@@ -1,0 +1,4693 @@
+{
+ "metadata": {
+  "description": "Channelization and technology metadata for US spectrum 30 MHz-6 GHz, linked to us_allocations_30MHz_6GHz rows by frequency overlap.",
+  "compiled_utc": "2026-09-20T23:12:34Z",
+  "allocation_source": {
+   "source": "FCC Online Table of Frequency Allocations (47 C.F.R. \u00a7 2.106), Office of Engineering and Technology",
+   "source_url": "https://transition.fcc.gov/oet/spectrum/table/fcctable.pdf",
+   "source_revision": "Revised on July 1, 2022 (as printed on the PDF cover page)",
+   "retrieved_utc": "2026-09-20T23:12:34Z",
+   "secondary_source_url": "https://transition.fcc.gov/oet/spectrum/table/fcctable.docx",
+   "secondary_source_revision": "Revised on February 1, 2021 (Word edition; used only for edge consistency check)"
+  },
+  "conventions": "Frequencies in MHz unless a field name says khz. Fields set to null were not confirmed against the cited source; unverified_fields names values that are quoted but not re-checked. Lists of 3GPP channel bandwidths are the commonly supported sets and are not exhaustive per release.",
+  "n_technologies": 67
+ },
+ "technologies": [
+  {
+   "id": "fm_broadcast",
+   "name": "FM broadcast",
+   "category": "broadcast",
+   "bands": [
+    {
+     "lower_mhz": 88.0,
+     "upper_mhz": 108.0,
+     "direction": "downlink"
+    }
+   ],
+   "channel_raster_khz": 200,
+   "channel_bandwidth_khz": 200,
+   "channel_plan": {
+    "channel_numbers": [
+     200,
+     300
+    ],
+    "center_frequency_mhz_formula": "87.9 + 0.2*(channel-200)",
+    "first_center_mhz": 87.9,
+    "last_center_mhz": 107.9,
+    "n_channels": 101,
+    "reserved_noncommercial_channels": [
+     201,
+     220
+    ],
+    "reserved_noncommercial_mhz": [
+     88.0,
+     92.0
+    ]
+   },
+   "modulation": "Wideband FM, \u00b175 kHz peak deviation (100% modulation); 19 kHz stereo pilot with 38 kHz DSB-SC L-R subcarrier; optional 57 kHz RBDS subcarrier; optional HD Radio (IBOC) digital sidebands",
+   "rule_parts": [
+    "73",
+    "74L"
+   ],
+   "sources": [
+    "47 CFR 73.201 (numerical designation of FM broadcast channels)",
+    "47 CFR 73.1570(b)(2) (modulation limits)",
+    "47 CFR 73.322 (FM stereo / subcarrier)",
+    "NRSC-4-B (United States RBDS Standard)",
+    "NRSC-5-D (In-band/on-channel digital radio)"
+   ],
+   "notes": "Channel 200 (87.9 MHz) is limited to Class D stations by 73.512.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "88-108"
+   ]
+  },
+  {
+   "id": "tv_broadcast_atsc",
+   "name": "Television broadcast (ATSC 1.0 / ATSC 3.0)",
+   "category": "broadcast",
+   "bands": [
+    {
+     "lower_mhz": 54.0,
+     "upper_mhz": 72.0,
+     "direction": "downlink",
+     "channels": "2-4"
+    },
+    {
+     "lower_mhz": 76.0,
+     "upper_mhz": 88.0,
+     "direction": "downlink",
+     "channels": "5-6"
+    },
+    {
+     "lower_mhz": 174.0,
+     "upper_mhz": 216.0,
+     "direction": "downlink",
+     "channels": "7-13"
+    },
+    {
+     "lower_mhz": 470.0,
+     "upper_mhz": 608.0,
+     "direction": "downlink",
+     "channels": "14-36"
+    }
+   ],
+   "channel_raster_khz": 6000,
+   "channel_bandwidth_khz": 6000,
+   "channel_plan": {
+    "post_repack_channel_range": [
+     2,
+     36
+    ],
+    "channel_37_608_614_mhz": "not assigned to TV (radio astronomy / WMTS)",
+    "repack_completion": "Incentive Auction transition (channels 38-51 cleared for 600 MHz wireless) completed 13 July 2020",
+    "lower_edge_mhz": {
+     "2": 54,
+     "5": 76,
+     "7": 174,
+     "14": 470
+    }
+   },
+   "modulation": {
+    "atsc_1_0": "8-VSB, 10.762 Msymbol/s, pilot 309.441 kHz above lower channel edge, 19.39 Mbit/s (ATSC A/53)",
+    "atsc_3_0": "COFDM (8K/16K/32K FFT), LDPC/BCH, 6 MHz channel (ATSC A/322)"
+   },
+   "rule_parts": [
+    "73",
+    "74G",
+    "74H"
+   ],
+   "sources": [
+    "47 CFR 73.603 (numerical designation of television channels)",
+    "47 CFR 73.616 (post-transition DTV station allotments)",
+    "ATSC A/53 Part 2 (RF/Transmission System Characteristics)",
+    "ATSC A/322 (Physical Layer Protocol)",
+    "FCC Incentive Auction Task Force, transition schedule (repack completed July 2020)"
+   ],
+   "notes": "Channels 14-20 (470-512 MHz) are shared with Part 90 land mobile in eleven metropolitan areas (T-band).",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "54-72",
+    "76-88",
+    "174-216",
+    "470-512",
+    "512-608"
+   ]
+  },
+  {
+   "id": "plmr_vhf_low",
+   "name": "Private land mobile, VHF low band (Part 90)",
+   "category": "land_mobile",
+   "bands": [
+    {
+     "lower_mhz": 30.56,
+     "upper_mhz": 32.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 33.0,
+     "upper_mhz": 34.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 35.0,
+     "upper_mhz": 36.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 37.0,
+     "upper_mhz": 38.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 39.0,
+     "upper_mhz": 40.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 42.0,
+     "upper_mhz": 46.6,
+     "direction": null
+    },
+    {
+     "lower_mhz": 47.0,
+     "upper_mhz": 49.6,
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 20,
+   "channel_bandwidth_khz": 20,
+   "modulation": "Analog FM (20K0F3E) predominantly",
+   "rule_parts": [
+    "90"
+   ],
+   "sources": [
+    "47 CFR 90.20 (Public Safety Pool frequency table, 20 kHz increments in 25-50 MHz)",
+    "47 CFR 90.35 (Industrial/Business Pool)",
+    "47 CFR 90.209(b)(5) (authorized bandwidth: 20 kHz for 25-50 MHz)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "30.56-32",
+    "33-34",
+    "35-36",
+    "37-37.5",
+    "37.5-38",
+    "39-40",
+    "42-43.35",
+    "43.35-43.69",
+    "43.69-44",
+    "44-46.6",
+    "47-49.6"
+   ]
+  },
+  {
+   "id": "plmr_vhf_high",
+   "name": "Private land mobile, VHF high band (Part 90)",
+   "category": "land_mobile",
+   "bands": [
+    {
+     "lower_mhz": 150.8,
+     "upper_mhz": 156.2475,
+     "direction": null
+    },
+    {
+     "lower_mhz": 157.45,
+     "upper_mhz": 161.575,
+     "direction": null
+    },
+    {
+     "lower_mhz": 162.0375,
+     "upper_mhz": 174.0,
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 7.5,
+   "channel_bandwidth_khz": [
+    11.25,
+    12.5
+   ],
+   "modulation": "Analog FM 11K2F3E (12.5 kHz) or digital P25 / DMR / NXDN (see separate entries); 25 kHz operation prohibited since 1 Jan 2013 (narrowbanding)",
+   "rule_parts": [
+    "90"
+   ],
+   "sources": [
+    "47 CFR 90.20(c)(3) and 90.35(b)(3) (frequency tables, 7.5 kHz channel steps 150.8-162 MHz)",
+    "47 CFR 90.209(b)(5) (authorized bandwidth 150-174 MHz: 11.25 kHz, 20 kHz for legacy licensees until 2013 deadline)",
+    "47 CFR 90.203(j) (narrowbanding: 12.5 kHz or equivalent efficiency required after 1 January 2013)"
+   ],
+   "notes": "Federal land mobile in the same range (162.0375-174 MHz federal FIXED/MOBILE) follows NTIA Manual Chapter 4 channel plans, not Part 90.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "150.8-152.855",
+    "152.855-154",
+    "154-156.248",
+    "157.45-161.575",
+    "162.037-173.2",
+    "173.2-173.4",
+    "173.4-174"
+   ]
+  },
+  {
+   "id": "plmr_uhf",
+   "name": "Private land mobile, UHF 450-470 MHz and T-band 470-512 MHz (Part 90)",
+   "category": "land_mobile",
+   "bands": [
+    {
+     "lower_mhz": 450.0,
+     "upper_mhz": 470.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 470.0,
+     "upper_mhz": 512.0,
+     "note": "T-band; 11 metropolitan areas only, shared with TV channels 14-20",
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 6.25,
+   "channel_bandwidth_khz": [
+    11.25,
+    12.5
+   ],
+   "modulation": "Analog FM 11K2F3E or digital P25 / DMR / NXDN; 6.25 kHz channels (NXDN, dPMR) also authorized",
+   "rule_parts": [
+    "90"
+   ],
+   "sources": [
+    "47 CFR 90.20 and 90.35 (frequency tables, 6.25 kHz steps 450-470 MHz)",
+    "47 CFR 90.209(b)(5)",
+    "47 CFR 90 Subpart L (470-512 MHz)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "450-454",
+    "454-455",
+    "455-456",
+    "456-459",
+    "459-460",
+    "460-462.538",
+    "462.538-462.738",
+    "462.738-467.538",
+    "467.538-467.738",
+    "467.738-470",
+    "470-512"
+   ]
+  },
+  {
+   "id": "plmr_220",
+   "name": "220-222 MHz land mobile (Part 90 Subpart T)",
+   "category": "land_mobile",
+   "bands": [
+    {
+     "lower_mhz": 220.0,
+     "upper_mhz": 222.0,
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 5,
+   "channel_bandwidth_khz": 4,
+   "modulation": "Narrowband (ACSB / linear modulation, digital)",
+   "rule_parts": [
+    "90"
+   ],
+   "sources": [
+    "47 CFR 90.715 (220-222 MHz channel table: 5 kHz channel pairs)",
+    "47 CFR 90.209(b)(5) (4 kHz authorized bandwidth)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "220-222"
+   ]
+  },
+  {
+   "id": "plmr_700_ps",
+   "name": "700 MHz public safety narrowband and broadband",
+   "category": "land_mobile",
+   "bands": [
+    {
+     "lower_mhz": 769.0,
+     "upper_mhz": 775.0,
+     "direction": "base/downlink",
+     "note": "narrowband"
+    },
+    {
+     "lower_mhz": 799.0,
+     "upper_mhz": 805.0,
+     "direction": "mobile/uplink",
+     "note": "narrowband"
+    },
+    {
+     "lower_mhz": 758.0,
+     "upper_mhz": 768.0,
+     "direction": "downlink",
+     "note": "broadband (3GPP band 14, FirstNet)"
+    },
+    {
+     "lower_mhz": 788.0,
+     "upper_mhz": 798.0,
+     "direction": "uplink",
+     "note": "broadband (3GPP band 14, FirstNet)"
+    }
+   ],
+   "channel_raster_khz": 6.25,
+   "channel_bandwidth_khz": [
+    6.25,
+    12.5
+   ],
+   "modulation": "P25 Phase 1/2 on narrowband channels; LTE band 14 on broadband segment",
+   "rule_parts": [
+    "90R",
+    "90S",
+    "27"
+   ],
+   "sources": [
+    "47 CFR 90.531 (700 MHz public safety band plan; 6.25 kHz narrowband channels)",
+    "47 CFR 90.533",
+    "47 CFR 27.5(b) (758-768/788-798 MHz public safety broadband)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "758-775",
+    "788-805"
+   ]
+  },
+  {
+   "id": "plmr_800",
+   "name": "800 MHz land mobile (806-824 / 851-869 MHz)",
+   "category": "land_mobile",
+   "bands": [
+    {
+     "lower_mhz": 806.0,
+     "upper_mhz": 824.0,
+     "direction": "mobile/uplink"
+    },
+    {
+     "lower_mhz": 851.0,
+     "upper_mhz": 869.0,
+     "direction": "base/downlink"
+    }
+   ],
+   "channel_raster_khz": 25,
+   "channel_bandwidth_khz": 20,
+   "modulation": "Analog FM (20K0F3E), P25, and ESMR (iDEN historically; now LTE band 26 in the 817-824/862-869 ESMR segment)",
+   "rule_parts": [
+    "90S"
+   ],
+   "sources": [
+    "47 CFR 90.613 (806-824/851-869 MHz channel table)",
+    "47 CFR 90.209(b)(5) (20 kHz authorized bandwidth)",
+    "47 CFR 90.614 (800 MHz band segments after rebanding)"
+   ],
+   "notes": "NPSPAC public safety channels (806-809/851-854 MHz) use 12.5 kHz offsets from the 25 kHz grid.",
+   "unverified_fields": [
+    "channel_raster_khz (25 kHz base grid per 90.613; interleaved 12.5 kHz offsets exist in NPSPAC)"
+   ],
+   "allocation_rows": [
+    "806-809",
+    "809-849",
+    "851-854",
+    "854-890"
+   ]
+  },
+  {
+   "id": "plmr_900",
+   "name": "900 MHz land mobile and 900 MHz broadband segment (896-901 / 935-940 MHz)",
+   "category": "land_mobile",
+   "bands": [
+    {
+     "lower_mhz": 896.0,
+     "upper_mhz": 901.0,
+     "direction": "mobile/uplink"
+    },
+    {
+     "lower_mhz": 935.0,
+     "upper_mhz": 940.0,
+     "direction": "base/downlink"
+    }
+   ],
+   "channel_raster_khz": 12.5,
+   "channel_bandwidth_khz": 13.6,
+   "modulation": "Narrowband FM/digital on 12.5 kHz channels; 3 MHz x 3 MHz broadband segment (897.5-900.5 / 936.5-939.5 MHz) authorized 2020 for LTE (3GPP band 8 covers this range)",
+   "rule_parts": [
+    "90"
+   ],
+   "sources": [
+    "47 CFR 90.613 / 90.617 (896-901/935-940 MHz channels)",
+    "47 CFR 90.209(b)(5) (13.6 kHz authorized bandwidth)",
+    "FCC 20-67, Report and Order, WT Docket 17-200 (900 MHz broadband segment, May 2020)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "896-897.5",
+    "897.5-900.5",
+    "900.5-901",
+    "935-936.5",
+    "936.5-939.5",
+    "939.5-940"
+   ]
+  },
+  {
+   "id": "p25",
+   "name": "APCO Project 25 (P25) digital land mobile",
+   "category": "land_mobile_waveform",
+   "bands": [
+    {
+     "lower_mhz": 136.0,
+     "upper_mhz": 174.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 380.0,
+     "upper_mhz": 512.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 764.0,
+     "upper_mhz": 806.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 806.0,
+     "upper_mhz": 869.0,
+     "direction": null
+    }
+   ],
+   "channel_bandwidth_khz": [
+    12.5,
+    6.25
+   ],
+   "modulation": {
+    "phase_1": "C4FM (4-level FSK), 4800 symbols/s, 9600 bit/s, 12.5 kHz channel; CQPSK receive-compatible variant",
+    "phase_2": "2-slot TDMA in 12.5 kHz (6.25 kHz equivalent), 12 kbit/s; H-DQPSK outbound, H-CPM inbound"
+   },
+   "rule_parts": [
+    "90"
+   ],
+   "sources": [
+    "TIA-102.BAAA-A (P25 FDMA Common Air Interface)",
+    "TIA-102.BBAB / TIA-102.BBAC (P25 Phase 2 two-slot TDMA physical layer / MAC)"
+   ],
+   "notes": "Band list gives ranges where P25 systems are commonly licensed; the waveform itself is band-agnostic.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "136-137",
+    "137-137.025",
+    "137.025-137.175",
+    "137.175-137.825",
+    "137.825-138",
+    "138-144",
+    "144-146",
+    "146-148",
+    "148-149.9",
+    "149.9-150.05",
+    "150.05-150.8",
+    "150.8-152.855",
+    "152.855-154",
+    "154-156.248",
+    "156.248-156.512",
+    "156.512-156.537",
+    "156.537-156.762",
+    "156.762-156.787",
+    "156.787-156.812",
+    "156.812-156.838",
+    "156.838-157.037",
+    "157.037-157.188",
+    "157.188-157.45",
+    "157.45-161.575",
+    "161.575-161.625",
+    "161.625-161.775",
+    "161.775-161.963",
+    "161.963-161.988",
+    "161.988-162.012",
+    "162.012-162.037",
+    "162.037-173.2",
+    "173.2-173.4",
+    "173.4-174",
+    "335.4-399.9",
+    "399.9-400.05",
+    "400.05-400.15",
+    "400.15-401",
+    "401-402",
+    "402-403",
+    "403-406",
+    "406-406.1",
+    "406.1-410",
+    "410-420",
+    "420-450",
+    "450-454",
+    "454-455",
+    "455-456",
+    "456-459",
+    "459-460",
+    "460-462.538",
+    "462.538-462.738",
+    "462.738-467.538",
+    "467.538-467.738",
+    "467.738-470",
+    "470-512",
+    "758-775",
+    "775-788",
+    "788-805",
+    "805-806",
+    "806-809",
+    "809-849",
+    "849-851",
+    "851-854",
+    "854-890"
+   ]
+  },
+  {
+   "id": "dmr",
+   "name": "DMR (ETSI Digital Mobile Radio)",
+   "category": "land_mobile_waveform",
+   "bands": [
+    {
+     "lower_mhz": 136.0,
+     "upper_mhz": 174.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 400.0,
+     "upper_mhz": 512.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 806.0,
+     "upper_mhz": 941.0,
+     "direction": null
+    }
+   ],
+   "channel_bandwidth_khz": 12.5,
+   "modulation": "4FSK, 4800 symbols/s, 9600 bit/s, 2-slot TDMA (30 ms slots, 60 ms frame) in 12.5 kHz",
+   "rule_parts": [
+    "90"
+   ],
+   "sources": [
+    "ETSI TS 102 361-1 (DMR Air Interface protocol)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "136-137",
+    "137-137.025",
+    "137.025-137.175",
+    "137.175-137.825",
+    "137.825-138",
+    "138-144",
+    "144-146",
+    "146-148",
+    "148-149.9",
+    "149.9-150.05",
+    "150.05-150.8",
+    "150.8-152.855",
+    "152.855-154",
+    "154-156.248",
+    "156.248-156.512",
+    "156.512-156.537",
+    "156.537-156.762",
+    "156.762-156.787",
+    "156.787-156.812",
+    "156.812-156.838",
+    "156.838-157.037",
+    "157.037-157.188",
+    "157.188-157.45",
+    "157.45-161.575",
+    "161.575-161.625",
+    "161.625-161.775",
+    "161.775-161.963",
+    "161.963-161.988",
+    "161.988-162.012",
+    "162.012-162.037",
+    "162.037-173.2",
+    "173.2-173.4",
+    "173.4-174",
+    "399.9-400.05",
+    "400.05-400.15",
+    "400.15-401",
+    "401-402",
+    "402-403",
+    "403-406",
+    "406-406.1",
+    "406.1-410",
+    "410-420",
+    "420-450",
+    "450-454",
+    "454-455",
+    "455-456",
+    "456-459",
+    "459-460",
+    "460-462.538",
+    "462.538-462.738",
+    "462.738-467.538",
+    "467.538-467.738",
+    "467.738-470",
+    "470-512",
+    "806-809",
+    "809-849",
+    "849-851",
+    "851-854",
+    "854-890",
+    "890-894",
+    "894-896",
+    "896-897.5",
+    "897.5-900.5",
+    "900.5-901",
+    "901-902",
+    "902-928",
+    "928-929",
+    "929-930",
+    "930-931",
+    "931-932",
+    "932-935",
+    "935-936.5",
+    "936.5-939.5",
+    "939.5-940",
+    "940-941"
+   ]
+  },
+  {
+   "id": "nxdn",
+   "name": "NXDN digital land mobile",
+   "category": "land_mobile_waveform",
+   "bands": [
+    {
+     "lower_mhz": 136.0,
+     "upper_mhz": 174.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 400.0,
+     "upper_mhz": 512.0,
+     "direction": null
+    }
+   ],
+   "channel_bandwidth_khz": [
+    6.25,
+    12.5
+   ],
+   "modulation": "4FSK FDMA; 2400 symbols/s (4800 bit/s) in 6.25 kHz or 4800 symbols/s (9600 bit/s) in 12.5 kHz",
+   "rule_parts": [
+    "90"
+   ],
+   "sources": [
+    "NXDN Technical Specifications, Part 1-A Common Air Interface (NXDN Forum)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "136-137",
+    "137-137.025",
+    "137.025-137.175",
+    "137.175-137.825",
+    "137.825-138",
+    "138-144",
+    "144-146",
+    "146-148",
+    "148-149.9",
+    "149.9-150.05",
+    "150.05-150.8",
+    "150.8-152.855",
+    "152.855-154",
+    "154-156.248",
+    "156.248-156.512",
+    "156.512-156.537",
+    "156.537-156.762",
+    "156.762-156.787",
+    "156.787-156.812",
+    "156.812-156.838",
+    "156.838-157.037",
+    "157.037-157.188",
+    "157.188-157.45",
+    "157.45-161.575",
+    "161.575-161.625",
+    "161.625-161.775",
+    "161.775-161.963",
+    "161.963-161.988",
+    "161.988-162.012",
+    "162.012-162.037",
+    "162.037-173.2",
+    "173.2-173.4",
+    "173.4-174",
+    "399.9-400.05",
+    "400.05-400.15",
+    "400.15-401",
+    "401-402",
+    "402-403",
+    "403-406",
+    "406-406.1",
+    "406.1-410",
+    "410-420",
+    "420-450",
+    "450-454",
+    "454-455",
+    "455-456",
+    "456-459",
+    "459-460",
+    "460-462.538",
+    "462.538-462.738",
+    "462.738-467.538",
+    "467.538-467.738",
+    "467.738-470",
+    "470-512"
+   ]
+  },
+  {
+   "id": "analog_fm_lmr",
+   "name": "Analog FM land mobile voice",
+   "category": "land_mobile_waveform",
+   "bands": [
+    {
+     "lower_mhz": 30.0,
+     "upper_mhz": 50.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 136.0,
+     "upper_mhz": 174.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 450.0,
+     "upper_mhz": 512.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 806.0,
+     "upper_mhz": 941.0,
+     "direction": null
+    }
+   ],
+   "channel_bandwidth_khz": [
+    11.25,
+    12.5,
+    20,
+    25
+   ],
+   "modulation": "FM voice; emission designators 11K2F3E (\u00b12.5 kHz deviation, 12.5 kHz channel), 16K0F3E (\u00b15 kHz, 25 kHz channel), 20K0F3E (VHF low band / 800 MHz); CTCSS (67-254 Hz) and DCS squelch subaudible signalling",
+   "rule_parts": [
+    "90",
+    "95"
+   ],
+   "sources": [
+    "47 CFR 90.207 (emission types)",
+    "47 CFR 90.209 (bandwidth limitations)",
+    "47 CFR 2.201 (emission designators)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "30-30.56",
+    "30.56-32",
+    "32-33",
+    "33-34",
+    "34-35",
+    "35-36",
+    "36-37",
+    "37-37.5",
+    "37.5-38",
+    "38-38.25",
+    "38.25-39",
+    "39-40",
+    "40-41.015",
+    "41.015-41.665",
+    "41.665-42",
+    "42-43.35",
+    "43.35-43.69",
+    "43.69-44",
+    "44-46.6",
+    "46.6-47",
+    "47-49.6",
+    "49.6-50",
+    "136-137",
+    "137-137.025",
+    "137.025-137.175",
+    "137.175-137.825",
+    "137.825-138",
+    "138-144",
+    "144-146",
+    "146-148",
+    "148-149.9",
+    "149.9-150.05",
+    "150.05-150.8",
+    "150.8-152.855",
+    "152.855-154",
+    "154-156.248",
+    "156.248-156.512",
+    "156.512-156.537",
+    "156.537-156.762",
+    "156.762-156.787",
+    "156.787-156.812",
+    "156.812-156.838",
+    "156.838-157.037",
+    "157.037-157.188",
+    "157.188-157.45",
+    "157.45-161.575",
+    "161.575-161.625",
+    "161.625-161.775",
+    "161.775-161.963",
+    "161.963-161.988",
+    "161.988-162.012",
+    "162.012-162.037",
+    "162.037-173.2",
+    "173.2-173.4",
+    "173.4-174",
+    "450-454",
+    "454-455",
+    "455-456",
+    "456-459",
+    "459-460",
+    "460-462.538",
+    "462.538-462.738",
+    "462.738-467.538",
+    "467.538-467.738",
+    "467.738-470",
+    "470-512",
+    "806-809",
+    "809-849",
+    "849-851",
+    "851-854",
+    "854-890",
+    "890-894",
+    "894-896",
+    "896-897.5",
+    "897.5-900.5",
+    "900.5-901",
+    "901-902",
+    "902-928",
+    "928-929",
+    "929-930",
+    "930-931",
+    "931-932",
+    "932-935",
+    "935-936.5",
+    "936.5-939.5",
+    "939.5-940",
+    "940-941"
+   ]
+  },
+  {
+   "id": "gmrs_frs",
+   "name": "GMRS / FRS (Part 95 Subparts E and B)",
+   "category": "personal_radio",
+   "bands": [
+    {
+     "lower_mhz": 462.55,
+     "upper_mhz": 462.725,
+     "direction": null
+    },
+    {
+     "lower_mhz": 467.55,
+     "upper_mhz": 467.725,
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 25,
+   "channel_bandwidth_khz": [
+    12.5,
+    20
+   ],
+   "channel_plan": {
+    "shared_frs_gmrs_channels_mhz": [
+     462.5625,
+     462.5875,
+     462.6125,
+     462.6375,
+     462.6625,
+     462.6875,
+     462.7125,
+     467.5625,
+     467.5875,
+     467.6125,
+     467.6375,
+     467.6625,
+     467.6875,
+     467.7125,
+     462.55,
+     462.575,
+     462.6,
+     462.625,
+     462.65,
+     462.675,
+     462.7,
+     462.725
+    ],
+    "gmrs_repeater_input_mhz": [
+     467.55,
+     467.575,
+     467.6,
+     467.625,
+     467.65,
+     467.675,
+     467.7,
+     467.725
+    ],
+    "n_channels_frs": 22
+   },
+   "modulation": "FM; FRS 12.5 kHz (11K2F3E), GMRS 20 kHz (16K0F3E) on main channels and 12.5 kHz on interstitial channels",
+   "rule_parts": [
+    "95"
+   ],
+   "sources": [
+    "47 CFR 95.563 (FRS channels)",
+    "47 CFR 95.1763 (GMRS channels)",
+    "47 CFR 95.1773 / 95.573 (authorized bandwidth)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "462.538-462.738",
+    "467.538-467.738"
+   ]
+  },
+  {
+   "id": "murs",
+   "name": "MURS (Part 95 Subpart J)",
+   "category": "personal_radio",
+   "bands": [
+    {
+     "lower_mhz": 151.82,
+     "upper_mhz": 154.6,
+     "direction": null
+    }
+   ],
+   "channel_plan": {
+    "channels_mhz": [
+     151.82,
+     151.88,
+     151.94,
+     154.57,
+     154.6
+    ],
+    "bandwidth_khz": {
+     "151.820/151.880/151.940": 11.25,
+     "154.570/154.600": 20
+    }
+   },
+   "modulation": "FM (or other) within 11.25 or 20 kHz, 2 W ERP",
+   "rule_parts": [
+    "95"
+   ],
+   "sources": [
+    "47 CFR 95.2763 (MURS channels)",
+    "47 CFR 95.2773 (bandwidth)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "150.8-152.855",
+    "152.855-154",
+    "154-156.248"
+   ]
+  },
+  {
+   "id": "vhf_air_voice",
+   "name": "VHF aeronautical mobile (R) voice (air band)",
+   "category": "aviation",
+   "bands": [
+    {
+     "lower_mhz": 117.975,
+     "upper_mhz": 137.0,
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 25,
+   "channel_bandwidth_khz": 25,
+   "channel_plan": {
+    "first_channel_mhz": 118.0,
+    "last_channel_mhz": 136.975,
+    "n_channels_25khz": 760,
+    "icao_8_33_khz_spacing": "defined in ICAO Annex 10 Vol V (2280 channels); implemented in European airspace; not the operating channel plan in US domestic airspace as of the source date",
+    "emergency_mhz": 121.5,
+    "unicom_ctaf_examples_mhz": [
+     122.7,
+     122.725,
+     122.8,
+     122.975,
+     123.0,
+     123.05,
+     123.075
+    ]
+   },
+   "modulation": "AM double-sideband voice (A3E), 6K00A3E; ACARS data 2400 bit/s MSK on AM (131.550 MHz primary US); VDL Mode 2 D8PSK 31.5 kbit/s (136.975 MHz common signalling channel)",
+   "rule_parts": [
+    "87"
+   ],
+   "sources": [
+    "47 CFR 87.173 (frequencies available: 25 kHz spaced channels 118.000-136.975 MHz)",
+    "ICAO Annex 10 Volume III Part II (VHF voice, 25 kHz / 8.33 kHz channel spacing)",
+    "ICAO Annex 10 Volume V (frequency utilization, 8.33 kHz plan)",
+    "ARINC 618 (ACARS air/ground protocol)",
+    "ICAO Annex 10 Volume III Part I Chapter 6 (VDL Mode 2)"
+   ],
+   "notes": "Aeronautical mobile (R) 136-137 MHz is used for data link (VDL) in the US.",
+   "unverified_fields": [
+    "icao_8_33_khz_spacing US status (regulatory statement not verified in a primary US document)"
+   ],
+   "allocation_rows": [
+    "117.975-121.938",
+    "121.938-123.088",
+    "123.088-123.588",
+    "123.588-128.812",
+    "128.812-132.012",
+    "132.012-136",
+    "136-137"
+   ]
+  },
+  {
+   "id": "vor_ils",
+   "name": "VOR, ILS localizer, ILS glide slope, marker beacon",
+   "category": "aviation_navaid",
+   "bands": [
+    {
+     "lower_mhz": 108.0,
+     "upper_mhz": 117.975,
+     "note": "VOR / localizer",
+     "direction": null
+    },
+    {
+     "lower_mhz": 328.6,
+     "upper_mhz": 335.4,
+     "note": "glide slope",
+     "direction": null
+    },
+    {
+     "lower_mhz": 74.8,
+     "upper_mhz": 75.2,
+     "note": "marker beacon 75 MHz",
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 50,
+   "channel_plan": {
+    "vor_mhz": "108.00-117.95 MHz in 50 kHz steps; 108.0-111.95 even-tenth (x.x0, x.x5 with even first decimal) channels for VOR, odd-tenth for localizer",
+    "localizer_mhz": "108.10-111.95 MHz, 40 channels at odd tenths (108.10, 108.15, 108.30, ...)",
+    "glide_slope_mhz": "329.15-335.00 MHz, 40 channels, 150 kHz spacing, paired to localizer channel",
+    "marker_beacon_mhz": 75.0
+   },
+   "modulation": "VOR: AM with 30 Hz reference/variable phase, 9960 Hz FM subcarrier, 1020 Hz ident; localizer/glide slope: 90/150 Hz AM modulation depth difference; marker: A2E 400/1300/3000 Hz tones",
+   "rule_parts": [
+    "87"
+   ],
+   "sources": [
+    "ICAO Annex 10 Volume I, Chapter 3.1 (ILS), 3.3 (VOR), 3.1.7 (marker beacons)",
+    "47 CFR 87.475 (radionavigation land stations)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "108-117.975",
+    "328.6-335.4",
+    "74.8-75.2"
+   ]
+  },
+  {
+   "id": "dme_tacan",
+   "name": "DME / TACAN",
+   "category": "aviation_navaid",
+   "bands": [
+    {
+     "lower_mhz": 1025.0,
+     "upper_mhz": 1150.0,
+     "direction": "interrogation (airborne)"
+    },
+    {
+     "lower_mhz": 962.0,
+     "upper_mhz": 1213.0,
+     "direction": "reply (ground)"
+    }
+   ],
+   "channel_raster_khz": 1000,
+   "channel_plan": {
+    "n_channels": 252,
+    "channel_numbering": "1X-126X and 1Y-126Y",
+    "interrogation_mhz": "1025 + (N-1) for channel N",
+    "reply_offset_mhz": "reply = interrogation \u00b1 63 MHz (X: -63 for N<=63, +63 for N>63; Y: opposite sense)",
+    "pulse_pair_spacing_us": {
+     "X_interrogate": 12,
+     "X_reply": 12,
+     "Y_interrogate": 36,
+     "Y_reply": 30
+    },
+    "pulse_width_us": 3.5,
+    "paired_with": "VOR/ILS channels 108.00-117.95 MHz"
+   },
+   "modulation": "Gaussian pulse pairs, pulse-position (interrogate/reply), ~2700 pulse-pairs/s transponder; TACAN adds 15 Hz / 135 Hz bearing modulation",
+   "rule_parts": [
+    "87"
+   ],
+   "sources": [
+    "ICAO Annex 10 Volume I, Chapter 3.5 (DME)",
+    "MIL-STD-291C (TACAN signal standard)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "960-1164",
+    "1164-1215"
+   ]
+  },
+  {
+   "id": "ssr_modes_adsb",
+   "name": "SSR / Mode S / ADS-B 1090ES / TCAS",
+   "category": "aviation_surveillance",
+   "bands": [
+    {
+     "lower_mhz": 1030.0,
+     "upper_mhz": 1030.0,
+     "direction": "interrogation (ground and TCAS)"
+    },
+    {
+     "lower_mhz": 1090.0,
+     "upper_mhz": 1090.0,
+     "direction": "reply / squitter (aircraft)"
+    }
+   ],
+   "channel_bandwidth_khz": null,
+   "modulation": {
+    "1030_uplink": "Mode A/C: P1/P2/P3 0.8 \u00b5s pulses (8 \u00b5s / 21 \u00b5s spacing); Mode S: 2 preamble pulses + DPSK 4 Mbit/s data block (56 or 112 bits)",
+    "1090_downlink": "Mode A/C: 0.45 \u00b5s pulses, 12 pulse frame (20.3 \u00b5s); Mode S / ADS-B extended squitter: 8 \u00b5s preamble + PPM 1 Mbit/s, 56/112-bit messages (120 \u00b5s)"
+   },
+   "rule_parts": [
+    "87"
+   ],
+   "sources": [
+    "ICAO Annex 10 Volume IV (Surveillance radar and collision avoidance systems), Chapter 3",
+    "RTCA DO-260B / EUROCAE ED-102A (1090 MHz Extended Squitter MOPS)",
+    "47 CFR 87.187 (frequencies for aircraft stations: 1030/1090 MHz transponders)"
+   ],
+   "notes": "UAT (978 MHz) listed separately.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "960-1164"
+   ]
+  },
+  {
+   "id": "uat_978",
+   "name": "UAT ADS-B (978 MHz)",
+   "category": "aviation_surveillance",
+   "bands": [
+    {
+     "lower_mhz": 978.0,
+     "upper_mhz": 978.0,
+     "direction": null
+    }
+   ],
+   "channel_bandwidth_khz": 1300,
+   "modulation": "Continuous-phase binary FSK, 1.041667 Mbit/s, \u00b1312.5 kHz deviation; 1 s frame with ground uplink segment (188 ms) and ADS-B segment (32 message start opportunities per ms)",
+   "rule_parts": [
+    "87"
+   ],
+   "sources": [
+    "RTCA DO-282B (UAT MOPS)",
+    "47 CFR 87.187"
+   ],
+   "notes": null,
+   "unverified_fields": [
+    "channel_bandwidth_khz (occupied bandwidth figure not confirmed against DO-282B)"
+   ],
+   "allocation_rows": [
+    "960-1164"
+   ]
+  },
+  {
+   "id": "elt_cospas_sarsat",
+   "name": "Emergency beacons (ELT/EPIRB/PLB) 406 MHz and 121.5 MHz homing",
+   "category": "aviation",
+   "bands": [
+    {
+     "lower_mhz": 406.0,
+     "upper_mhz": 406.1,
+     "direction": null
+    },
+    {
+     "lower_mhz": 121.5,
+     "upper_mhz": 121.5,
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 3,
+   "channel_plan": {
+    "406_channels_mhz": "406.025-406.076 MHz, 3 kHz channel spacing, assigned by Cospas-Sarsat channel plan",
+    "homing_mhz": 121.5
+   },
+   "modulation": "406 MHz: 5 W, biphase-L PSK \u00b11.1 rad, 400 bit/s, 112/144-bit burst every ~50 s; 121.5 MHz: AM swept tone (A3X) low power homing",
+   "rule_parts": [
+    "87",
+    "80",
+    "95"
+   ],
+   "sources": [
+    "Cospas-Sarsat C/S T.001 (Specification for 406 MHz distress beacons)",
+    "Cospas-Sarsat C/S T.012 (406 MHz frequency management plan)",
+    "47 CFR 87.199 (ELT)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "406-406.1",
+    "117.975-121.938"
+   ]
+  },
+  {
+   "id": "marine_vhf",
+   "name": "Marine VHF (RR Appendix 18)",
+   "category": "maritime",
+   "bands": [
+    {
+     "lower_mhz": 156.025,
+     "upper_mhz": 157.425,
+     "direction": "ship transmit"
+    },
+    {
+     "lower_mhz": 160.625,
+     "upper_mhz": 162.025,
+     "direction": "coast transmit / duplex"
+    }
+   ],
+   "channel_raster_khz": 25,
+   "channel_bandwidth_khz": 25,
+   "channel_plan": {
+    "channel_16_distress_mhz": 156.8,
+    "channel_70_dsc_mhz": 156.525,
+    "channel_13_bridge_to_bridge_mhz": 156.65,
+    "channel_06_mhz": 156.3,
+    "ais1_mhz": 161.975,
+    "ais2_mhz": 162.025,
+    "asm1_asm2_mhz": [
+     161.95,
+     162.0
+    ],
+    "ship_simplex_duplex_mhz": "156.025-157.425 in 25 kHz steps (channels 01-28, 60-88)"
+   },
+   "modulation": "FM voice 16K0G3E (\u00b15 kHz); DSC on ch 70: FSK 1200 bit/s (1300/2100 Hz tones); AIS: GMSK 9600 bit/s, SOTDMA, 25 kHz (ITU-R M.1371)",
+   "rule_parts": [
+    "80"
+   ],
+   "sources": [
+    "47 CFR 80.371 (public correspondence frequencies)",
+    "47 CFR 80.373 (private communications frequencies)",
+    "ITU Radio Regulations Appendix 18",
+    "ITU-R M.1084-5 (interim solutions for improved efficiency in the VHF maritime mobile band)",
+    "ITU-R M.493 (DSC)",
+    "ITU-R M.1371 (AIS)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "154-156.248",
+    "156.248-156.512",
+    "156.512-156.537",
+    "156.537-156.762",
+    "156.762-156.787",
+    "156.787-156.812",
+    "156.812-156.838",
+    "156.838-157.037",
+    "157.037-157.188",
+    "157.188-157.45",
+    "157.45-161.575",
+    "161.575-161.625",
+    "161.625-161.775",
+    "161.775-161.963",
+    "161.963-161.988",
+    "161.988-162.012",
+    "162.012-162.037"
+   ]
+  },
+  {
+   "id": "noaa_weather_radio",
+   "name": "NOAA Weather Radio All Hazards (NWR)",
+   "category": "broadcast_federal",
+   "bands": [
+    {
+     "lower_mhz": 162.4,
+     "upper_mhz": 162.55,
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 25,
+   "channel_bandwidth_khz": 16,
+   "channel_plan": {
+    "channels_mhz": [
+     162.4,
+     162.425,
+     162.45,
+     162.475,
+     162.5,
+     162.525,
+     162.55
+    ],
+    "n_channels": 7
+   },
+   "modulation": "Narrowband FM voice (\u00b15 kHz); 1050 Hz warning alarm tone; SAME digital header, AFSK 520.83 bit/s (2083.3/1562.5 Hz)",
+   "rule_parts": [],
+   "sources": [
+    "NOAA National Weather Service, NWR station listing and frequencies (weather.gov/nwr)",
+    "NWS Instruction 10-1712 (NOAA Weather Radio All Hazards SAME)"
+   ],
+   "notes": "Federal (NWS) transmitters; falls in the 162.0375-173.2 MHz Federal FIXED/MOBILE box, not a Part 73 broadcast service.",
+   "unverified_fields": [
+    "channel_bandwidth_khz"
+   ],
+   "allocation_rows": [
+    "162.037-173.2"
+   ]
+  },
+  {
+   "id": "3gpp_band_2",
+   "name": "3GPP band 2 / n2 (PCS 1900)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 1850,
+     "upper_mhz": 1910,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 1930,
+     "upper_mhz": 1990,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 2,
+   "nr_band": "n2",
+   "lte_channel_bandwidths_mhz": [
+    1.4,
+    3,
+    5,
+    10,
+    15,
+    20
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "Broadband PCS A-F blocks",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "1850-2000"
+   ]
+  },
+  {
+   "id": "3gpp_band_4",
+   "name": "3GPP band 4 (AWS-1)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 1710,
+     "upper_mhz": 1755,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 2110,
+     "upper_mhz": 2155,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 4,
+   "nr_band": null,
+   "lte_channel_bandwidths_mhz": [
+    1.4,
+    3,
+    5,
+    10,
+    15,
+    20
+   ],
+   "nr_channel_bandwidths_mhz": null,
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "AWS-1 A-F blocks (Auction 66); superseded operationally by band 66",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": "Subset of band 66.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "1710-1761",
+    "2110-2120",
+    "2120-2180"
+   ]
+  },
+  {
+   "id": "3gpp_band_5",
+   "name": "3GPP band 5 / n5 (Cellular 850)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 824,
+     "upper_mhz": 849,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 869,
+     "upper_mhz": 894,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 5,
+   "nr_band": "n5",
+   "lte_channel_bandwidths_mhz": [
+    1.4,
+    3,
+    5,
+    10
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "Cellular A/B blocks",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "809-849",
+    "854-890",
+    "890-894"
+   ]
+  },
+  {
+   "id": "3gpp_band_8",
+   "name": "3GPP band 8 / n8 (900 MHz (E-GSM))",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 880,
+     "upper_mhz": 915,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 925,
+     "upper_mhz": 960,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 8,
+   "nr_band": "n8",
+   "lte_channel_bandwidths_mhz": [
+    1.4,
+    3,
+    5,
+    10
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "US use limited to the 900 MHz broadband segment 897.5-900.5 / 936.5-939.5 MHz (Part 90, FCC 20-67)",
+   "rule_parts": [
+    "90"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR 90.1301-90.1345 (900 MHz broadband segment); FCC 20-67"
+   ],
+   "notes": "Band edges are 3GPP; only the 3x3 MHz segment is licensed for broadband in the US.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "854-890",
+    "890-894",
+    "894-896",
+    "896-897.5",
+    "897.5-900.5",
+    "900.5-901",
+    "901-902",
+    "902-928",
+    "928-929",
+    "929-930",
+    "930-931",
+    "931-932",
+    "932-935",
+    "935-936.5",
+    "936.5-939.5",
+    "939.5-940",
+    "940-941",
+    "941-944",
+    "944-960"
+   ]
+  },
+  {
+   "id": "3gpp_band_12",
+   "name": "3GPP band 12 / n12 (Lower 700 MHz A/B/C)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 699,
+     "upper_mhz": 716,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 729,
+     "upper_mhz": 746,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 12,
+   "nr_band": "n12",
+   "lte_channel_bandwidths_mhz": [
+    1.4,
+    3,
+    5,
+    10
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10,
+    15
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "Lower 700 MHz A, B, C blocks (Auction 73)",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "698-758"
+   ]
+  },
+  {
+   "id": "3gpp_band_13",
+   "name": "3GPP band 13 / n13 (Upper 700 MHz C)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 777,
+     "upper_mhz": 787,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 746,
+     "upper_mhz": 756,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 13,
+   "nr_band": "n13",
+   "lte_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "Upper 700 MHz C block (Auction 73)",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": "Reverse duplex (uplink above downlink).",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "775-788",
+    "698-758"
+   ]
+  },
+  {
+   "id": "3gpp_band_14",
+   "name": "3GPP band 14 / n14 (Upper 700 MHz D / public safety)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 788,
+     "upper_mhz": 798,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 758,
+     "upper_mhz": 768,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 14,
+   "nr_band": "n14",
+   "lte_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "700 MHz public safety broadband (FirstNet)",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": "Reverse duplex.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "788-805",
+    "758-775"
+   ]
+  },
+  {
+   "id": "3gpp_band_17",
+   "name": "3GPP band 17 (Lower 700 MHz B/C)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 704,
+     "upper_mhz": 716,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 734,
+     "upper_mhz": 746,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 17,
+   "nr_band": null,
+   "lte_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "nr_channel_bandwidths_mhz": null,
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "Lower 700 MHz B, C blocks",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": "Subset of band 12.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "698-758"
+   ]
+  },
+  {
+   "id": "3gpp_band_25",
+   "name": "3GPP band 25 / n25 (PCS + G block)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 1850,
+     "upper_mhz": 1915,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 1930,
+     "upper_mhz": 1995,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 25,
+   "nr_band": "n25",
+   "lte_channel_bandwidths_mhz": [
+    1.4,
+    3,
+    5,
+    10,
+    15,
+    20
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "Broadband PCS A-G blocks",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "1850-2000"
+   ]
+  },
+  {
+   "id": "3gpp_band_26",
+   "name": "3GPP band 26 / n26 (Extended 850 (Cellular + SMR))",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 814,
+     "upper_mhz": 849,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 859,
+     "upper_mhz": 894,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 26,
+   "nr_band": "n26",
+   "lte_channel_bandwidths_mhz": [
+    1.4,
+    3,
+    5,
+    10,
+    15
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "Cellular A/B + 800 MHz ESMR (817-824 / 862-869 MHz)",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "809-849",
+    "854-890",
+    "890-894"
+   ]
+  },
+  {
+   "id": "3gpp_band_29",
+   "name": "3GPP band 29 / n29 (Lower 700 MHz D/E (SDL))",
+   "category": "cellular_3gpp",
+   "duplex": "SDL",
+   "bands": [
+    {
+     "lower_mhz": 717,
+     "upper_mhz": 728,
+     "direction": "tdd"
+    }
+   ],
+   "lte_band": 29,
+   "nr_band": "n29",
+   "lte_channel_bandwidths_mhz": [
+    3,
+    5,
+    10
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "Lower 700 MHz D and E blocks (unpaired)",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "698-758"
+   ]
+  },
+  {
+   "id": "3gpp_band_30",
+   "name": "3GPP band 30 / n30 (WCS 2.3 GHz)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 2305,
+     "upper_mhz": 2315,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 2350,
+     "upper_mhz": 2360,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 30,
+   "nr_band": "n30",
+   "lte_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "WCS A and B blocks",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "2305-2310",
+    "2310-2320",
+    "2345-2360"
+   ]
+  },
+  {
+   "id": "3gpp_band_41",
+   "name": "3GPP band 41 / n41 (BRS/EBS 2.5 GHz)",
+   "category": "cellular_3gpp",
+   "duplex": "TDD",
+   "bands": [
+    {
+     "lower_mhz": 2496,
+     "upper_mhz": 2690,
+     "direction": "tdd"
+    }
+   ],
+   "lte_band": 41,
+   "nr_band": "n41",
+   "lte_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20
+   ],
+   "nr_channel_bandwidths_mhz": [
+    10,
+    15,
+    20,
+    40,
+    50,
+    60,
+    80,
+    90,
+    100
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "BRS/EBS (Part 27 Subpart M)",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "2495-2500",
+    "2500-2655",
+    "2655-2690"
+   ]
+  },
+  {
+   "id": "3gpp_band_46",
+   "name": "3GPP band 46 (LAA 5 GHz unlicensed)",
+   "category": "cellular_3gpp",
+   "duplex": "TDD",
+   "bands": [
+    {
+     "lower_mhz": 5150,
+     "upper_mhz": 5925,
+     "direction": "tdd"
+    }
+   ],
+   "lte_band": 46,
+   "nr_band": null,
+   "lte_channel_bandwidths_mhz": [
+    20
+   ],
+   "nr_channel_bandwidths_mhz": null,
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "U-NII (Part 15.407)",
+   "rule_parts": [
+    "15"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths"
+   ],
+   "notes": "Licence-assisted access; unlicensed under Part 15.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "5150-5250",
+    "5250-5255",
+    "5255-5350",
+    "5350-5460",
+    "5460-5470",
+    "5470-5570",
+    "5570-5600",
+    "5600-5650",
+    "5650-5830",
+    "5830-5850",
+    "5850-5925"
+   ]
+  },
+  {
+   "id": "3gpp_band_48",
+   "name": "3GPP band 48 / n48 (CBRS 3.5 GHz)",
+   "category": "cellular_3gpp",
+   "duplex": "TDD",
+   "bands": [
+    {
+     "lower_mhz": 3550,
+     "upper_mhz": 3700,
+     "direction": "tdd"
+    }
+   ],
+   "lte_band": 48,
+   "nr_band": "n48",
+   "lte_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20,
+    40,
+    50,
+    60,
+    80,
+    90,
+    100
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "CBRS PAL/GAA (Part 96)",
+   "rule_parts": [
+    "96"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "3550-3600",
+    "3600-3650",
+    "3650-3700"
+   ]
+  },
+  {
+   "id": "3gpp_band_53",
+   "name": "3GPP band 53 / n53 (Globalstar 2.4 GHz (TDD))",
+   "category": "cellular_3gpp",
+   "duplex": "TDD",
+   "bands": [
+    {
+     "lower_mhz": 2483.5,
+     "upper_mhz": 2495,
+     "direction": "tdd"
+    }
+   ],
+   "lte_band": 53,
+   "nr_band": "n53",
+   "lte_channel_bandwidths_mhz": [
+    1.4,
+    3,
+    5,
+    10
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "Globalstar terrestrial low-power service (Part 25.149 ancillary terrestrial)",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": "Standardized; US deployment status not verified.",
+   "unverified_fields": [
+    "us deployment status"
+   ],
+   "allocation_rows": [
+    "2483.5-2495"
+   ]
+  },
+  {
+   "id": "3gpp_band_66",
+   "name": "3GPP band 66 / n66 (AWS-1 + AWS-3 (extended AWS))",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 1710,
+     "upper_mhz": 1780,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 2110,
+     "upper_mhz": 2200,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 66,
+   "nr_band": "n66",
+   "lte_channel_bandwidths_mhz": [
+    1.4,
+    3,
+    5,
+    10,
+    15,
+    20
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20,
+    40
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "AWS-1 (1710-1755/2110-2155), AWS-3 (1755-1780/2155-2180), AWS-4 downlink 2180-2200 (SDL in band 66)",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "1710-1761",
+    "1761-1780",
+    "2110-2120",
+    "2120-2180",
+    "2180-2200"
+   ]
+  },
+  {
+   "id": "3gpp_band_70",
+   "name": "3GPP band 70 / n70 (AWS-3 uplink + AWS-4/H block downlink)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 1695,
+     "upper_mhz": 1710,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 1995,
+     "upper_mhz": 2020,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 70,
+   "nr_band": "n70",
+   "lte_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20,
+    25
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "AWS-3 unpaired uplink 1695-1710; H block 1995-2000; AWS-4 2000-2020",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": "Downlink 25 MHz, uplink 15 MHz (asymmetric).",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "1695-1710",
+    "1850-2000",
+    "2000-2020"
+   ]
+  },
+  {
+   "id": "3gpp_band_71",
+   "name": "3GPP band 71 / n71 (600 MHz)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 663,
+     "upper_mhz": 698,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 617,
+     "upper_mhz": 652,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 71,
+   "nr_band": "n71",
+   "lte_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10,
+    15,
+    20
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "600 MHz A-G blocks (Incentive Auction 1002)",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": "Reverse duplex.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "614-698"
+   ]
+  },
+  {
+   "id": "3gpp_band_85",
+   "name": "3GPP band 85 / n85 (Extended Lower 700 MHz)",
+   "category": "cellular_3gpp",
+   "duplex": "FDD",
+   "bands": [
+    {
+     "lower_mhz": 698,
+     "upper_mhz": 716,
+     "direction": "uplink"
+    },
+    {
+     "lower_mhz": 728,
+     "upper_mhz": 746,
+     "direction": "downlink"
+    }
+   ],
+   "lte_band": 85,
+   "nr_band": "n85",
+   "lte_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "nr_channel_bandwidths_mhz": [
+    5,
+    10
+   ],
+   "channel_raster_khz": 100,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "Lower 700 MHz A/B/C blocks plus 698-699/728-729 guard",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 36.101 (E-UTRA UE radio transmission and reception), Table 5.5-1 operating bands, Table 5.6.1-1 channel bandwidths",
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR Part 27 (Miscellaneous Wireless Communications Services)"
+   ],
+   "notes": "Superset of band 12; deployment status not verified.",
+   "unverified_fields": [
+    "us deployment status"
+   ],
+   "allocation_rows": [
+    "698-758"
+   ]
+  },
+  {
+   "id": "3gpp_band_n77",
+   "name": "3GPP NR band n77 (3.3-4.2 GHz TDD; US C-band and 3.45 GHz)",
+   "category": "cellular_3gpp",
+   "duplex": "TDD",
+   "bands": [
+    {
+     "lower_mhz": 3300,
+     "upper_mhz": 4200,
+     "direction": "tdd"
+    }
+   ],
+   "lte_band": null,
+   "nr_band": "n77",
+   "lte_channel_bandwidths_mhz": null,
+   "nr_channel_bandwidths_mhz": [
+    10,
+    15,
+    20,
+    25,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100
+   ],
+   "channel_raster_khz": null,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "3.45-3.55 GHz (Auction 110), 3.7-3.98 GHz C-band (Auction 107); 3.98-4.0 GHz guard band",
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR 27.5(l) (3.45 GHz service)",
+    "47 CFR 27.5(m) (3.7 GHz service)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "3300-3450",
+    "3450-3500",
+    "3500-3550",
+    "3550-3600",
+    "3600-3650",
+    "3650-3700",
+    "3700-4000",
+    "4000-4200"
+   ]
+  },
+  {
+   "id": "3gpp_band_n78",
+   "name": "3GPP NR band n78",
+   "category": "cellular_3gpp",
+   "duplex": "TDD",
+   "bands": [
+    {
+     "lower_mhz": 3300,
+     "upper_mhz": 3800,
+     "direction": "tdd"
+    }
+   ],
+   "lte_band": null,
+   "nr_band": "n78",
+   "lte_channel_bandwidths_mhz": null,
+   "nr_channel_bandwidths_mhz": [
+    10,
+    15,
+    20,
+    25,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100
+   ],
+   "channel_raster_khz": null,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": null,
+   "rule_parts": [
+    "27"
+   ],
+   "sources": [
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths"
+   ],
+   "notes": "Defined by 3GPP; US operators use the n77 designation for 3.45 GHz and C-band. Included for completeness of the 3.3-3.8 GHz range.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "3300-3450",
+    "3450-3500",
+    "3500-3550",
+    "3550-3600",
+    "3600-3650",
+    "3650-3700",
+    "3700-4000"
+   ]
+  },
+  {
+   "id": "3gpp_band_n96",
+   "name": "3GPP NR-U band n96 (5925-7125 MHz, unlicensed)",
+   "category": "cellular_3gpp",
+   "duplex": "TDD",
+   "bands": [
+    {
+     "lower_mhz": 5925,
+     "upper_mhz": 7125,
+     "direction": "tdd"
+    }
+   ],
+   "lte_band": null,
+   "nr_band": "n96",
+   "lte_channel_bandwidths_mhz": null,
+   "nr_channel_bandwidths_mhz": [
+    20,
+    40,
+    60,
+    80,
+    100
+   ],
+   "channel_raster_khz": null,
+   "modulation": "OFDMA downlink / SC-FDMA uplink (LTE); CP-OFDM downlink, CP-OFDM or DFT-s-OFDM uplink (NR); QPSK/16QAM/64QAM/256QAM",
+   "us_spectrum_block": "U-NII-5 to U-NII-8 (Part 15.407), unlicensed",
+   "rule_parts": [
+    "15"
+   ],
+   "sources": [
+    "3GPP TS 38.101-1 (NR UE radio transmission and reception, FR1), Table 5.2-1 operating bands, Table 5.3.5-1 channel bandwidths",
+    "47 CFR 15.407"
+   ],
+   "notes": "Only 5925-6000 MHz falls inside this database's range.",
+   "unverified_fields": [],
+   "allocation_rows": [
+    "5925-6000"
+   ]
+  },
+  {
+   "id": "cbrs",
+   "name": "Citizens Broadband Radio Service (CBRS) 3550-3700 MHz",
+   "category": "cellular_3gpp",
+   "bands": [
+    {
+     "lower_mhz": 3550.0,
+     "upper_mhz": 3700.0,
+     "direction": "tdd"
+    }
+   ],
+   "channel_raster_khz": 10000,
+   "channel_bandwidth_khz": [
+    10000,
+    20000
+   ],
+   "channel_plan": {
+    "pal_segment_mhz": [
+     3550,
+     3650
+    ],
+    "gaa_segment_mhz": [
+     3550,
+     3700
+    ],
+    "pal_channel_mhz": 10,
+    "max_pal_channels_per_county": 7,
+    "cbsd_category_a_eirp_dbm_per_10mhz": 30,
+    "cbsd_category_b_eirp_dbm_per_10mhz": 47,
+    "coordination": "Spectrum Access System (SAS) with ESC for incumbent radar protection"
+   },
+   "modulation": "LTE band 48 / NR n48 (TDD)",
+   "rule_parts": [
+    "96"
+   ],
+   "sources": [
+    "47 CFR 96.11 (frequencies)",
+    "47 CFR 96.25 (Priority Access Licenses: 10 MHz channels 3550-3650)",
+    "47 CFR 96.41 (power limits)",
+    "47 CFR 96.53-96.67 (SAS)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "3550-3600",
+    "3600-3650",
+    "3650-3700"
+   ]
+  },
+  {
+   "id": "wifi_2_4",
+   "name": "Wi-Fi 2.4 GHz (IEEE 802.11b/g/n/ax/be)",
+   "category": "unlicensed",
+   "bands": [
+    {
+     "lower_mhz": 2400.0,
+     "upper_mhz": 2483.5,
+     "direction": "tdd"
+    }
+   ],
+   "channel_raster_khz": 5000,
+   "channel_bandwidth_khz": [
+    20000,
+    40000
+   ],
+   "channel_plan": {
+    "center_frequency_mhz_formula": "2407 + 5*n for n = 1..13; channel 14 = 2484 MHz (Japan only)",
+    "us_channels": [
+     1,
+     11
+    ],
+    "us_centers_mhz": [
+     2412,
+     2417,
+     2422,
+     2427,
+     2432,
+     2437,
+     2442,
+     2447,
+     2452,
+     2457,
+     2462
+    ],
+    "non_overlapping_20mhz": [
+     1,
+     6,
+     11
+    ]
+   },
+   "modulation": "DSSS/CCK (802.11b, 22 MHz), OFDM 20 MHz (802.11g/n/ax; 64-point FFT, 312.5 kHz subcarriers; 802.11ax 256-point, 78.125 kHz), 40 MHz HT/VHT; BPSK-1024QAM",
+   "rule_parts": [
+    "15"
+   ],
+   "sources": [
+    "IEEE Std 802.11-2020, Annex E (country information and operating classes), Table E-1",
+    "IEEE Std 802.11-2020 clause 15/17/19 (DSSS/OFDM/HT PHY)",
+    "47 CFR 15.247 (2400-2483.5 MHz digital modulation and FHSS)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "2400-2417",
+    "2417-2450",
+    "2450-2483.5"
+   ]
+  },
+  {
+   "id": "wifi_5",
+   "name": "Wi-Fi 5 GHz (IEEE 802.11a/n/ac/ax/be), U-NII-1 to U-NII-4",
+   "category": "unlicensed",
+   "bands": [
+    {
+     "lower_mhz": 5150.0,
+     "upper_mhz": 5250.0,
+     "note": "U-NII-1",
+     "direction": null
+    },
+    {
+     "lower_mhz": 5250.0,
+     "upper_mhz": 5350.0,
+     "note": "U-NII-2A (DFS)",
+     "direction": null
+    },
+    {
+     "lower_mhz": 5470.0,
+     "upper_mhz": 5725.0,
+     "note": "U-NII-2C (DFS)",
+     "direction": null
+    },
+    {
+     "lower_mhz": 5725.0,
+     "upper_mhz": 5850.0,
+     "note": "U-NII-3",
+     "direction": null
+    },
+    {
+     "lower_mhz": 5850.0,
+     "upper_mhz": 5895.0,
+     "note": "U-NII-4 (FCC 20-164, 2020)",
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 5000,
+   "channel_bandwidth_khz": [
+    20000,
+    40000,
+    80000,
+    160000
+   ],
+   "channel_plan": {
+    "center_frequency_mhz_formula": "5000 + 5*n",
+    "unii1_20mhz_channels": [
+     36,
+     40,
+     44,
+     48
+    ],
+    "unii2a_20mhz_channels": [
+     52,
+     56,
+     60,
+     64
+    ],
+    "unii2c_20mhz_channels": [
+     100,
+     104,
+     108,
+     112,
+     116,
+     120,
+     124,
+     128,
+     132,
+     136,
+     140,
+     144
+    ],
+    "unii3_20mhz_channels": [
+     149,
+     153,
+     157,
+     161,
+     165
+    ],
+    "unii4_20mhz_channels": [
+     169,
+     173,
+     177
+    ],
+    "dfs_required": "U-NII-2A and U-NII-2C",
+    "tdwr_note": "5600-5650 MHz historically excluded near TDWR sites"
+   },
+   "modulation": "OFDM 20/40/80/160 MHz (802.11a/n/ac/ax/be), BPSK-4096QAM",
+   "rule_parts": [
+    "15"
+   ],
+   "sources": [
+    "IEEE Std 802.11-2020, Annex E, Table E-1 / E-4 (operating classes)",
+    "47 CFR 15.407 (U-NII devices: band edges, power, DFS)",
+    "FCC 20-164, First Report and Order, ET Docket 19-138 (5.850-5.895 GHz for unlicensed use)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "5150-5250",
+    "5250-5255",
+    "5255-5350",
+    "5470-5570",
+    "5570-5600",
+    "5600-5650",
+    "5650-5830",
+    "5830-5850",
+    "5850-5925"
+   ]
+  },
+  {
+   "id": "wifi_6e_lower",
+   "name": "Wi-Fi 6E/7 lower 6 GHz (U-NII-5, 5925-6425 MHz) - portion below 6000 MHz",
+   "category": "unlicensed",
+   "bands": [
+    {
+     "lower_mhz": 5925.0,
+     "upper_mhz": 6425.0,
+     "note": "U-NII-5; only 5925-6000 within this database",
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": 5000,
+   "channel_bandwidth_khz": [
+    20000,
+    40000,
+    80000,
+    160000,
+    320000
+   ],
+   "channel_plan": {
+    "center_frequency_mhz_formula": "5950 + 5*n",
+    "20mhz_channels_below_6000_mhz": {
+     "1": 5955,
+     "5": 5975,
+     "9": 5995
+    },
+    "40mhz_channel_3_mhz": 5965,
+    "80mhz_channel_7_mhz": 5985,
+    "160mhz_channel_15_mhz": 6025,
+    "psc_channels": "5, 21, 37, ... (every fourth 20 MHz channel)",
+    "device_classes": "Low-power indoor (LPI), standard power under AFC, very-low-power (VLP)"
+   },
+   "modulation": "OFDMA 802.11ax/be, up to 4096QAM, 320 MHz (802.11be)",
+   "rule_parts": [
+    "15"
+   ],
+   "sources": [
+    "IEEE Std 802.11ax-2021 Annex E (6 GHz operating classes 131-136)",
+    "47 CFR 15.407 (U-NII-5 to U-NII-8)",
+    "FCC 20-51, Report and Order, ET Docket 18-295 (6 GHz unlicensed, April 2020)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "5925-6000"
+   ]
+  },
+  {
+   "id": "bluetooth",
+   "name": "Bluetooth BR/EDR and Bluetooth Low Energy",
+   "category": "unlicensed",
+   "bands": [
+    {
+     "lower_mhz": 2400.0,
+     "upper_mhz": 2483.5,
+     "direction": "tdd"
+    }
+   ],
+   "channel_plan": {
+    "br_edr": {
+     "channel_mhz_formula": "2402 + k, k = 0..78",
+     "n_channels": 79,
+     "channel_bandwidth_khz": 1000,
+     "hop_rate_hz": 1600
+    },
+    "le": {
+     "channel_mhz_formula": "2402 + 2k, k = 0..39",
+     "n_channels": 40,
+     "channel_bandwidth_khz": 2000,
+     "advertising_channels": {
+      "37": 2402,
+      "38": 2426,
+      "39": 2480
+     }
+    }
+   },
+   "modulation": "BR: GFSK 1 Msym/s (BT=0.5, modulation index 0.28-0.35); EDR: \u03c0/4-DQPSK 2 Mbit/s, 8DPSK 3 Mbit/s; LE: GFSK 1 Msym/s (LE 1M), 2 Msym/s (LE 2M), LE Coded S=2/S=8; adaptive frequency hopping",
+   "rule_parts": [
+    "15"
+   ],
+   "sources": [
+    "Bluetooth Core Specification v5.4, Vol 2 Part A (BR/EDR Radio Specification)",
+    "Bluetooth Core Specification v5.4, Vol 6 Part A/B (LE Physical Layer / Link Layer)",
+    "47 CFR 15.247"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "2400-2417",
+    "2417-2450",
+    "2450-2483.5"
+   ]
+  },
+  {
+   "id": "ism_915_lora",
+   "name": "902-928 MHz ISM: LoRaWAN US902-928",
+   "category": "unlicensed",
+   "bands": [
+    {
+     "lower_mhz": 902.0,
+     "upper_mhz": 928.0,
+     "direction": null
+    }
+   ],
+   "channel_plan": {
+    "uplink_125khz": {
+     "n": 64,
+     "first_center_mhz": 902.3,
+     "step_mhz": 0.2,
+     "last_center_mhz": 914.9
+    },
+    "uplink_500khz": {
+     "n": 8,
+     "first_center_mhz": 903.0,
+     "step_mhz": 1.6,
+     "last_center_mhz": 914.2
+    },
+    "downlink_500khz": {
+     "n": 8,
+     "first_center_mhz": 923.3,
+     "step_mhz": 0.6,
+     "last_center_mhz": 927.5
+    },
+    "data_rates": "DR0-DR3: SF10-SF7 @125 kHz; DR4: SF8 @500 kHz; DR8-DR13 downlink SF12-SF7 @500 kHz",
+    "max_eirp_dbm": 30
+   },
+   "modulation": "LoRa chirp spread spectrum (SF7-SF12), 125/500 kHz; FCC 15.247 frequency hopping (\u226550 channels) or digital modulation (\u2265500 kHz 6 dB bandwidth)",
+   "rule_parts": [
+    "15"
+   ],
+   "sources": [
+    "LoRa Alliance RP002-1.0.4 Regional Parameters, section US902-928",
+    "47 CFR 15.247 (902-928 MHz FHSS and digital modulation limits)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "902-928"
+   ]
+  },
+  {
+   "id": "ism_915_other",
+   "name": "902-928 MHz ISM: other unlicensed systems (Z-Wave, IEEE 802.15.4g, UHF RFID, FHSS data)",
+   "category": "unlicensed",
+   "bands": [
+    {
+     "lower_mhz": 902.0,
+     "upper_mhz": 928.0,
+     "direction": null
+    }
+   ],
+   "channel_plan": {
+    "z_wave_mhz": {
+     "US_R1_R2": 908.42,
+     "US_R3": 916.0,
+     "data_rates_kbps": [
+      9.6,
+      40,
+      100
+     ],
+     "modulation": "FSK/GFSK (ITU-T G.9959)"
+    },
+    "rfid_epc_gen2": {
+     "range_mhz": [
+      902,
+      928
+     ],
+     "channels": 50,
+     "channel_khz": 500,
+     "reader_modulation": "DSB-ASK / SSB-ASK / PR-ASK; tag backscatter FM0 or Miller"
+    },
+    "ieee_802_15_4g_sun_fsk": {
+     "channel_spacing_khz": [
+      200,
+      400
+     ],
+     "data_rates_kbps": [
+      50,
+      100,
+      150,
+      200
+     ],
+     "channel_plan": null
+    }
+   },
+   "modulation": "See channel_plan per system",
+   "rule_parts": [
+    "15"
+   ],
+   "sources": [
+    "ITU-T G.9959 (Z-Wave PHY/MAC)",
+    "GS1 EPC Radio-Frequency Identity Protocols, UHF Class 1 Gen 2 (ISO/IEC 18000-63)",
+    "IEEE Std 802.15.4-2020 (SUN FSK PHY, 902-928 MHz band)",
+    "47 CFR 15.247"
+   ],
+   "notes": "Per-standard channel centre lists for 802.15.4g not transcribed (None).",
+   "unverified_fields": [
+    "ieee_802_15_4g_sun_fsk.channel_plan",
+    "rfid channel count (regulatory FHSS practice, not fixed by the standard)"
+   ],
+   "allocation_rows": [
+    "902-928"
+   ]
+  },
+  {
+   "id": "dect_6_0",
+   "name": "DECT 6.0 (UPCS 1920-1930 MHz)",
+   "category": "unlicensed",
+   "bands": [
+    {
+     "lower_mhz": 1920.0,
+     "upper_mhz": 1930.0,
+     "direction": "tdd"
+    }
+   ],
+   "channel_raster_khz": 1728,
+   "channel_bandwidth_khz": 1728,
+   "channel_plan": {
+    "n_carriers": 5,
+    "carrier_centers_mhz": [
+     1921.536,
+     1923.264,
+     1924.992,
+     1926.72,
+     1928.448
+    ]
+   },
+   "modulation": "GFSK 1.152 Mbit/s, TDMA 24 slots per 10 ms frame (TDD)",
+   "rule_parts": [
+    "15"
+   ],
+   "sources": [
+    "ETSI EN 300 175-2 (DECT Common Interface, Physical Layer)",
+    "47 CFR 15 Subpart D (Unlicensed PCS devices, 1920-1930 MHz)"
+   ],
+   "notes": null,
+   "unverified_fields": [
+    "carrier_centers_mhz (computed from 1728 kHz spacing; not checked against a US DECT 6.0 profile document)"
+   ],
+   "allocation_rows": [
+    "1850-2000"
+   ]
+  },
+  {
+   "id": "gnss",
+   "name": "GNSS (GPS, GLONASS, Galileo, BeiDou, QZSS, SBAS)",
+   "category": "radionavigation_satellite",
+   "bands": [
+    {
+     "lower_mhz": 1164.0,
+     "upper_mhz": 1215.0,
+     "note": "L5/E5/B2",
+     "direction": null
+    },
+    {
+     "lower_mhz": 1215.0,
+     "upper_mhz": 1300.0,
+     "note": "L2/E6/B3/GLONASS L2",
+     "direction": null
+    },
+    {
+     "lower_mhz": 1559.0,
+     "upper_mhz": 1610.0,
+     "note": "L1/E1/B1/GLONASS L1",
+     "direction": null
+    }
+   ],
+   "signals": {
+    "gps": {
+     "L1": {
+      "center_mhz": 1575.42,
+      "signals": "C/A BPSK(1) 1.023 Mcps; P(Y) BPSK(10) 10.23 Mcps; L1C TMBOC(6,1,4/33)",
+      "main_lobe_bandwidth_mhz": 2.046,
+      "source": "IS-GPS-200 / IS-GPS-800"
+     },
+     "L2": {
+      "center_mhz": 1227.6,
+      "signals": "L2C (CM/CL) BPSK(1); P(Y) BPSK(10)",
+      "source": "IS-GPS-200"
+     },
+     "L5": {
+      "center_mhz": 1176.45,
+      "signals": "QPSK, 10.23 Mcps I5/Q5",
+      "main_lobe_bandwidth_mhz": 20.46,
+      "source": "IS-GPS-705"
+     }
+    },
+    "glonass": {
+     "L1_fdma": {
+      "center_mhz_formula": "1602 + k*0.5625, k = -7..+6",
+      "range_mhz": [
+       1598.0625,
+       1605.375
+      ],
+      "chip_rate_mcps": {
+       "SP": 0.511,
+       "HP": 5.11
+      }
+     },
+     "L2_fdma": {
+      "center_mhz_formula": "1246 + k*0.4375, k = -7..+6",
+      "range_mhz": [
+       1242.9375,
+       1248.625
+      ]
+     },
+     "cdma": {
+      "L1OC_mhz": 1600.995,
+      "L2OC_mhz": 1248.06,
+      "L3OC_mhz": 1202.025
+     },
+     "source": "GLONASS ICD Edition 5.1 (FDMA); GLONASS ICD CDMA General Description (2016)"
+    },
+    "galileo": {
+     "E1": {
+      "center_mhz": 1575.42,
+      "modulation": "CBOC(6,1,1/11)"
+     },
+     "E5a": {
+      "center_mhz": 1176.45
+     },
+     "E5b": {
+      "center_mhz": 1207.14
+     },
+     "E5_altboc_center_mhz": 1191.795,
+     "E6": {
+      "center_mhz": 1278.75
+     },
+     "source": "Galileo OS SIS ICD v2.1"
+    },
+    "beidou": {
+     "B1I_mhz": 1561.098,
+     "B1C_mhz": 1575.42,
+     "B2a_mhz": 1176.45,
+     "B2b_mhz": 1207.14,
+     "B3I_mhz": 1268.52,
+     "source": "BDS-SIS-ICD (B1I/B1C/B2a/B2b/B3I)"
+    },
+    "qzss": {
+     "L1_mhz": 1575.42,
+     "L2_mhz": 1227.6,
+     "L5_mhz": 1176.45,
+     "L6_mhz": 1278.75,
+     "source": "IS-QZSS-PNT"
+    },
+    "sbas_waas": {
+     "L1_mhz": 1575.42,
+     "L5_mhz": 1176.45,
+     "source": "RTCA DO-229 (SBAS MOPS)"
+    }
+   },
+   "modulation": "Direct-sequence spread spectrum, see signals",
+   "rule_parts": [
+    "25",
+    "87"
+   ],
+   "sources": [
+    "IS-GPS-200 (Navstar GPS Space Segment/Navigation User Interfaces)",
+    "IS-GPS-705 (L5)",
+    "IS-GPS-800 (L1C)",
+    "GLONASS ICD 5.1",
+    "Galileo OS SIS ICD 2.1",
+    "BeiDou BDS-SIS-ICD",
+    "RTCA DO-229"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "1164-1215",
+    "1215-1240",
+    "1240-1300",
+    "1559-1610"
+   ]
+  },
+  {
+   "id": "nexrad_wsr88d",
+   "name": "NEXRAD WSR-88D weather radar (S-band)",
+   "category": "radar",
+   "bands": [
+    {
+     "lower_mhz": 2700.0,
+     "upper_mhz": 3000.0,
+     "direction": null
+    }
+   ],
+   "parameters": {
+    "assigned_frequency": "one fixed frequency per site within 2700-3000 MHz",
+    "peak_power_kw": 750,
+    "pulse_width_us": [
+     1.57,
+     4.7
+    ],
+    "prf_hz": [
+     318,
+     1304
+    ],
+    "antenna_beamwidth_deg": 0.95,
+    "antenna_gain_dbi": 45.5,
+    "polarization": "dual (H/V) since 2011-2013 upgrade",
+    "rotation": "VCP-dependent, 3-6 rpm typical"
+   },
+   "modulation": "Unmodulated (CW) pulses, klystron transmitter",
+   "rule_parts": [],
+   "sources": [
+    "Federal Meteorological Handbook No. 11 (FMH-11), Part B: Doppler Radar Theory and Meteorology",
+    "NOAA NWS Radar Operations Center, WSR-88D system description",
+    "ITU-R M.1849 (technical and operational aspects of ground-based meteorological radars)"
+   ],
+   "notes": "Federal system (NWS/FAA/DoD); US Table box 2700-2900 MHz (METEOROLOGICAL AIDS, AERONAUTICAL RADIONAVIGATION) and 2900-3100 MHz.",
+   "unverified_fields": [
+    "prf_hz range and rotation rate quoted from FMH-11 tables without re-verification"
+   ],
+   "allocation_rows": [
+    "2700-2900",
+    "2900-3100"
+   ]
+  },
+  {
+   "id": "tdwr",
+   "name": "Terminal Doppler Weather Radar (TDWR, C-band)",
+   "category": "radar",
+   "bands": [
+    {
+     "lower_mhz": 5600.0,
+     "upper_mhz": 5650.0,
+     "direction": null
+    }
+   ],
+   "parameters": {
+    "peak_power_kw": 250,
+    "pulse_width_us": 1.1,
+    "prf_hz": [
+     1066,
+     1930
+    ],
+    "antenna_beamwidth_deg": 0.55,
+    "n_sites_us": 45
+   },
+   "modulation": "Unmodulated pulses",
+   "rule_parts": [],
+   "sources": [
+    "ITU-R M.1849 (meteorological radar characteristics)",
+    "FAA TDWR system description"
+   ],
+   "notes": "Reason for the 5600-5650 MHz DFS/exclusion rules in 15.407.",
+   "unverified_fields": [
+    "prf_hz",
+    "n_sites_us"
+   ],
+   "allocation_rows": [
+    "5600-5650"
+   ]
+  },
+  {
+   "id": "asr_sband",
+   "name": "Airport surveillance radar ASR-9 / ASR-11 (S-band 2700-2900 MHz)",
+   "category": "radar",
+   "bands": [
+    {
+     "lower_mhz": 2700.0,
+     "upper_mhz": 2900.0,
+     "direction": null
+    }
+   ],
+   "parameters": {
+    "asr_9": {
+     "peak_power_kw": 1100,
+     "pulse_width_us": 1.0,
+     "prf_hz": "~1000 (staggered, ~700-1200)",
+     "rotation_rpm": 12.5,
+     "frequency_pair": "two frequencies per site, 2700-2900 MHz"
+    },
+    "asr_11": {
+     "peak_power_kw": 25,
+     "pulse_width_us": [
+      1.0,
+      80
+     ],
+     "waveform": "solid state, NLFM pulse compression on long pulse",
+     "rotation_rpm": 12.5
+    }
+   },
+   "modulation": "Unmodulated pulse (ASR-9); NLFM chirp (ASR-11 long pulse)",
+   "rule_parts": [],
+   "sources": [
+    "ITU-R M.1464-2 (characteristics of radiolocation radars, and characteristics and protection criteria for aeronautical radionavigation radars in 2700-2900 MHz)",
+    "FAA ASR-9 / ASR-11 system descriptions"
+   ],
+   "notes": null,
+   "unverified_fields": [
+    "asr_9.prf_hz",
+    "asr_11.pulse_width_us"
+   ],
+   "allocation_rows": [
+    "2700-2900"
+   ]
+  },
+  {
+   "id": "arsr_lband",
+   "name": "Long-range air route surveillance radar ARSR-4 / ARSR-1,2,3 (L-band 1215-1400 MHz)",
+   "category": "radar",
+   "bands": [
+    {
+     "lower_mhz": 1215.0,
+     "upper_mhz": 1400.0,
+     "direction": null
+    }
+   ],
+   "parameters": {
+    "arsr_4": {
+     "range_mhz": [
+      1215,
+      1400
+     ],
+     "peak_power_kw": 60,
+     "pulse_width_us": [
+      60,
+      150
+     ],
+     "rotation_rpm": 5,
+     "waveform": "NLFM pulse compression, frequency agile"
+    },
+    "arsr_1_2_3": {
+     "range_mhz": [
+      1250,
+      1350
+     ],
+     "peak_power_kw": null,
+     "pulse_width_us": 2.0
+    }
+   },
+   "modulation": "Pulse compression (ARSR-4); unmodulated pulses (legacy ARSR)",
+   "rule_parts": [],
+   "sources": [
+    "ITU-R M.1463-3 (characteristics of and protection criteria for radars operating in the radiodetermination service in 1215-1400 MHz)",
+    "FAA ARSR-4 system description"
+   ],
+   "notes": null,
+   "unverified_fields": [
+    "arsr_1_2_3 power",
+    "arsr_4 pulse widths"
+   ],
+   "allocation_rows": [
+    "1215-1240",
+    "1240-1300",
+    "1300-1350",
+    "1350-1390",
+    "1390-1395",
+    "1395-1400"
+   ]
+  },
+  {
+   "id": "amateur",
+   "name": "Amateur Radio Service (Part 97) bands 30 MHz - 6 GHz",
+   "category": "amateur",
+   "bands": [
+    {
+     "lower_mhz": 50.0,
+     "upper_mhz": 54.0,
+     "note": "6 m, primary",
+     "direction": null
+    },
+    {
+     "lower_mhz": 144.0,
+     "upper_mhz": 148.0,
+     "note": "2 m, primary",
+     "direction": null
+    },
+    {
+     "lower_mhz": 219.0,
+     "upper_mhz": 220.0,
+     "note": "fixed digital message forwarding only, secondary",
+     "direction": null
+    },
+    {
+     "lower_mhz": 222.0,
+     "upper_mhz": 225.0,
+     "note": "1.25 m, primary",
+     "direction": null
+    },
+    {
+     "lower_mhz": 420.0,
+     "upper_mhz": 450.0,
+     "note": "70 cm, secondary",
+     "direction": null
+    },
+    {
+     "lower_mhz": 902.0,
+     "upper_mhz": 928.0,
+     "note": "33 cm, secondary",
+     "direction": null
+    },
+    {
+     "lower_mhz": 1240.0,
+     "upper_mhz": 1300.0,
+     "note": "23 cm, secondary",
+     "direction": null
+    },
+    {
+     "lower_mhz": 2300.0,
+     "upper_mhz": 2310.0,
+     "note": "13 cm, secondary",
+     "direction": null
+    },
+    {
+     "lower_mhz": 2390.0,
+     "upper_mhz": 2450.0,
+     "note": "13 cm, secondary",
+     "direction": null
+    },
+    {
+     "lower_mhz": 3300.0,
+     "upper_mhz": 3450.0,
+     "note": "9 cm; removed from the Non-Federal Table (FCC 20-138); see notes",
+     "direction": null
+    },
+    {
+     "lower_mhz": 5650.0,
+     "upper_mhz": 5925.0,
+     "note": "5 cm, secondary",
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": null,
+   "channel_plan": {
+    "regulatory": "no channelization; emission types and bandwidth per 97.305/97.307",
+    "common_practice_non_regulatory": {
+     "2m_fm_repeater_spacing_khz": [
+      15,
+      20
+     ],
+     "70cm_fm_repeater_spacing_khz": 25,
+     "aprs_mhz": 144.39,
+     "ft8_6m_mhz": 50.313,
+     "ft8_2m_mhz": 144.174,
+     "2m_calling_fm_mhz": 146.52,
+     "70cm_calling_fm_mhz": 446.0
+    }
+   },
+   "modulation": "CW, SSB, FM, digital (AX.25 1200 bit/s AFSK, FT8, D-STAR GMSK 4800, DMR, C4FM), ATV; satellite; EME",
+   "rule_parts": [
+    "97"
+   ],
+   "sources": [
+    "47 CFR 97.301 (authorized frequency bands)",
+    "47 CFR 97.303 (frequency sharing requirements)",
+    "47 CFR 97.305 / 97.307 (emission types and standards)",
+    "FCC 20-138, Report and Order, WT Docket 19-348 (3.3-3.55 GHz; removal of amateur secondary allocation)",
+    "ARRL band plans (non-regulatory channel spacing conventions)"
+   ],
+   "notes": "In the July 2022 Online Table the Non-Federal box 3300-3450 MHz lists no services and no rule part (amateur entry removed following FCC 20-138); 3450-3600 MHz lists FIXED and MOBILE except aeronautical mobile. 47 CFR 97.301 should be consulted for the current operating status of 3300-3450 MHz.",
+   "unverified_fields": [
+    "3300-3450 MHz status as of a later date"
+   ],
+   "allocation_rows": [
+    "50-54",
+    "144-146",
+    "146-148",
+    "219-220",
+    "222-225",
+    "420-450",
+    "902-928",
+    "1240-1300",
+    "2300-2305",
+    "2305-2310",
+    "2390-2395",
+    "2395-2400",
+    "2400-2417",
+    "2417-2450",
+    "3300-3450",
+    "5650-5830",
+    "5830-5850",
+    "5850-5925"
+   ]
+  },
+  {
+   "id": "paging",
+   "name": "Paging (Part 22 Subpart E; Part 90 private paging 929-930 MHz)",
+   "category": "paging",
+   "bands": [
+    {
+     "lower_mhz": 35.2,
+     "upper_mhz": 35.66,
+     "direction": null
+    },
+    {
+     "lower_mhz": 43.2,
+     "upper_mhz": 43.66,
+     "direction": null
+    },
+    {
+     "lower_mhz": 152.03,
+     "upper_mhz": 152.21,
+     "direction": null
+    },
+    {
+     "lower_mhz": 157.77,
+     "upper_mhz": 158.7,
+     "direction": null
+    },
+    {
+     "lower_mhz": 454.025,
+     "upper_mhz": 454.65,
+     "direction": null
+    },
+    {
+     "lower_mhz": 929.0,
+     "upper_mhz": 930.0,
+     "note": "private carrier paging (Part 90.494)",
+     "direction": null
+    },
+    {
+     "lower_mhz": 931.0,
+     "upper_mhz": 932.0,
+     "note": "common carrier paging (Part 22)",
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": {
+    "35/43 MHz": 20,
+    "152/158 MHz": 30,
+    "454 MHz": 25,
+    "929-932 MHz": 25
+   },
+   "channel_plan": {
+    "931_mhz_channels": "931.0125-931.9875 MHz, 40 channels, 25 kHz",
+    "929_mhz_channels": "929.0125-929.9875 MHz, 40 channels, 25 kHz"
+   },
+   "modulation": {
+    "flex": "Motorola FLEX: 2-FSK/4-FSK \u00b14.8 kHz, 1600/3200/6400 bit/s",
+    "pocsag": "POCSAG (ITU-R M.584): 2-FSK \u00b14.5 kHz, 512/1200/2400 bit/s"
+   },
+   "rule_parts": [
+    "22",
+    "90"
+   ],
+   "sources": [
+    "47 CFR 22.531 (channels for paging operation)",
+    "47 CFR 22.561 (channels for 35/43 MHz paging)",
+    "47 CFR 90.494 (929-930 MHz private paging)",
+    "ITU-R M.584-2 (POCSAG code)",
+    "Motorola FLEX protocol specification (proprietary)"
+   ],
+   "notes": "Lower-band channel lists (35/43/152/158/454 MHz) are summarized from 22.531/22.561; exact channel-by-channel lists not transcribed.",
+   "unverified_fields": [
+    "157.77-158.7 MHz segment edges",
+    "channel_raster for 152/158 MHz"
+   ],
+   "allocation_rows": [
+    "35-36",
+    "42-43.35",
+    "43.35-43.69",
+    "150.8-152.855",
+    "157.45-161.575",
+    "454-455",
+    "929-930",
+    "931-932"
+   ]
+  },
+  {
+   "id": "wmts",
+   "name": "Wireless Medical Telemetry Service (WMTS)",
+   "category": "medical",
+   "bands": [
+    {
+     "lower_mhz": 608.0,
+     "upper_mhz": 614.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 1395.0,
+     "upper_mhz": 1400.0,
+     "direction": null
+    },
+    {
+     "lower_mhz": 1427.0,
+     "upper_mhz": 1432.0,
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": null,
+   "modulation": "Various low-power digital telemetry (no fixed channelization; frequency coordination by ASHE)",
+   "rule_parts": [
+    "95"
+   ],
+   "sources": [
+    "47 CFR 95 Subpart H (95.2301-95.2395)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "608-614",
+    "1395-1400",
+    "1427-1429.5",
+    "1429.5-1432"
+   ]
+  },
+  {
+   "id": "medradio",
+   "name": "MedRadio (401-406 MHz) and MICS core 402-405 MHz",
+   "category": "medical",
+   "bands": [
+    {
+     "lower_mhz": 401.0,
+     "upper_mhz": 406.0,
+     "direction": null
+    }
+   ],
+   "channel_raster_khz": null,
+   "channel_bandwidth_khz": {
+    "402-405 MHz": 300,
+    "401-402 / 405-406 MHz": [
+     100,
+     300
+    ]
+   },
+   "modulation": "Low-power implant/body-worn telemetry, \u226425 \u00b5W EIRP in 402-405 MHz",
+   "rule_parts": [
+    "95"
+   ],
+   "sources": [
+    "47 CFR 95 Subpart I (95.2501-95.2595)",
+    "47 CFR 95.2573 (bandwidth)"
+   ],
+   "notes": null,
+   "unverified_fields": [],
+   "allocation_rows": [
+    "401-402",
+    "402-403",
+    "403-406"
+   ]
+  },
+  {
+   "id": "mss_lband_iridium_globalstar_inmarsat",
+   "name": "L-band / S-band mobile-satellite systems (Iridium, Globalstar, Inmarsat, Ligado)",
+   "category": "satellite",
+   "bands": [
+    {
+     "lower_mhz": 1525.0,
+     "upper_mhz": 1559.0,
+     "direction": "downlink",
+     "note": "Inmarsat / Ligado space-to-Earth"
+    },
+    {
+     "lower_mhz": 1610.0,
+     "upper_mhz": 1618.725,
+     "direction": "uplink",
+     "note": "Globalstar user uplink"
+    },
+    {
+     "lower_mhz": 1616.0,
+     "upper_mhz": 1626.5,
+     "direction": "tdd",
+     "note": "Iridium user links (both directions, TDD)"
+    },
+    {
+     "lower_mhz": 1626.5,
+     "upper_mhz": 1660.5,
+     "direction": "uplink",
+     "note": "Inmarsat / Ligado Earth-to-space"
+    },
+    {
+     "lower_mhz": 2483.5,
+     "upper_mhz": 2500.0,
+     "direction": "downlink",
+     "note": "Globalstar user downlink"
+    }
+   ],
+   "channel_plan": {
+    "iridium": {
+     "channel_spacing_khz": 41.667,
+     "n_channels": 240,
+     "access": "FDMA/TDMA, 90 ms frame, TDD",
+     "modulation": "QPSK ~50 kbit/s burst"
+    },
+    "globalstar": {
+     "access": "CDMA, 1.23 MHz channels",
+     "modulation": "QPSK spread spectrum"
+    },
+    "inmarsat": {
+     "channel_plan": null
+    }
+   },
+   "modulation": "See channel_plan",
+   "rule_parts": [
+    "25"
+   ],
+   "sources": [
+    "47 CFR 25.202 (frequencies, MSS)",
+    "ITU-R M.1184 (technical characteristics of mobile satellite systems in 1-3 GHz)",
+    "Iridium and Globalstar public system descriptions / FCC filings (operator-published)"
+   ],
+   "notes": "Operator parameters are from operator-published descriptions rather than a standards body; treat as approximate.",
+   "unverified_fields": [
+    "iridium n_channels",
+    "globalstar channel bandwidth",
+    "inmarsat.channel_plan"
+   ],
+   "allocation_rows": [
+    "1525-1535",
+    "1535-1559",
+    "1610-1610.6",
+    "1610.6-1613.8",
+    "1613.8-1626.5",
+    "1626.5-1660",
+    "1660-1660.5",
+    "2483.5-2495",
+    "2495-2500"
+   ]
+  },
+  {
+   "id": "leo_vhf_uhf_sat",
+   "name": "VHF/UHF satellite links (NOAA POES APT/HRPT, Orbcomm, GOES DCS, radiosondes)",
+   "category": "satellite",
+   "bands": [
+    {
+     "lower_mhz": 137.0,
+     "upper_mhz": 138.0,
+     "direction": "downlink",
+     "note": "NOAA APT 137.1/137.9125 MHz; Orbcomm downlink"
+    },
+    {
+     "lower_mhz": 148.0,
+     "upper_mhz": 150.05,
+     "direction": "uplink",
+     "note": "Orbcomm uplink"
+    },
+    {
+     "lower_mhz": 400.15,
+     "upper_mhz": 406.0,
+     "note": "radiosondes (400.15-406), GOES DCS uplink 401.7-402.1 MHz",
+     "direction": null
+    },
+    {
+     "lower_mhz": 1675.0,
+     "upper_mhz": 1710.0,
+     "direction": "downlink",
+     "note": "GOES-R GRB 1686.6 MHz, HRIT/EMWIN 1694.1 MHz; POES HRPT 1698/1702.5/1707 MHz"
+    }
+   ],
+   "channel_plan": {
+    "noaa_apt_mhz": [
+     137.1,
+     137.9125
+    ],
+    "noaa_apt_modulation": "FM \u00b117 kHz with 2400 Hz AM subcarrier, ~34 kHz bandwidth",
+    "poes_hrpt_mhz": [
+     1698.0,
+     1702.5,
+     1707.0
+    ],
+    "goes_r_grb_mhz": 1686.6,
+    "goes_r_hrit_mhz": 1694.1,
+    "orbcomm": {
+     "downlink_mhz": [
+      137.0,
+      138.0
+     ],
+     "uplink_mhz": [
+      148.0,
+      150.05
+     ],
+     "modulation": "SDPSK 4800 bit/s"
+    }
+   },
+   "modulation": "See channel_plan",
+   "rule_parts": [
+    "25"
+   ],
+   "sources": [
+    "NOAA NESDIS, POES/GOES-R user's guides (GRB, HRIT/EMWIN, HRPT, APT specifications)",
+    "Orbcomm system description (FCC filings)",
+    "WMO Guide to Instruments and Methods of Observation (radiosonde frequencies)"
+   ],
+   "notes": "APT ended with NOAA-15/18/19 end of life; verify current status.",
+   "unverified_fields": [
+    "orbcomm modulation and rate"
+   ],
+   "allocation_rows": [
+    "137-137.025",
+    "137.025-137.175",
+    "137.175-137.825",
+    "137.825-138",
+    "148-149.9",
+    "149.9-150.05",
+    "400.15-401",
+    "401-402",
+    "402-403",
+    "403-406",
+    "1675-1695",
+    "1695-1710"
+   ]
+  },
+  {
+   "id": "sdars",
+   "name": "Satellite Digital Audio Radio Service (SiriusXM), 2320-2345 MHz",
+   "category": "satellite",
+   "bands": [
+    {
+     "lower_mhz": 2320.0,
+     "upper_mhz": 2345.0,
+     "direction": "downlink"
+    }
+   ],
+   "channel_plan": {
+    "segments": "12.5 MHz per original licensee (2320-2332.5 and 2332.5-2345 MHz); satellite TDM carriers plus terrestrial repeater COFDM carriers"
+   },
+   "modulation": "QPSK TDM (satellite), COFDM (terrestrial repeaters)",
+   "rule_parts": [
+    "25"
+   ],
+   "sources": [
+    "47 CFR 25.144 (SDARS licensing)",
+    "47 CFR 25.202(a)(6)",
+    "SiriusXM FCC filings (operator-published)"
+   ],
+   "notes": null,
+   "unverified_fields": [
+    "carrier bandwidths and exact carrier centre frequencies"
+   ],
+   "allocation_rows": [
+    "2320-2345"
+   ]
+  },
+  {
+   "id": "uhf_milair_satcom",
+   "name": "UHF military aeronautical mobile (225-400 MHz) and UHF SATCOM (243-270 / 292-318 MHz)",
+   "category": "federal",
+   "bands": [
+    {
+     "lower_mhz": 225.0,
+     "upper_mhz": 400.0,
+     "note": "military air/ground/air voice and data, 25 kHz AM/FM channels",
+     "direction": null
+    },
+    {
+     "lower_mhz": 243.0,
+     "upper_mhz": 270.0,
+     "direction": "downlink",
+     "note": "UHF SATCOM"
+    },
+    {
+     "lower_mhz": 292.0,
+     "upper_mhz": 318.0,
+     "direction": "uplink",
+     "note": "UHF SATCOM"
+    }
+   ],
+   "channel_raster_khz": 25,
+   "channel_bandwidth_khz": [
+    5,
+    25
+   ],
+   "modulation": "AM voice (A3E) 25 kHz; FM; HAVE QUICK frequency hopping; UHF SATCOM 5 kHz / 25 kHz channels (MIL-STD-188-181/182/183), MUOS WCDMA 5 MHz carriers in 300-320 MHz (uplink) / 360-380 MHz (downlink)",
+   "rule_parts": [],
+   "sources": [
+    "NTIA Manual of Regulations and Procedures for Federal Radio Frequency Management, Chapter 4 (225-400 MHz)",
+    "MIL-STD-188-181 / 182 / 183 (UHF SATCOM DAMA waveforms)",
+    "US Navy MUOS public program descriptions (operator-published)"
+   ],
+   "notes": "Descriptive only; federal assignments are not public at channel level.",
+   "unverified_fields": [
+    "MUOS carrier centre frequencies",
+    "HAVE QUICK parameters"
+   ],
+   "allocation_rows": [
+    "225-235",
+    "235-267",
+    "267-322",
+    "322-328.6",
+    "328.6-335.4",
+    "335.4-399.9",
+    "399.9-400.05"
+   ]
+  }
+ ],
+ "by_allocation_row": {
+  "88-108": [
+   "fm_broadcast"
+  ],
+  "54-72": [
+   "tv_broadcast_atsc"
+  ],
+  "76-88": [
+   "tv_broadcast_atsc"
+  ],
+  "174-216": [
+   "tv_broadcast_atsc"
+  ],
+  "470-512": [
+   "tv_broadcast_atsc",
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "512-608": [
+   "tv_broadcast_atsc"
+  ],
+  "30.56-32": [
+   "plmr_vhf_low",
+   "analog_fm_lmr"
+  ],
+  "33-34": [
+   "plmr_vhf_low",
+   "analog_fm_lmr"
+  ],
+  "35-36": [
+   "plmr_vhf_low",
+   "analog_fm_lmr",
+   "paging"
+  ],
+  "37-37.5": [
+   "plmr_vhf_low",
+   "analog_fm_lmr"
+  ],
+  "37.5-38": [
+   "plmr_vhf_low",
+   "analog_fm_lmr"
+  ],
+  "39-40": [
+   "plmr_vhf_low",
+   "analog_fm_lmr"
+  ],
+  "42-43.35": [
+   "plmr_vhf_low",
+   "analog_fm_lmr",
+   "paging"
+  ],
+  "43.35-43.69": [
+   "plmr_vhf_low",
+   "analog_fm_lmr",
+   "paging"
+  ],
+  "43.69-44": [
+   "plmr_vhf_low",
+   "analog_fm_lmr"
+  ],
+  "44-46.6": [
+   "plmr_vhf_low",
+   "analog_fm_lmr"
+  ],
+  "47-49.6": [
+   "plmr_vhf_low",
+   "analog_fm_lmr"
+  ],
+  "150.8-152.855": [
+   "plmr_vhf_high",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "murs",
+   "paging"
+  ],
+  "152.855-154": [
+   "plmr_vhf_high",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "murs"
+  ],
+  "154-156.248": [
+   "plmr_vhf_high",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "murs",
+   "marine_vhf"
+  ],
+  "157.45-161.575": [
+   "plmr_vhf_high",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf",
+   "paging"
+  ],
+  "162.037-173.2": [
+   "plmr_vhf_high",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "noaa_weather_radio"
+  ],
+  "173.2-173.4": [
+   "plmr_vhf_high",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "173.4-174": [
+   "plmr_vhf_high",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "450-454": [
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "454-455": [
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "paging"
+  ],
+  "455-456": [
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "456-459": [
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "459-460": [
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "460-462.538": [
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "462.538-462.738": [
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "gmrs_frs"
+  ],
+  "462.738-467.538": [
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "467.538-467.738": [
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "gmrs_frs"
+  ],
+  "467.738-470": [
+   "plmr_uhf",
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "220-222": [
+   "plmr_220"
+  ],
+  "758-775": [
+   "plmr_700_ps",
+   "p25",
+   "3gpp_band_14"
+  ],
+  "788-805": [
+   "plmr_700_ps",
+   "p25",
+   "3gpp_band_14"
+  ],
+  "806-809": [
+   "plmr_800",
+   "p25",
+   "dmr",
+   "analog_fm_lmr"
+  ],
+  "809-849": [
+   "plmr_800",
+   "p25",
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_5",
+   "3gpp_band_26"
+  ],
+  "851-854": [
+   "plmr_800",
+   "p25",
+   "dmr",
+   "analog_fm_lmr"
+  ],
+  "854-890": [
+   "plmr_800",
+   "p25",
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_5",
+   "3gpp_band_8",
+   "3gpp_band_26"
+  ],
+  "896-897.5": [
+   "plmr_900",
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "897.5-900.5": [
+   "plmr_900",
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "900.5-901": [
+   "plmr_900",
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "935-936.5": [
+   "plmr_900",
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "936.5-939.5": [
+   "plmr_900",
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "939.5-940": [
+   "plmr_900",
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "136-137": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "vhf_air_voice"
+  ],
+  "137-137.025": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "leo_vhf_uhf_sat"
+  ],
+  "137.025-137.175": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "leo_vhf_uhf_sat"
+  ],
+  "137.175-137.825": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "leo_vhf_uhf_sat"
+  ],
+  "137.825-138": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "leo_vhf_uhf_sat"
+  ],
+  "138-144": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "144-146": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "amateur"
+  ],
+  "146-148": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "amateur"
+  ],
+  "148-149.9": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "leo_vhf_uhf_sat"
+  ],
+  "149.9-150.05": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "leo_vhf_uhf_sat"
+  ],
+  "150.05-150.8": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr"
+  ],
+  "156.248-156.512": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "156.512-156.537": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "156.537-156.762": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "156.762-156.787": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "156.787-156.812": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "156.812-156.838": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "156.838-157.037": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "157.037-157.188": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "157.188-157.45": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "161.575-161.625": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "161.625-161.775": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "161.775-161.963": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "161.963-161.988": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "161.988-162.012": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "162.012-162.037": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "analog_fm_lmr",
+   "marine_vhf"
+  ],
+  "335.4-399.9": [
+   "p25",
+   "uhf_milair_satcom"
+  ],
+  "399.9-400.05": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "uhf_milair_satcom"
+  ],
+  "400.05-400.15": [
+   "p25",
+   "dmr",
+   "nxdn"
+  ],
+  "400.15-401": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "leo_vhf_uhf_sat"
+  ],
+  "401-402": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "medradio",
+   "leo_vhf_uhf_sat"
+  ],
+  "402-403": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "medradio",
+   "leo_vhf_uhf_sat"
+  ],
+  "403-406": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "medradio",
+   "leo_vhf_uhf_sat"
+  ],
+  "406-406.1": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "elt_cospas_sarsat"
+  ],
+  "406.1-410": [
+   "p25",
+   "dmr",
+   "nxdn"
+  ],
+  "410-420": [
+   "p25",
+   "dmr",
+   "nxdn"
+  ],
+  "420-450": [
+   "p25",
+   "dmr",
+   "nxdn",
+   "amateur"
+  ],
+  "775-788": [
+   "p25",
+   "3gpp_band_13"
+  ],
+  "805-806": [
+   "p25"
+  ],
+  "849-851": [
+   "p25",
+   "dmr",
+   "analog_fm_lmr"
+  ],
+  "890-894": [
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_5",
+   "3gpp_band_8",
+   "3gpp_band_26"
+  ],
+  "894-896": [
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "901-902": [
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "902-928": [
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8",
+   "ism_915_lora",
+   "ism_915_other",
+   "amateur"
+  ],
+  "928-929": [
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "929-930": [
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8",
+   "paging"
+  ],
+  "930-931": [
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "931-932": [
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8",
+   "paging"
+  ],
+  "932-935": [
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "940-941": [
+   "dmr",
+   "analog_fm_lmr",
+   "3gpp_band_8"
+  ],
+  "30-30.56": [
+   "analog_fm_lmr"
+  ],
+  "32-33": [
+   "analog_fm_lmr"
+  ],
+  "34-35": [
+   "analog_fm_lmr"
+  ],
+  "36-37": [
+   "analog_fm_lmr"
+  ],
+  "38-38.25": [
+   "analog_fm_lmr"
+  ],
+  "38.25-39": [
+   "analog_fm_lmr"
+  ],
+  "40-41.015": [
+   "analog_fm_lmr"
+  ],
+  "41.015-41.665": [
+   "analog_fm_lmr"
+  ],
+  "41.665-42": [
+   "analog_fm_lmr"
+  ],
+  "46.6-47": [
+   "analog_fm_lmr"
+  ],
+  "49.6-50": [
+   "analog_fm_lmr"
+  ],
+  "117.975-121.938": [
+   "vhf_air_voice",
+   "elt_cospas_sarsat"
+  ],
+  "121.938-123.088": [
+   "vhf_air_voice"
+  ],
+  "123.088-123.588": [
+   "vhf_air_voice"
+  ],
+  "123.588-128.812": [
+   "vhf_air_voice"
+  ],
+  "128.812-132.012": [
+   "vhf_air_voice"
+  ],
+  "132.012-136": [
+   "vhf_air_voice"
+  ],
+  "108-117.975": [
+   "vor_ils"
+  ],
+  "328.6-335.4": [
+   "vor_ils",
+   "uhf_milair_satcom"
+  ],
+  "74.8-75.2": [
+   "vor_ils"
+  ],
+  "960-1164": [
+   "dme_tacan",
+   "ssr_modes_adsb",
+   "uat_978"
+  ],
+  "1164-1215": [
+   "dme_tacan",
+   "gnss"
+  ],
+  "1850-2000": [
+   "3gpp_band_2",
+   "3gpp_band_25",
+   "3gpp_band_70",
+   "dect_6_0"
+  ],
+  "1710-1761": [
+   "3gpp_band_4",
+   "3gpp_band_66"
+  ],
+  "2110-2120": [
+   "3gpp_band_4",
+   "3gpp_band_66"
+  ],
+  "2120-2180": [
+   "3gpp_band_4",
+   "3gpp_band_66"
+  ],
+  "941-944": [
+   "3gpp_band_8"
+  ],
+  "944-960": [
+   "3gpp_band_8"
+  ],
+  "698-758": [
+   "3gpp_band_12",
+   "3gpp_band_13",
+   "3gpp_band_17",
+   "3gpp_band_29",
+   "3gpp_band_85"
+  ],
+  "2305-2310": [
+   "3gpp_band_30",
+   "amateur"
+  ],
+  "2310-2320": [
+   "3gpp_band_30"
+  ],
+  "2345-2360": [
+   "3gpp_band_30"
+  ],
+  "2495-2500": [
+   "3gpp_band_41",
+   "mss_lband_iridium_globalstar_inmarsat"
+  ],
+  "2500-2655": [
+   "3gpp_band_41"
+  ],
+  "2655-2690": [
+   "3gpp_band_41"
+  ],
+  "5150-5250": [
+   "3gpp_band_46",
+   "wifi_5"
+  ],
+  "5250-5255": [
+   "3gpp_band_46",
+   "wifi_5"
+  ],
+  "5255-5350": [
+   "3gpp_band_46",
+   "wifi_5"
+  ],
+  "5350-5460": [
+   "3gpp_band_46"
+  ],
+  "5460-5470": [
+   "3gpp_band_46"
+  ],
+  "5470-5570": [
+   "3gpp_band_46",
+   "wifi_5"
+  ],
+  "5570-5600": [
+   "3gpp_band_46",
+   "wifi_5"
+  ],
+  "5600-5650": [
+   "3gpp_band_46",
+   "wifi_5",
+   "tdwr"
+  ],
+  "5650-5830": [
+   "3gpp_band_46",
+   "wifi_5",
+   "amateur"
+  ],
+  "5830-5850": [
+   "3gpp_band_46",
+   "wifi_5",
+   "amateur"
+  ],
+  "5850-5925": [
+   "3gpp_band_46",
+   "wifi_5",
+   "amateur"
+  ],
+  "3550-3600": [
+   "3gpp_band_48",
+   "3gpp_band_n77",
+   "3gpp_band_n78",
+   "cbrs"
+  ],
+  "3600-3650": [
+   "3gpp_band_48",
+   "3gpp_band_n77",
+   "3gpp_band_n78",
+   "cbrs"
+  ],
+  "3650-3700": [
+   "3gpp_band_48",
+   "3gpp_band_n77",
+   "3gpp_band_n78",
+   "cbrs"
+  ],
+  "2483.5-2495": [
+   "3gpp_band_53",
+   "mss_lband_iridium_globalstar_inmarsat"
+  ],
+  "1761-1780": [
+   "3gpp_band_66"
+  ],
+  "2180-2200": [
+   "3gpp_band_66"
+  ],
+  "1695-1710": [
+   "3gpp_band_70",
+   "leo_vhf_uhf_sat"
+  ],
+  "2000-2020": [
+   "3gpp_band_70"
+  ],
+  "614-698": [
+   "3gpp_band_71"
+  ],
+  "3300-3450": [
+   "3gpp_band_n77",
+   "3gpp_band_n78",
+   "amateur"
+  ],
+  "3450-3500": [
+   "3gpp_band_n77",
+   "3gpp_band_n78"
+  ],
+  "3500-3550": [
+   "3gpp_band_n77",
+   "3gpp_band_n78"
+  ],
+  "3700-4000": [
+   "3gpp_band_n77",
+   "3gpp_band_n78"
+  ],
+  "4000-4200": [
+   "3gpp_band_n77"
+  ],
+  "5925-6000": [
+   "3gpp_band_n96",
+   "wifi_6e_lower"
+  ],
+  "2400-2417": [
+   "wifi_2_4",
+   "bluetooth",
+   "amateur"
+  ],
+  "2417-2450": [
+   "wifi_2_4",
+   "bluetooth",
+   "amateur"
+  ],
+  "2450-2483.5": [
+   "wifi_2_4",
+   "bluetooth"
+  ],
+  "1215-1240": [
+   "gnss",
+   "arsr_lband"
+  ],
+  "1240-1300": [
+   "gnss",
+   "arsr_lband",
+   "amateur"
+  ],
+  "1559-1610": [
+   "gnss"
+  ],
+  "2700-2900": [
+   "nexrad_wsr88d",
+   "asr_sband"
+  ],
+  "2900-3100": [
+   "nexrad_wsr88d"
+  ],
+  "1300-1350": [
+   "arsr_lband"
+  ],
+  "1350-1390": [
+   "arsr_lband"
+  ],
+  "1390-1395": [
+   "arsr_lband"
+  ],
+  "1395-1400": [
+   "arsr_lband",
+   "wmts"
+  ],
+  "50-54": [
+   "amateur"
+  ],
+  "219-220": [
+   "amateur"
+  ],
+  "222-225": [
+   "amateur"
+  ],
+  "2300-2305": [
+   "amateur"
+  ],
+  "2390-2395": [
+   "amateur"
+  ],
+  "2395-2400": [
+   "amateur"
+  ],
+  "608-614": [
+   "wmts"
+  ],
+  "1427-1429.5": [
+   "wmts"
+  ],
+  "1429.5-1432": [
+   "wmts"
+  ],
+  "1525-1535": [
+   "mss_lband_iridium_globalstar_inmarsat"
+  ],
+  "1535-1559": [
+   "mss_lband_iridium_globalstar_inmarsat"
+  ],
+  "1610-1610.6": [
+   "mss_lband_iridium_globalstar_inmarsat"
+  ],
+  "1610.6-1613.8": [
+   "mss_lband_iridium_globalstar_inmarsat"
+  ],
+  "1613.8-1626.5": [
+   "mss_lband_iridium_globalstar_inmarsat"
+  ],
+  "1626.5-1660": [
+   "mss_lband_iridium_globalstar_inmarsat"
+  ],
+  "1660-1660.5": [
+   "mss_lband_iridium_globalstar_inmarsat"
+  ],
+  "1675-1695": [
+   "leo_vhf_uhf_sat"
+  ],
+  "2320-2345": [
+   "sdars"
+  ],
+  "225-235": [
+   "uhf_milair_satcom"
+  ],
+  "235-267": [
+   "uhf_milair_satcom"
+  ],
+  "267-322": [
+   "uhf_milair_satcom"
+  ],
+  "322-328.6": [
+   "uhf_milair_satcom"
+  ]
+ }
+}

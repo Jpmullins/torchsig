@@ -14,6 +14,51 @@ request.
 | Bluetooth LE at its standard symbol rate, with optional inter-frame gaps | `pr12-btle-standard-rate` (`0a24d8c`, `e5bc624`, `bec2441`) | not posted yet: [appendix](#appendix-issue-g-not-posted-yet) | merged (`d90c232`) | post the issue; open the PR once it is agreed |
 | Bounding the LFM and chirp-spread-spectrum sweep length | none | [#490](https://github.com/TorchDSP/torchsig/issues/490), open | no code yet | wait for a reply |
 | Location of the cached polyphase filter weights | none | [#491](https://github.com/TorchDSP/torchsig/issues/491), open | no code yet | wait for a reply |
+| Band-realistic spectrum streaming (`torchsig.spectrum`) | `spectrum-band-stream` | not posted yet | new subpackage, additive | propose it upstream once it has been exercised on a second band |
+
+## `torchsig.spectrum`, in more detail
+
+A new subpackage, additive: it imports from TorchSig but nothing in TorchSig imports it, so with the package
+unused the library behaves exactly as 2.2.0 does.
+
+**What it is for.** `TorchSigIterableDataset` builds a scene from a list of modulation classes placed at
+arbitrary frequencies. That is the right abstraction for training a classifier, and the wrong one for asking
+what a receiver pointed at a real band would actually see. `torchsig.spectrum` starts from an allocation
+table instead: which technologies are allocated in a span, what their channel plans are, how many emitters of
+each are within reception range, when each transmits, and what a named receiver does to the sum.
+
+**The pieces.**
+
+- `catalog.py` — `BandPlan` and `Technology`, over three compiled reference files (US allocations 30 MHz to
+  6 GHz, channel plans, deployment densities) plus `additions.json` for technologies added since. Channel
+  plans and PHY parameters are verified against the cited standards; counts, EIRP and activity figures are
+  engineering estimates, and every one carries its own `basis` field.
+- `population.py` — draws who is out there: channel, EIRP, range, path loss, carrier error and Rician K.
+- `activity.py` — when each one transmits, on an epoch-seeded timeline that can be queried at any interval
+  without having generated the earlier ones.
+- `waveforms.py` — renders one burst through the existing signal builders, asking each for the bandwidth
+  that makes its timing standard, with an LRU cache keyed on (technology, kind, length, variant).
+- `receiver.py` — a USRP X310 with a UBX-160: master clock and decimation, analog bandwidth, noise figure by
+  band, I/Q imbalance image, residual DC, a 14-bit ADC and sc16 on the wire.
+- `stream.py` — `BandStream`, endless and seekable: a chunk is a pure function of its index.
+
+**Two properties the tests pin down**, because everything else depends on them:
+
+- *A chunk is a pure function of its index.* Nothing accumulates, so a stream can be seeked and resumed, and
+  two processes agree sample for sample.
+- *A chunk boundary is invisible.* Concatenating consecutive clean chunks equals one render of the same
+  span, to complex64 precision, because a burst that straddles the boundary is rendered from the same cached
+  waveform at the same absolute-time phase on both sides.
+
+**What is tier 2 rather than faithful**, and should be read as such: Bluetooth BR/EDR is generic GFSK on the
+correct raster and slot clock without packet structure; 3GPP band 53 is a generically shaped OFDM carrier;
+the microwave oven is swept filtered noise; the analog video sender is wideband FM. Wi-Fi is rendered as
+802.11a OFDM only, so there is no 802.11b DSSS and no 40 MHz channel. The X310 receiver model is specific to
+one radio and may be the part least suited to upstreaming as it stands.
+
+**Open question for the maintainers:** whether a band-and-receiver layer belongs in TorchSig at all, or
+whether only the parts that are not vendor specific should be offered. That is why it is on its own branch
+and not merged into anything.
 
 ## What holds for every change
 

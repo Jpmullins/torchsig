@@ -1,0 +1,1252 @@
+{
+ "metadata": {
+  "description": "Deployment density, channel-reuse and spatial parameters for the RF world model scene generator. Consumed by rf_world_model.scene.populate.populate_scene.",
+  "compiled_utc": "2026-09-23T00:07:40Z",
+  "status": "Calibration parameters, not measurements. Every figure is an engineering estimate whose basis is recorded in the entry's `basis` field. The Calibration phase fits these against measured occupancy and power distributions; nothing downstream should treat them as ground truth.",
+  "fields": {
+   "expected_count": "Expected number of distinct emitters of this technology within reception range of the receiver, counted over the technology's whole allocated band, per clutter class of scene.Environment.",
+   "scale_with_observed_bandwidth": "True when the count scales with the fraction of the technology's band that the requested scene band covers (channelized populations). False when one emitter is one facility or one satellite, so observing a slice of the band does not reduce the count.",
+   "reuse_channels": "True when two emitters of this technology may share a channel (cellular sector reuse, unlicensed contention, shared aviation channels). False forces distinct channel assignments.",
+   "occupied_bandwidth_hz": "Occupied bandwidth of the clean waveform, in Hz. When present it overrides the bandwidth implied by channelization.json, because a channel raster is a carrier placement grid and not an emission bandwidth (the 3GPP bands raster at 50-100 kHz while carrying 9-98 MHz carriers). Omitted when channelization.json already gives a usable channel bandwidth.",
+   "spatial": "Range and height distribution of emitters about the receiver: min_range_m, max_range_km, alt_m_agl [low, high]. Position is drawn uniformly in the annulus between min_range_m and max_range_km.",
+   "basis": "What the figure is based on. Required on every entry."
+  },
+  "clutter_classes": [
+   "urban_dense",
+   "urban",
+   "suburban",
+   "rural",
+   "open",
+   "indoor"
+  ],
+  "overriding": "populate_scene(density=...) takes a scalar multiplier applied to every expected_count, or a mapping of technology_id to a replacement count (a number) or to a partial entry (a dict merged over the file's entry). A scene can therefore be made denser, sparser, or technology-specific without editing this file.",
+  "resolution_order": "technologies[<id>] overrides category_defaults[<category of id>] overrides global_defaults.",
+  "sources": [
+   "data/reference/channelization.json",
+   "data/reference/emitter_catalog.json"
+  ],
+  "flag_rationale": {
+   "reuse_channels": "True for systems where co-channel operation at one place and time is the normal condition: cellular sector reuse, Part 15 contention, simulcast paging, aircraft and vessels sharing an aviation or marine channel, satellites sharing a band, and services with no channel plan. False for systems whose licensing or engineering separates co-located emitters onto distinct channels: broadcast, radar, VOR/ILS, NWR, and the trunked and conventional land-mobile channel pools.",
+   "scale_with_observed_bandwidth": "False for the systems listed as one-emitter-per-facility or per-satellite (the four radars, GNSS, the satellite downlinks, 1090 MHz and 978 MHz aircraft, NWR, VOR/ILS and DME facilities, and the 406 MHz beacon rate), where observing a slice of the band does not reduce how many emitters are in view. True elsewhere, where the population is a channel pool and the count scales with the fraction of it observed."
+  }
+ },
+ "global_defaults": {
+  "expected_count": {
+   "urban_dense": 1,
+   "urban": 1,
+   "suburban": 1,
+   "rural": 0.5,
+   "open": 0.5,
+   "indoor": 0.5
+  },
+  "scale_with_observed_bandwidth": true,
+  "reuse_channels": false,
+  "max_count": 400,
+  "spatial": {
+   "min_range_m": 100.0,
+   "max_range_km": 30.0,
+   "alt_m_agl": [
+    2.0,
+    50.0
+   ]
+  },
+  "eirp_spread_db": 6.0,
+  "basis": "Fallback for a technology with no entry: one emitter, suburban ranges. eirp_spread_db is the standard deviation of the lognormal draw about the catalog typical EIRP, truncated to the catalog min and max; 6 dB reproduces the spread between the catalog min/typical/max for most technologies.",
+  "default_diurnal_curve": {
+   "hour_of_day": [
+    0.45,
+    0.36,
+    0.3,
+    0.27,
+    0.28,
+    0.34,
+    0.48,
+    0.64,
+    0.76,
+    0.82,
+    0.85,
+    0.87,
+    0.88,
+    0.88,
+    0.87,
+    0.87,
+    0.89,
+    0.93,
+    0.97,
+    1.0,
+    0.98,
+    0.9,
+    0.75,
+    0.58
+   ],
+   "day_of_week": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.02,
+    0.88,
+    0.8
+   ],
+   "basis": "Shape of the busy-hour curve used when an activity model is `diurnal` but the catalog gives no curve: trough at 03:00-04:00 local, rise through the morning, broad plateau through the working day, peak at 19:00-20:00. Taken as the normalised shape of published mobile-network busy-hour profiles; amplitude and phase are calibration parameters. day_of_week is indexed Monday=0 and lowers weekend traffic. Hours are UTC in the scene clock, so a scene at a given longitude needs the curve rotated or the receiver's local offset applied by the caller."
+  }
+ },
+ "category_defaults": {
+  "broadcast": {
+   "reuse_channels": false,
+   "spatial": {
+    "min_range_m": 2000.0,
+    "max_range_km": 120.0,
+    "alt_m_agl": [
+     120.0,
+     600.0
+    ]
+   },
+   "basis": "High-power fixed towers well outside the local clutter; receivable range set by the 60 dBu/41 dBu service contours in 47 CFR 73.683 and 73.699."
+  },
+  "broadcast_federal": {
+   "reuse_channels": false,
+   "spatial": {
+    "min_range_m": 3000.0,
+    "max_range_km": 60.0,
+    "alt_m_agl": [
+     60.0,
+     300.0
+    ]
+   },
+   "basis": "NWR transmitters are one per service area on a 7-channel plan, sited for ~40 mile coverage (NWS station listings)."
+  },
+  "cellular_3gpp": {
+   "reuse_channels": true,
+   "spatial": {
+    "min_range_m": 150.0,
+    "max_range_km": 15.0,
+    "alt_m_agl": [
+     15.0,
+     45.0
+    ]
+   },
+   "basis": "Macro sectors on rooftops and monopoles; inter-site distance 0.3-1 km urban, 2-8 km rural (3GPP TR 36.942 urban/rural macro scenarios). Channels are reused across sectors, so co-channel duplicates are allowed."
+  },
+  "land_mobile_waveform": {
+   "reuse_channels": false,
+   "spatial": {
+    "min_range_m": 500.0,
+    "max_range_km": 40.0,
+    "alt_m_agl": [
+     20.0,
+     150.0
+    ]
+   },
+   "basis": "Part 90 repeater sites on towers and tall buildings; 25-50 km talk-out typical for a VHF/UHF repeater."
+  },
+  "land_mobile": {
+   "reuse_channels": false,
+   "spatial": {
+    "min_range_m": 300.0,
+    "max_range_km": 35.0,
+    "alt_m_agl": [
+     10.0,
+     120.0
+    ]
+   },
+   "basis": "Part 90 base and mobile stations; mobiles dominate count, bases dominate power."
+  },
+  "paging": {
+   "reuse_channels": true,
+   "spatial": {
+    "min_range_m": 3000.0,
+    "max_range_km": 80.0,
+    "alt_m_agl": [
+     60.0,
+     300.0
+    ]
+   },
+   "basis": "Simulcast paging networks transmit the same channel from many sites at once, so co-channel duplicates are expected rather than avoided."
+  },
+  "unlicensed": {
+   "reuse_channels": true,
+   "spatial": {
+    "min_range_m": 5.0,
+    "max_range_km": 0.6,
+    "alt_m_agl": [
+     1.0,
+     30.0
+    ]
+   },
+   "basis": "Part 15 devices are dense, low power and close; useful reception range is tens to a few hundred metres, and channel reuse among neighbouring networks is the normal condition."
+  },
+  "aviation_surveillance": {
+   "reuse_channels": true,
+   "spatial": {
+    "min_range_m": 5000.0,
+    "max_range_km": 250.0,
+    "alt_m_agl": [
+     300.0,
+     12000.0
+    ]
+   },
+   "basis": "1090 MHz replies come from airborne transponders sharing one channel by random squitter; count is the number of aircraft in radio horizon."
+  },
+  "aviation": {
+   "reuse_channels": false,
+   "spatial": {
+    "min_range_m": 3000.0,
+    "max_range_km": 150.0,
+    "alt_m_agl": [
+     100.0,
+     11000.0
+    ]
+   },
+   "basis": "Air-ground voice: a few ground stations plus aircraft at altitude, line of sight to the horizon."
+  },
+  "aviation_navaid": {
+   "reuse_channels": false,
+   "spatial": {
+    "min_range_m": 5000.0,
+    "max_range_km": 200.0,
+    "alt_m_agl": [
+     30.0,
+     8000.0
+    ]
+   },
+   "basis": "VOR/ILS/DME ground facilities are geographically separated by the FAA service-volume rules; airborne DME interrogators add per-aircraft emitters."
+  },
+  "maritime": {
+   "reuse_channels": false,
+   "spatial": {
+    "min_range_m": 1000.0,
+    "max_range_km": 60.0,
+    "alt_m_agl": [
+     3.0,
+     40.0
+    ]
+   },
+   "basis": "Marine VHF is line of sight from sea level; count is coastal or inland-waterway traffic, zero far from navigable water."
+  },
+  "radionavigation_satellite": {
+   "reuse_channels": true,
+   "spatial": {
+    "min_range_m": 20000000.0,
+    "max_range_km": 25000.0,
+    "alt_m_agl": [
+     20000000.0,
+     20200000.0
+    ]
+   },
+   "basis": "GNSS is a constellation: 8-12 satellites above the horizon per system per band. Received power is set directly rather than from EIRP and path loss."
+  },
+  "radar": {
+   "reuse_channels": false,
+   "spatial": {
+    "min_range_m": 5000.0,
+    "max_range_km": 120.0,
+    "alt_m_agl": [
+     10.0,
+     200.0
+    ]
+   },
+   "basis": "One site per facility: an ARSR every few hundred km, an ASR per major airport, one NEXRAD per forecast office, a TDWR at 45 US airports."
+  },
+  "personal_radio": {
+   "reuse_channels": true,
+   "spatial": {
+    "min_range_m": 50.0,
+    "max_range_km": 8.0,
+    "alt_m_agl": [
+     1.0,
+     20.0
+    ]
+   },
+   "basis": "FRS/GMRS/MURS handhelds on a fixed shared channel set; channel collisions are common."
+  },
+  "amateur": {
+   "reuse_channels": false,
+   "spatial": {
+    "min_range_m": 300.0,
+    "max_range_km": 60.0,
+    "alt_m_agl": [
+     5.0,
+     200.0
+    ]
+   },
+   "basis": "Part 97 has no channel plan; simplex and repeater practice concentrates activity on a small number of customary frequencies."
+  },
+  "satellite": {
+   "reuse_channels": true,
+   "spatial": {
+    "min_range_m": 800000.0,
+    "max_range_km": 40000.0,
+    "alt_m_agl": [
+     700000.0,
+     36000000.0
+    ]
+   },
+   "basis": "Space-to-Earth downlinks: SDARS from GEO plus terrestrial repeaters, Iridium/Globalstar/Orbcomm from LEO with a handful in view."
+  },
+  "federal": {
+   "reuse_channels": false,
+   "spatial": {
+    "min_range_m": 2000.0,
+    "max_range_km": 150.0,
+    "alt_m_agl": [
+     10.0,
+     11000.0
+    ]
+   },
+   "basis": "UHF milair and SATCOM: a small number of ground and airborne emitters; occupancy is sparse and bursty."
+  },
+  "medical": {
+   "reuse_channels": true,
+   "spatial": {
+    "min_range_m": 10.0,
+    "max_range_km": 1.5,
+    "alt_m_agl": [
+     1.0,
+     30.0
+    ]
+   },
+   "basis": "WMTS and MedRadio are hospital-campus and body-worn devices at very low power; present only near a healthcare facility."
+  }
+ },
+ "technologies": {
+  "fm_broadcast": {
+   "expected_count": {
+    "urban_dense": 34,
+    "urban": 28,
+    "suburban": 20,
+    "rural": 9,
+    "open": 6,
+    "indoor": 22
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "A top-20 US market has 30-40 FM stations inside the 60 dBu contour on the 100-channel 200 kHz raster; a rural county has 5-10 (FCC FM Query station counts by market). Occupied bandwidth: Carson-rule bandwidth of +/-75 kHz deviation with a 57 kHz highest subcarrier is about 180 kHz inside the 200 kHz channel (47 CFR 73.1570, 73.322).",
+   "occupied_bandwidth_hz": 180000.0
+  },
+  "tv_broadcast_atsc": {
+   "expected_count": {
+    "urban_dense": 16,
+    "urban": 13,
+    "suburban": 9,
+    "rural": 4,
+    "open": 3,
+    "indoor": 9
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "Full-power DTV stations per DMA: 15-20 in the largest markets, 3-6 in small ones (FCC TV Query). Occupied bandwidth 5.8 MHz inside the 6 MHz channel per 47 CFR 73.622.",
+   "occupied_bandwidth_hz": 5800000.0
+  },
+  "noaa_weather_radio": {
+   "expected_count": {
+    "urban_dense": 2,
+    "urban": 2,
+    "suburban": 1,
+    "rural": 1,
+    "open": 1,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": false,
+   "basis": "One or two NWR transmitters are receivable at a point; 7 channels exist nationally and adjacent sites use different ones (NWS transmitter list).",
+   "occupied_bandwidth_hz": 16000.0
+  },
+  "paging": {
+   "expected_count": {
+    "urban_dense": 6,
+    "urban": 5,
+    "suburban": 3,
+    "rural": 1,
+    "open": 1,
+    "indoor": 4
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Surviving US paging carriers run simulcast networks; a receiver typically sees a handful of active 25 kHz FLEX channels in the 929/931 MHz segments.",
+   "occupied_bandwidth_hz": 25000.0
+  },
+  "cbrs": {
+   "expected_count": {
+    "urban_dense": 14,
+    "urban": 10,
+    "suburban": 5,
+    "rural": 1,
+    "open": 1,
+    "indoor": 8
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "CBRS GAA deployments cluster in enterprise and fixed-wireless use; 10-15 CBSDs in view in a dense urban block, essentially none rural (SAS deployment counts are the calibration target). Occupied bandwidth: CBRS PAL channel is 10 MHz (47 CFR 96.5); a 10 MHz NR carrier at 30 kHz subcarrier spacing carries 24 resource blocks x 360 kHz = 8.64 MHz occupied (3GPP TS 38.104 Table 5.3.2-1).",
+   "occupied_bandwidth_hz": 8640000.0
+  },
+  "p25": {
+   "expected_count": {
+    "urban_dense": 12,
+    "urban": 10,
+    "suburban": 6,
+    "rural": 3,
+    "open": 2,
+    "indoor": 6
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "A metro P25 trunked system runs 10-20 repeater channels per site with control channel always on; rural counties run 2-4.",
+   "occupied_bandwidth_hz": 12500.0
+  },
+  "dmr": {
+   "expected_count": {
+    "urban_dense": 9,
+    "urban": 7,
+    "suburban": 4,
+    "rural": 2,
+    "open": 1,
+    "indoor": 5
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "Business DMR licences are numerous but each site carries few channels; count scales with the observed slice of the 136-941 MHz licence pool.",
+   "occupied_bandwidth_hz": 12500.0
+  },
+  "nxdn": {
+   "expected_count": {
+    "urban_dense": 4,
+    "urban": 3,
+    "suburban": 2,
+    "rural": 1,
+    "open": 1,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "NXDN is a minority of the Part 90 digital base; taken as roughly a third of the DMR count.",
+   "occupied_bandwidth_hz": 6250.0
+  },
+  "analog_fm_lmr": {
+   "expected_count": {
+    "urban_dense": 10,
+    "urban": 9,
+    "suburban": 7,
+    "rural": 4,
+    "open": 2,
+    "indoor": 5
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "Analog FM still dominates small Part 90 licences (taxi, tow, school bus, utility); assumed comparable to the digital LMR count combined.",
+   "occupied_bandwidth_hz": 12500.0
+  },
+  "plmr_vhf_low": {
+   "expected_count": {
+    "urban_dense": 3,
+    "urban": 3,
+    "suburban": 3,
+    "rural": 3,
+    "open": 2,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "30-50 MHz low band is now used mainly by state agencies, forestry and farm operations, so the count is flat rather than clutter-driven.",
+   "occupied_bandwidth_hz": 16000.0
+  },
+  "plmr_vhf_high": {
+   "expected_count": {
+    "urban_dense": 8,
+    "urban": 7,
+    "suburban": 6,
+    "rural": 4,
+    "open": 2,
+    "indoor": 4
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "150-174 MHz is the densest Part 90 VHF segment; public works, EMS and business licences per county.",
+   "occupied_bandwidth_hz": 12500.0
+  },
+  "plmr_uhf": {
+   "expected_count": {
+    "urban_dense": 10,
+    "urban": 9,
+    "suburban": 6,
+    "rural": 3,
+    "open": 1,
+    "indoor": 6
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "450-470 MHz carries the largest Part 90 licence population in urban areas, including in-building systems.",
+   "occupied_bandwidth_hz": 12500.0
+  },
+  "plmr_220": {
+   "expected_count": {
+    "urban_dense": 1,
+    "urban": 1,
+    "suburban": 1,
+    "rural": 1,
+    "open": 0,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "The 220-222 MHz band is lightly used after the Part 90 Subpart T re-auctions.",
+   "occupied_bandwidth_hz": 5000.0
+  },
+  "plmr_700_ps": {
+   "expected_count": {
+    "urban_dense": 6,
+    "urban": 5,
+    "suburban": 3,
+    "rural": 2,
+    "open": 1,
+    "indoor": 3
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "700 MHz public-safety narrowband channels per county plus FirstNet broadband sectors counted under 3GPP band 14.",
+   "occupied_bandwidth_hz": 12500.0
+  },
+  "plmr_800": {
+   "expected_count": {
+    "urban_dense": 10,
+    "urban": 8,
+    "suburban": 5,
+    "rural": 2,
+    "open": 1,
+    "indoor": 5
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "800 MHz SMR and public-safety trunked systems: a metro system carries 10-20 channels per site.",
+   "occupied_bandwidth_hz": 12500.0
+  },
+  "plmr_900": {
+   "expected_count": {
+    "urban_dense": 4,
+    "urban": 3,
+    "suburban": 2,
+    "rural": 1,
+    "open": 1,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": false,
+   "basis": "896-901/935-940 MHz business and SMR channels, partly re-banded to 900 MHz broadband. Occupied bandwidth: 900 MHz business channels are 12.5 kHz after narrowbanding (47 CFR 90.209).",
+   "occupied_bandwidth_hz": 12500.0
+  },
+  "gmrs_frs": {
+   "expected_count": {
+    "urban_dense": 8,
+    "urban": 6,
+    "suburban": 4,
+    "rural": 2,
+    "open": 2,
+    "indoor": 3
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "FRS/GMRS handhelds are abundant but transmit rarely; the emitter count is the number of radios in range, not the number transmitting at once.",
+   "occupied_bandwidth_hz": 12500.0
+  },
+  "murs": {
+   "expected_count": {
+    "urban_dense": 2,
+    "urban": 2,
+    "suburban": 1,
+    "rural": 1,
+    "open": 1,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "MURS is a small installed base of 5 channels, mostly retail and farm use.",
+   "occupied_bandwidth_hz": 11250.0
+  },
+  "wifi_2_4": {
+   "expected_count": {
+    "urban_dense": 120,
+    "urban": 70,
+    "suburban": 25,
+    "rural": 4,
+    "open": 1,
+    "indoor": 60
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Urban 2.4 GHz scans routinely show 50-150 distinct BSSIDs from a fixed point; suburban 15-40, rural single digits. This is the single largest emitter population in the model and the first density figure the calibration phase should fit.",
+   "occupied_bandwidth_hz": 20000000.0
+  },
+  "wifi_5": {
+   "expected_count": {
+    "urban_dense": 90,
+    "urban": 55,
+    "suburban": 22,
+    "rural": 3,
+    "open": 1,
+    "indoor": 45
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "5 GHz AP counts are comparable to 2.4 GHz in new deployments but propagate less far, so slightly fewer are receivable.",
+   "occupied_bandwidth_hz": 20000000.0
+  },
+  "wifi_6e_lower": {
+   "expected_count": {
+    "urban_dense": 14,
+    "urban": 8,
+    "suburban": 3,
+    "rural": 1,
+    "open": 0,
+    "indoor": 8
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "6 GHz Wi-Fi is a growing fraction of the installed base; taken at roughly 15 percent of the 5 GHz count for the portion of U-NII-5 below 6 GHz.",
+   "occupied_bandwidth_hz": 20000000.0
+  },
+  "bluetooth": {
+   "expected_count": {
+    "urban_dense": 60,
+    "urban": 35,
+    "suburban": 12,
+    "rural": 2,
+    "open": 1,
+    "indoor": 30
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Phones, wearables and audio devices in range of an urban street corner; BLE advertising makes most of them intermittently visible.",
+   "occupied_bandwidth_hz": 2000000.0
+  },
+  "ism_915_lora": {
+   "expected_count": {
+    "urban_dense": 12,
+    "urban": 9,
+    "suburban": 6,
+    "rural": 3,
+    "open": 1,
+    "indoor": 6
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "LoRaWAN gateways plus end devices on the 64-channel 125 kHz uplink plan; utility metering keeps the rural count non-zero.",
+   "occupied_bandwidth_hz": 125000.0
+  },
+  "ism_915_other": {
+   "expected_count": {
+    "urban_dense": 25,
+    "urban": 18,
+    "suburban": 12,
+    "rural": 5,
+    "open": 2,
+    "indoor": 12
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "902-928 MHz also carries smart meters, Z-Wave, 802.15.4g and UHF RFID readers, which together outnumber LoRa devices.",
+   "occupied_bandwidth_hz": 200000.0
+  },
+  "dect_6_0": {
+   "expected_count": {
+    "urban_dense": 6,
+    "urban": 4,
+    "suburban": 2,
+    "rural": 1,
+    "open": 0,
+    "indoor": 4
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "DECT 6.0 cordless phone bases on the 5-carrier UPCS plan; a declining installed base concentrated indoors.",
+   "occupied_bandwidth_hz": 1728000.0
+  },
+  "wmts": {
+   "expected_count": {
+    "urban_dense": 3,
+    "urban": 2,
+    "suburban": 1,
+    "rural": 0,
+    "open": 0,
+    "indoor": 3
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "WMTS exists only on hospital campuses; zero elsewhere. Count is per facility in range.",
+   "occupied_bandwidth_hz": 100000.0
+  },
+  "medradio": {
+   "expected_count": {
+    "urban_dense": 2,
+    "urban": 1,
+    "suburban": 1,
+    "rural": 0,
+    "open": 0,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "MedRadio implant and body-worn telemetry at -25 dBm typical; only detectable within a few metres.",
+   "occupied_bandwidth_hz": 300000.0
+  },
+  "ssr_modes_adsb": {
+   "expected_count": {
+    "urban_dense": 40,
+    "urban": 35,
+    "suburban": 30,
+    "rural": 20,
+    "open": 25,
+    "indoor": 8
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": true,
+   "basis": "Aircraft within 250 km radio horizon of a ground receiver: 20-60 in busy airspace, all sharing 1090 MHz. Occupied bandwidth 2.6 MHz for the 1 Mbit/s PPM squitter.",
+   "occupied_bandwidth_hz": 2600000.0
+  },
+  "uat_978": {
+   "expected_count": {
+    "urban_dense": 12,
+    "urban": 10,
+    "suburban": 8,
+    "rural": 6,
+    "open": 8,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": true,
+   "basis": "UAT 978 MHz is the general-aviation half of US ADS-B; fewer equipped aircraft in view than 1090ES.",
+   "occupied_bandwidth_hz": 1300000.0
+  },
+  "vhf_air_voice": {
+   "expected_count": {
+    "urban_dense": 14,
+    "urban": 12,
+    "suburban": 10,
+    "rural": 6,
+    "open": 6,
+    "indoor": 4
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Air-ground voice channels active in one terminal area: tower, ground, approach, ATIS, plus en-route sectors and aircraft.",
+   "occupied_bandwidth_hz": 6000.0
+  },
+  "vor_ils": {
+   "expected_count": {
+    "urban_dense": 6,
+    "urban": 5,
+    "suburban": 5,
+    "rural": 4,
+    "open": 4,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": false,
+   "basis": "VOR and ILS facilities within service volume of a point; the FAA VOR MON retains a nationwide skeleton of stations.",
+   "occupied_bandwidth_hz": 20000.0
+  },
+  "dme_tacan": {
+   "expected_count": {
+    "urban_dense": 10,
+    "urban": 9,
+    "suburban": 8,
+    "rural": 6,
+    "open": 6,
+    "indoor": 3
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": true,
+   "basis": "DME ground transponders in range plus airborne interrogators; the 1 MHz channel raster spans 962-1213 MHz.",
+   "occupied_bandwidth_hz": 1000000.0
+  },
+  "elt_cospas_sarsat": {
+   "expected_count": {
+    "urban_dense": 0.02,
+    "urban": 0.02,
+    "suburban": 0.02,
+    "rural": 0.02,
+    "open": 0.05,
+    "indoor": 0.0
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": true,
+   "basis": "406 MHz beacons transmit only in distress or during a self-test; the expected count is a rare-event rate, not a population.",
+   "occupied_bandwidth_hz": 3000.0
+  },
+  "marine_vhf": {
+   "expected_count": {
+    "urban_dense": 6,
+    "urban": 4,
+    "suburban": 2,
+    "rural": 1,
+    "open": 3,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Coastal and inland-waterway traffic on RR Appendix 18 channels; set to zero by an override for inland scenes far from navigable water.",
+   "occupied_bandwidth_hz": 16000.0
+  },
+  "gnss": {
+   "expected_count": {
+    "urban_dense": 30,
+    "urban": 30,
+    "suburban": 30,
+    "rural": 30,
+    "open": 30,
+    "indoor": 4
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": true,
+   "basis": "GPS, GLONASS, Galileo and BeiDou together put roughly 30 satellites above the horizon; L1 C/A arrives near -128.5 dBm (IS-GPS-200 minimum received power -158.5 dBW), below the thermal floor.",
+   "occupied_bandwidth_hz": 2046000.0
+  },
+  "arsr_lband": {
+   "expected_count": {
+    "urban_dense": 2,
+    "urban": 2,
+    "suburban": 2,
+    "rural": 2,
+    "open": 2,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": false,
+   "basis": "Long-range air-route surveillance radars are spaced a few hundred km apart, so one or two are in view of any point.",
+   "occupied_bandwidth_hz": 1000000.0
+  },
+  "asr_sband": {
+   "expected_count": {
+    "urban_dense": 2,
+    "urban": 2,
+    "suburban": 1,
+    "rural": 1,
+    "open": 1,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": false,
+   "basis": "One ASR-9/ASR-11 per major airport; a metro with two airports sees two.",
+   "occupied_bandwidth_hz": 1500000.0
+  },
+  "nexrad_wsr88d": {
+   "expected_count": {
+    "urban_dense": 1,
+    "urban": 1,
+    "suburban": 1,
+    "rural": 1,
+    "open": 1,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": false,
+   "basis": "159 WSR-88D sites cover the US, so exactly one dominant NEXRAD is in view at most locations.",
+   "occupied_bandwidth_hz": 1000000.0
+  },
+  "tdwr": {
+   "expected_count": {
+    "urban_dense": 1,
+    "urban": 1,
+    "suburban": 0.5,
+    "rural": 0.1,
+    "open": 0.1,
+    "indoor": 0.5
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": false,
+   "basis": "TDWR is installed at 45 US airports, so it is present in large metros and absent elsewhere.",
+   "occupied_bandwidth_hz": 1000000.0
+  },
+  "sdars": {
+   "expected_count": {
+    "urban_dense": 4,
+    "urban": 4,
+    "suburban": 3,
+    "rural": 2,
+    "open": 2,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": true,
+   "basis": "SiriusXM satellite TDM carriers plus urban terrestrial repeaters in the 2320-2345 MHz segments.",
+   "occupied_bandwidth_hz": 4000000.0
+  },
+  "mss_lband_iridium_globalstar_inmarsat": {
+   "expected_count": {
+    "urban_dense": 8,
+    "urban": 8,
+    "suburban": 8,
+    "rural": 8,
+    "open": 8,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": true,
+   "basis": "Iridium alone puts several satellites above the horizon with 41.667 kHz FDMA channels; Globalstar and Inmarsat add a few wider carriers.",
+   "occupied_bandwidth_hz": 41667.0
+  },
+  "leo_vhf_uhf_sat": {
+   "expected_count": {
+    "urban_dense": 3,
+    "urban": 3,
+    "suburban": 3,
+    "rural": 3,
+    "open": 3,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": false,
+   "reuse_channels": true,
+   "basis": "NOAA APT, Orbcomm, GOES DCS and radiosondes: a small number of passes in view at any moment.",
+   "occupied_bandwidth_hz": 34000.0
+  },
+  "uhf_milair_satcom": {
+   "expected_count": {
+    "urban_dense": 4,
+    "urban": 3,
+    "suburban": 3,
+    "rural": 2,
+    "open": 2,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "225-400 MHz military air and UHF SATCOM channels; occupancy is sparse but the band is wide. Occupied bandwidth: 225-400 MHz military air voice is 25 kHz AM; UHF SATCOM uses 5 and 25 kHz channels. 25 kHz taken as typical.",
+   "occupied_bandwidth_hz": 25000.0
+  },
+  "amateur": {
+   "expected_count": {
+    "urban_dense": 8,
+    "urban": 7,
+    "suburban": 6,
+    "rural": 4,
+    "open": 3,
+    "indoor": 3
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Repeaters and simplex activity on customary frequencies (2 m and 70 cm dominate); no channel plan exists in Part 97 so centres come from common practice.",
+   "occupied_bandwidth_hz": 16000.0
+  },
+  "3gpp_band_2": {
+   "expected_count": {
+    "urban_dense": 18,
+    "urban": 12,
+    "suburban": 6,
+    "rural": 2,
+    "open": 1,
+    "indoor": 8
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "PCS 1900 is a mature macro layer: 3 operators x 2-3 carriers x 2-3 sectors in view in a dense urban cell. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_4": {
+   "expected_count": {
+    "urban_dense": 18,
+    "urban": 12,
+    "suburban": 6,
+    "rural": 2,
+    "open": 1,
+    "indoor": 8
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "AWS-1 mirrors the PCS macro layer in carrier count. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_5": {
+   "expected_count": {
+    "urban_dense": 12,
+    "urban": 9,
+    "suburban": 5,
+    "rural": 2,
+    "open": 1,
+    "indoor": 5
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Cellular 850 is the wide-area coverage layer; fewer carriers, larger cells. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_8": {
+   "expected_count": {
+    "urban_dense": 3,
+    "urban": 2,
+    "suburban": 1,
+    "rural": 0.5,
+    "open": 0.2,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "GSM 900 is not a US band; presence in a US scene comes only from border or private deployments. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_12": {
+   "expected_count": {
+    "urban_dense": 8,
+    "urban": 6,
+    "suburban": 4,
+    "rural": 2,
+    "open": 1,
+    "indoor": 3
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Lower 700 A block, one national operator's coverage layer. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_13": {
+   "expected_count": {
+    "urban_dense": 6,
+    "urban": 5,
+    "suburban": 3,
+    "rural": 2,
+    "open": 1,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Upper 700 C block, one national operator. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_14": {
+   "expected_count": {
+    "urban_dense": 5,
+    "urban": 4,
+    "suburban": 3,
+    "rural": 2,
+    "open": 1,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "700 MHz Band 14 is FirstNet: one nationwide network, present at most sites. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_17": {
+   "expected_count": {
+    "urban_dense": 6,
+    "urban": 5,
+    "suburban": 3,
+    "rural": 2,
+    "open": 1,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Lower 700 B/C, overlapping band 12 spectrum for one operator. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_25": {
+   "expected_count": {
+    "urban_dense": 14,
+    "urban": 10,
+    "suburban": 5,
+    "rural": 2,
+    "open": 1,
+    "indoor": 6
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "PCS plus G block for one operator; overlaps band 2. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_26": {
+   "expected_count": {
+    "urban_dense": 10,
+    "urban": 7,
+    "suburban": 4,
+    "rural": 2,
+    "open": 1,
+    "indoor": 4
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Extended 850 including SMR spectrum, one operator's low-band layer. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_29": {
+   "expected_count": {
+    "urban_dense": 3,
+    "urban": 2,
+    "suburban": 1,
+    "rural": 0.5,
+    "open": 0.2,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Downlink-only supplemental carrier, deployed selectively. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_30": {
+   "expected_count": {
+    "urban_dense": 4,
+    "urban": 3,
+    "suburban": 2,
+    "rural": 1,
+    "open": 0.5,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "WCS 2.3 GHz, one operator, 10 MHz. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_41": {
+   "expected_count": {
+    "urban_dense": 20,
+    "urban": 14,
+    "suburban": 7,
+    "rural": 2,
+    "open": 1,
+    "indoor": 10
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "2.5 GHz TDD is the dominant capacity layer of one operator, 194 MHz wide with many carriers. Occupied bandwidth: 20 MHz LTE TDD carrier: 100 resource blocks x 180 kHz = 18.0 MHz occupied (3GPP TS 36.104).",
+   "occupied_bandwidth_hz": 18000000.0
+  },
+  "3gpp_band_46": {
+   "expected_count": {
+    "urban_dense": 6,
+    "urban": 4,
+    "suburban": 2,
+    "rural": 0.5,
+    "open": 0.2,
+    "indoor": 4
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "LAA/LTE-U in 5 GHz unlicensed; deployed in dense urban capacity sites only. Occupied bandwidth: LAA uses a 20 MHz carrier aligned to the Wi-Fi channel grid; 18.0 MHz occupied.",
+   "occupied_bandwidth_hz": 18000000.0
+  },
+  "3gpp_band_48": {
+   "expected_count": {
+    "urban_dense": 14,
+    "urban": 10,
+    "suburban": 5,
+    "rural": 1,
+    "open": 0.5,
+    "indoor": 8
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "Band 48 is the CBRS 3.55-3.7 GHz LTE view of the same spectrum as the cbrs entry; keep only one of the two in a scene. Occupied bandwidth: CBRS LTE carriers are 10 or 20 MHz; 20 MHz taken as typical, 18.0 MHz occupied.",
+   "occupied_bandwidth_hz": 18000000.0
+  },
+  "3gpp_band_53": {
+   "expected_count": {
+    "urban_dense": 2,
+    "urban": 1,
+    "suburban": 0.5,
+    "rural": 0.2,
+    "open": 0.1,
+    "indoor": 1
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "2483.5-2495 MHz Globalstar terrestrial band, a narrow single-operator deployment. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_66": {
+   "expected_count": {
+    "urban_dense": 18,
+    "urban": 12,
+    "suburban": 6,
+    "rural": 2,
+    "open": 1,
+    "indoor": 8
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "AWS-3 extension of band 4; same macro layer. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_70": {
+   "expected_count": {
+    "urban_dense": 4,
+    "urban": 3,
+    "suburban": 2,
+    "rural": 1,
+    "open": 0.5,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "AWS-4 supplemental downlink, selectively deployed. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_71": {
+   "expected_count": {
+    "urban_dense": 10,
+    "urban": 8,
+    "suburban": 5,
+    "rural": 3,
+    "open": 2,
+    "indoor": 4
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "600 MHz band is the newest wide-area coverage layer and reaches furthest, so rural counts stay up. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_85": {
+   "expected_count": {
+    "urban_dense": 4,
+    "urban": 3,
+    "suburban": 2,
+    "rural": 1,
+    "open": 0.5,
+    "indoor": 2
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "600/700 MHz supplemental downlink. Occupied bandwidth: 10 MHz LTE carrier: 50 resource blocks x 180 kHz = 9.0 MHz occupied inside a 10 MHz channel (3GPP TS 36.104 Table 5.6-1).",
+   "occupied_bandwidth_hz": 9000000.0
+  },
+  "3gpp_band_n77": {
+   "expected_count": {
+    "urban_dense": 18,
+    "urban": 12,
+    "suburban": 6,
+    "rural": 1,
+    "open": 0.5,
+    "indoor": 8
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "C-band and CBRS 5G NR TDD, the main mid-band capacity layer; 3300-4200 MHz but only 3450-3980 MHz is licensed in the US. Occupied bandwidth: 100 MHz NR TDD carrier at 30 kHz subcarrier spacing: 273 resource blocks x 360 kHz = 98.28 MHz occupied (3GPP TS 38.104 Table 5.3.2-1).",
+   "occupied_bandwidth_hz": 98280000.0
+  },
+  "3gpp_band_n78": {
+   "expected_count": {
+    "urban_dense": 12,
+    "urban": 8,
+    "suburban": 4,
+    "rural": 1,
+    "open": 0.5,
+    "indoor": 6
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "n78 overlaps n77 in 3300-3800 MHz; keep one of the two in a scene. Occupied bandwidth: 100 MHz NR TDD carrier at 30 kHz subcarrier spacing, 98.28 MHz occupied (3GPP TS 38.104).",
+   "occupied_bandwidth_hz": 98280000.0
+  },
+  "3gpp_band_n96": {
+   "expected_count": {
+    "urban_dense": 6,
+    "urban": 4,
+    "suburban": 2,
+    "rural": 0.5,
+    "open": 0.2,
+    "indoor": 4
+   },
+   "scale_with_observed_bandwidth": true,
+   "reuse_channels": true,
+   "basis": "NR-U in 6 GHz unlicensed, only the part below 6 GHz is in band. Occupied bandwidth: 20 MHz NR-U carrier at 30 kHz subcarrier spacing: 51 resource blocks x 360 kHz = 18.36 MHz occupied (3GPP TS 38.104).",
+   "occupied_bandwidth_hz": 18360000.0
+  }
+ }
+}

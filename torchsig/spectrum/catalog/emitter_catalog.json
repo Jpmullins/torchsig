@@ -1,0 +1,2872 @@
+{
+ "metadata": {
+  "description": "Emitter catalog for the RF world model: maps each technology in channelization.json to a renderer, a priority tier, a default activity model and a plausible EIRP range.",
+  "compiled_utc": "2026-09-22T23:51:19Z",
+  "tier_definitions": {
+   "1": "Protocol-faithful renderer: frame or burst structure, preambles/sync/pilots, standard symbol or chip rate, standard occupied bandwidth.",
+   "2": "Parametric renderer: correct band, channel raster, occupied bandwidth, power and duty cycle, with a generic modulation of the right family. No frame structure.",
+   "3": "Occupancy-only fallback for allocation rows with no technology metadata; labelled by allocated service."
+  },
+  "eirp_note": "EIRP values are plausible deployment ranges compiled from the rule parts and equipment classes named in channelization.json, not measured values. They are calibration parameters, to be adjusted against the measured power distributions in calibration_targets.",
+  "uplink_note": "Cellular uplink is not a renderer. A downlink carrier emitter may be paired with separate user-equipment emitters carrying the uplink channel assignment, low EIRP and bursty activity.",
+  "sources": [
+   "data/reference/channelization.json",
+   "data/reference/us_allocations_30MHz_6GHz.parquet"
+  ]
+ },
+ "renderers": {
+  "fm_broadcast": {
+   "tier": 1,
+   "family": "analog_fm",
+   "description": "Wideband FM with 19 kHz stereo pilot, 38 kHz DSB-SC difference channel, optional 57 kHz RBDS subcarrier.",
+   "status": "planned"
+  },
+  "atsc": {
+   "tier": 1,
+   "family": "vsb_ofdm",
+   "description": "ATSC 1.0 8-VSB with in-band pilot, or ATSC 3.0 OFDM, in a 6 MHz channel.",
+   "status": "planned"
+  },
+  "lte_downlink": {
+   "tier": 1,
+   "family": "ofdm",
+   "description": "LTE downlink frame: PSS/SSS, cell-specific reference signals, PBCH, PDSCH fill at a configurable load.",
+   "status": "planned"
+  },
+  "nr_downlink": {
+   "tier": 1,
+   "family": "ofdm",
+   "description": "5G NR downlink: SSB burst set, CSI-RS, PDSCH fill; TDD pattern for n77/n78/n48.",
+   "status": "planned"
+  },
+  "wifi_ofdm": {
+   "tier": 1,
+   "family": "ofdm",
+   "description": "802.11 PPDU (L-STF, L-LTF, L-SIG, payload) with CSMA/CA inter-frame spacing and backoff.",
+   "status": "planned"
+  },
+  "bluetooth": {
+   "tier": 1,
+   "family": "fsk",
+   "description": "BLE advertising on channels 37/38/39 and hopping data channels; BR/EDR 79-channel hop sequence.",
+   "status": "planned"
+  },
+  "p25": {
+   "tier": 1,
+   "family": "fsk",
+   "description": "P25 Phase 1 C4FM with frame sync and NID, or Phase 2 H-DQPSK two-slot TDMA.",
+   "status": "planned"
+  },
+  "dmr": {
+   "tier": 1,
+   "family": "fsk",
+   "description": "DMR 4FSK, 2-slot TDMA with 30 ms slots and sync patterns.",
+   "status": "planned"
+  },
+  "analog_fm_voice": {
+   "tier": 1,
+   "family": "analog_fm",
+   "description": "Narrowband FM voice at the emission designator's deviation, with speech-like modulating statistics.",
+   "status": "planned"
+  },
+  "am_voice": {
+   "tier": 1,
+   "family": "analog_am",
+   "description": "AM double-sideband voice (aeronautical 6K00A3E) with carrier and speech-like modulation.",
+   "status": "planned"
+  },
+  "paging_flex": {
+   "tier": 1,
+   "family": "fsk",
+   "description": "FLEX 2-FSK/4-FSK frame structure, or POCSAG; simulcast at high power.",
+   "status": "planned"
+  },
+  "lora": {
+   "tier": 1,
+   "family": "css",
+   "description": "LoRa chirp spread spectrum: preamble up-chirps, sync words, SFD down-chirps, payload symbols, at the standard chip rate.",
+   "status": "planned"
+  },
+  "adsb": {
+   "tier": 1,
+   "family": "pulse",
+   "description": "1090 MHz extended squitter: 8 us preamble plus 112-bit PPM, Poisson arrivals from a modelled aircraft population.",
+   "status": "planned"
+  },
+  "gnss": {
+   "tier": 1,
+   "family": "dsss",
+   "description": "GPS L1 C/A: 1023-chip Gold codes at 1.023 Mchip/s, multiple satellites, received power set directly below the thermal floor.",
+   "status": "planned"
+  },
+  "pulsed_radar": {
+   "tier": 1,
+   "family": "pulse",
+   "description": "Pulsed radar with configurable PRF, pulse width, intra-pulse modulation (none, LFM, NLFM) and mechanical scan modulation of the observed amplitude.",
+   "status": "planned"
+  },
+  "generic_fm": {
+   "tier": 2,
+   "family": "analog_fm",
+   "description": "Parametric FM at the correct raster and deviation; TorchSig fm_modulator.",
+   "status": "planned"
+  },
+  "generic_am": {
+   "tier": 2,
+   "family": "analog_am",
+   "description": "Parametric AM; TorchSig am_modulator.",
+   "status": "planned"
+  },
+  "generic_fsk": {
+   "tier": 2,
+   "family": "fsk",
+   "description": "Parametric FSK/GFSK at the correct symbol rate and raster; TorchSig fsk_modulator.",
+   "status": "planned"
+  },
+  "generic_psk": {
+   "tier": 2,
+   "family": "psk",
+   "description": "Parametric PSK/QAM; TorchSig constellation_modulator.",
+   "status": "planned"
+  },
+  "generic_ofdm": {
+   "tier": 2,
+   "family": "ofdm",
+   "description": "Parametric OFDM without pilots; TorchSig ofdm_modulator.",
+   "status": "planned"
+  },
+  "generic_pulse": {
+   "tier": 2,
+   "family": "pulse",
+   "description": "Parametric pulse trains and pulse pairs.",
+   "status": "planned"
+  },
+  "generic_mixed": {
+   "tier": 2,
+   "family": "mixed",
+   "description": "Draws from several modulation families for services where the mode varies (amateur, military UHF).",
+   "status": "planned"
+  },
+  "generic_service": {
+   "tier": 3,
+   "family": "mixed",
+   "description": "Occupancy-only fallback for allocation rows with no technology metadata: a modulation family consistent with the allocated service, placed inside the row, labelled by service only.",
+   "status": "planned"
+  }
+ },
+ "technologies": {
+  "fm_broadcast": {
+   "technology_id": "fm_broadcast",
+   "name": "FM broadcast",
+   "category": "broadcast",
+   "tier": 1,
+   "renderer": "fm_broadcast",
+   "modulation_family": "analog_fm",
+   "activity_default": {
+    "kind": "always_on"
+   },
+   "eirp_dbm": {
+    "min": 43,
+    "typical": 73,
+    "max": 80
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     88.0,
+     108.0,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": 200,
+   "channel_raster_khz": 200,
+   "rule_parts": [
+    "73",
+    "74L"
+   ],
+   "notes": "Stereo pilot at 19 kHz, DSB-SC L-R at 38 kHz, optional RBDS at 57 kHz, optional HD Radio sidebands.",
+   "unverified_fields": []
+  },
+  "tv_broadcast_atsc": {
+   "technology_id": "tv_broadcast_atsc",
+   "name": "Television broadcast (ATSC 1.0 / ATSC 3.0)",
+   "category": "broadcast",
+   "tier": 1,
+   "renderer": "atsc",
+   "modulation_family": "vsb_ofdm",
+   "activity_default": {
+    "kind": "always_on"
+   },
+   "eirp_dbm": {
+    "min": 50,
+    "typical": 80,
+    "max": 90
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     54.0,
+     72.0,
+     "downlink"
+    ],
+    [
+     76.0,
+     88.0,
+     "downlink"
+    ],
+    [
+     174.0,
+     216.0,
+     "downlink"
+    ],
+    [
+     470.0,
+     608.0,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": 6000,
+   "channel_raster_khz": 6000,
+   "rule_parts": [
+    "73",
+    "74G",
+    "74H"
+   ],
+   "notes": "ATSC 1.0 8-VSB with pilot 309.441 kHz above the lower edge, or ATSC 3.0 OFDM.",
+   "unverified_fields": []
+  },
+  "noaa_weather_radio": {
+   "technology_id": "noaa_weather_radio",
+   "name": "NOAA Weather Radio All Hazards (NWR)",
+   "category": "broadcast_federal",
+   "tier": 1,
+   "renderer": "analog_fm_voice",
+   "modulation_family": "analog_fm",
+   "activity_default": {
+    "kind": "always_on"
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 47,
+    "max": 50
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     162.4,
+     162.55,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": 16,
+   "channel_raster_khz": 25,
+   "rule_parts": [],
+   "notes": "Continuous FM voice, 1050 Hz alarm tone, SAME bursts at the top of the hour.",
+   "unverified_fields": [
+    "channel_bandwidth_khz"
+   ]
+  },
+  "cbrs": {
+   "technology_id": "cbrs",
+   "name": "Citizens Broadband Radio Service (CBRS) 3550-3700 MHz",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "nr_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 55,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     3550.0,
+     3700.0,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    10000,
+    20000
+   ],
+   "channel_raster_khz": 10000,
+   "rule_parts": [
+    "96"
+   ],
+   "notes": "TDD frame structure; CBSD categories A/B.",
+   "unverified_fields": []
+  },
+  "p25": {
+   "technology_id": "p25",
+   "name": "APCO Project 25 (P25) digital land mobile",
+   "category": "land_mobile_waveform",
+   "tier": 1,
+   "renderer": "p25",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 8.0,
+    "mean_off_s": 180.0
+   },
+   "eirp_dbm": {
+    "min": 30,
+    "typical": 45,
+    "max": 52
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     136.0,
+     174.0,
+     null
+    ],
+    [
+     380.0,
+     512.0,
+     null
+    ],
+    [
+     764.0,
+     806.0,
+     null
+    ],
+    [
+     806.0,
+     869.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    12.5,
+    6.25
+   ],
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "90"
+   ],
+   "notes": "C4FM Phase 1 / H-DQPSK TDMA Phase 2.",
+   "unverified_fields": []
+  },
+  "dmr": {
+   "technology_id": "dmr",
+   "name": "DMR (ETSI Digital Mobile Radio)",
+   "category": "land_mobile_waveform",
+   "tier": 1,
+   "renderer": "dmr",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 10.0,
+    "mean_off_s": 240.0
+   },
+   "eirp_dbm": {
+    "min": 27,
+    "typical": 43,
+    "max": 50
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     136.0,
+     174.0,
+     null
+    ],
+    [
+     400.0,
+     512.0,
+     null
+    ],
+    [
+     806.0,
+     941.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": 12.5,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "90"
+   ],
+   "notes": "2-slot TDMA, 30 ms slots.",
+   "unverified_fields": []
+  },
+  "analog_fm_lmr": {
+   "technology_id": "analog_fm_lmr",
+   "name": "Analog FM land mobile voice",
+   "category": "land_mobile_waveform",
+   "tier": 1,
+   "renderer": "analog_fm_voice",
+   "modulation_family": "analog_fm",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 7.0,
+    "mean_off_s": 300.0
+   },
+   "eirp_dbm": {
+    "min": 27,
+    "typical": 43,
+    "max": 50
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     30.0,
+     50.0,
+     null
+    ],
+    [
+     136.0,
+     174.0,
+     null
+    ],
+    [
+     450.0,
+     512.0,
+     null
+    ],
+    [
+     806.0,
+     941.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    11.25,
+    12.5,
+    20,
+    25
+   ],
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "90",
+    "95"
+   ],
+   "notes": "Analog FM voice, deviation per emission designator.",
+   "unverified_fields": []
+  },
+  "paging": {
+   "technology_id": "paging",
+   "name": "Paging (Part 22 Subpart E; Part 90 private paging 929-930 MHz)",
+   "category": "paging",
+   "tier": 1,
+   "renderer": "paging_flex",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "duty_cycle",
+    "duty": 0.35,
+    "period_s": 4.0
+   },
+   "eirp_dbm": {
+    "min": 50,
+    "typical": 60,
+    "max": 66
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     35.2,
+     35.66,
+     null
+    ],
+    [
+     43.2,
+     43.66,
+     null
+    ],
+    [
+     152.03,
+     152.21,
+     null
+    ],
+    [
+     157.77,
+     158.7,
+     null
+    ],
+    [
+     454.025,
+     454.65,
+     null
+    ],
+    [
+     929.0,
+     930.0,
+     null
+    ],
+    [
+     931.0,
+     932.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": {
+    "35/43 MHz": 20,
+    "152/158 MHz": 30,
+    "454 MHz": 25,
+    "929-932 MHz": 25
+   },
+   "rule_parts": [
+    "22",
+    "90"
+   ],
+   "notes": "FLEX/POCSAG 2-FSK or 4-FSK, simulcast high power.",
+   "unverified_fields": [
+    "157.77-158.7 MHz segment edges",
+    "channel_raster for 152/158 MHz"
+   ]
+  },
+  "wifi_2_4": {
+   "technology_id": "wifi_2_4",
+   "name": "Wi-Fi 2.4 GHz (IEEE 802.11b/g/n/ax/be)",
+   "category": "unlicensed",
+   "tier": 1,
+   "renderer": "wifi_ofdm",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "csma",
+    "offered_load": 0.25
+   },
+   "eirp_dbm": {
+    "min": 15,
+    "typical": 28,
+    "max": 36
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     2400.0,
+     2483.5,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    20000,
+    40000
+   ],
+   "channel_raster_khz": 5000,
+   "rule_parts": [
+    "15"
+   ],
+   "notes": "802.11b DSSS/CCK and 802.11g/n/ax OFDM, 20/40 MHz.",
+   "unverified_fields": []
+  },
+  "wifi_5": {
+   "technology_id": "wifi_5",
+   "name": "Wi-Fi 5 GHz (IEEE 802.11a/n/ac/ax/be), U-NII-1 to U-NII-4",
+   "category": "unlicensed",
+   "tier": 1,
+   "renderer": "wifi_ofdm",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "csma",
+    "offered_load": 0.15
+   },
+   "eirp_dbm": {
+    "min": 15,
+    "typical": 26,
+    "max": 36
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     5150.0,
+     5250.0,
+     null
+    ],
+    [
+     5250.0,
+     5350.0,
+     null
+    ],
+    [
+     5470.0,
+     5725.0,
+     null
+    ],
+    [
+     5725.0,
+     5850.0,
+     null
+    ],
+    [
+     5850.0,
+     5895.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    20000,
+    40000,
+    80000,
+    160000
+   ],
+   "channel_raster_khz": 5000,
+   "rule_parts": [
+    "15"
+   ],
+   "notes": "802.11a/n/ac/ax/be, 20-160 MHz; DFS channels.",
+   "unverified_fields": []
+  },
+  "wifi_6e_lower": {
+   "technology_id": "wifi_6e_lower",
+   "name": "Wi-Fi 6E/7 lower 6 GHz (U-NII-5, 5925-6425 MHz) - portion below 6000 MHz",
+   "category": "unlicensed",
+   "tier": 1,
+   "renderer": "wifi_ofdm",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "csma",
+    "offered_load": 0.05
+   },
+   "eirp_dbm": {
+    "min": 12,
+    "typical": 24,
+    "max": 30
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     5925.0,
+     6425.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    20000,
+    40000,
+    80000,
+    160000,
+    320000
+   ],
+   "channel_raster_khz": 5000,
+   "rule_parts": [
+    "15"
+   ],
+   "notes": "802.11ax/be, up to 320 MHz; LPI power limits indoors.",
+   "unverified_fields": []
+  },
+  "bluetooth": {
+   "technology_id": "bluetooth",
+   "name": "Bluetooth BR/EDR and Bluetooth Low Energy",
+   "category": "unlicensed",
+   "tier": 1,
+   "renderer": "bluetooth",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "poisson",
+    "rate_hz": 10.0,
+    "burst_duration_s": 0.0004
+   },
+   "eirp_dbm": {
+    "min": -6,
+    "typical": 4,
+    "max": 20
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     2400.0,
+     2483.5,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "15"
+   ],
+   "notes": "BLE advertising on 37/38/39 plus hopping data channels; BR/EDR 79-channel hop.",
+   "unverified_fields": []
+  },
+  "ism_915_lora": {
+   "technology_id": "ism_915_lora",
+   "name": "902-928 MHz ISM: LoRaWAN US902-928",
+   "category": "unlicensed",
+   "tier": 1,
+   "renderer": "lora",
+   "modulation_family": "css",
+   "activity_default": {
+    "kind": "poisson",
+    "rate_hz": 0.02,
+    "burst_duration_s": 0.4
+   },
+   "eirp_dbm": {
+    "min": 7,
+    "typical": 20,
+    "max": 30
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     902.0,
+     928.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "15"
+   ],
+   "notes": "CSS SF7-SF12, 125/500 kHz, FCC 15.247 hopping.",
+   "unverified_fields": []
+  },
+  "ssr_modes_adsb": {
+   "technology_id": "ssr_modes_adsb",
+   "name": "SSR / Mode S / ADS-B 1090ES / TCAS",
+   "category": "aviation_surveillance",
+   "tier": 1,
+   "renderer": "adsb",
+   "modulation_family": "pulse",
+   "activity_default": {
+    "kind": "poisson",
+    "rate_hz": 6.2,
+    "burst_duration_s": 0.00012
+   },
+   "eirp_dbm": {
+    "min": 44,
+    "typical": 52,
+    "max": 57
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     1030.0,
+     1030.0,
+     "interrogation (ground and TCAS)"
+    ],
+    [
+     1090.0,
+     1090.0,
+     "reply / squitter (aircraft)"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "87"
+   ],
+   "notes": "1090 MHz extended squitter PPM; aggregate FRUIT from many aircraft.",
+   "unverified_fields": []
+  },
+  "vhf_air_voice": {
+   "technology_id": "vhf_air_voice",
+   "name": "VHF aeronautical mobile (R) voice (air band)",
+   "category": "aviation",
+   "tier": 1,
+   "renderer": "am_voice",
+   "modulation_family": "analog_am",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 5.0,
+    "mean_off_s": 25.0
+   },
+   "eirp_dbm": {
+    "min": 30,
+    "typical": 43,
+    "max": 50
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     117.975,
+     137.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": 25,
+   "channel_raster_khz": 25,
+   "rule_parts": [
+    "87"
+   ],
+   "notes": "AM DSB voice 6K00A3E; ACARS 2400 bit/s MSK data.",
+   "unverified_fields": [
+    "icao_8_33_khz_spacing US status (regulatory statement not verified in a primary US document)"
+   ]
+  },
+  "marine_vhf": {
+   "technology_id": "marine_vhf",
+   "name": "Marine VHF (RR Appendix 18)",
+   "category": "maritime",
+   "tier": 1,
+   "renderer": "analog_fm_voice",
+   "modulation_family": "analog_fm",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 6.0,
+    "mean_off_s": 600.0
+   },
+   "eirp_dbm": {
+    "min": 30,
+    "typical": 44,
+    "max": 50
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     156.025,
+     157.425,
+     "ship transmit"
+    ],
+    [
+     160.625,
+     162.025,
+     "coast transmit / duplex"
+    ]
+   ],
+   "channel_bandwidth_khz": 25,
+   "channel_raster_khz": 25,
+   "rule_parts": [
+    "80"
+   ],
+   "notes": "FM voice; DSC FSK on channel 70; AIS GMSK on 161.975/162.025.",
+   "unverified_fields": []
+  },
+  "gnss": {
+   "technology_id": "gnss",
+   "name": "GNSS (GPS, GLONASS, Galileo, BeiDou, QZSS, SBAS)",
+   "category": "radionavigation_satellite",
+   "tier": 1,
+   "renderer": "gnss",
+   "modulation_family": "dsss",
+   "activity_default": {
+    "kind": "always_on"
+   },
+   "eirp_dbm": {
+    "min": null,
+    "typical": null,
+    "max": null
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     1164.0,
+     1215.0,
+     null
+    ],
+    [
+     1215.0,
+     1300.0,
+     null
+    ],
+    [
+     1559.0,
+     1610.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "25",
+    "87"
+   ],
+   "notes": "Received power is set directly (GPS L1 C/A at about -128.5 dBm), below the thermal floor.",
+   "unverified_fields": []
+  },
+  "nexrad_wsr88d": {
+   "technology_id": "nexrad_wsr88d",
+   "name": "NEXRAD WSR-88D weather radar (S-band)",
+   "category": "radar",
+   "tier": 1,
+   "renderer": "pulsed_radar",
+   "modulation_family": "pulse",
+   "activity_default": {
+    "kind": "always_on"
+   },
+   "eirp_dbm": {
+    "min": 80,
+    "typical": 88,
+    "max": 90
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     2700.0,
+     3000.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [],
+   "notes": "Klystron unmodulated pulses, mechanical scan; 750 kW peak.",
+   "unverified_fields": [
+    "prf_hz range and rotation rate quoted from FMH-11 tables without re-verification"
+   ]
+  },
+  "asr_sband": {
+   "technology_id": "asr_sband",
+   "name": "Airport surveillance radar ASR-9 / ASR-11 (S-band 2700-2900 MHz)",
+   "category": "radar",
+   "tier": 1,
+   "renderer": "pulsed_radar",
+   "modulation_family": "pulse",
+   "activity_default": {
+    "kind": "always_on"
+   },
+   "eirp_dbm": {
+    "min": 75,
+    "typical": 85,
+    "max": 88
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     2700.0,
+     2900.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [],
+   "notes": "ASR-9 unmodulated pulse; ASR-11 NLFM long pulse.",
+   "unverified_fields": [
+    "asr_9.prf_hz",
+    "asr_11.pulse_width_us"
+   ]
+  },
+  "arsr_lband": {
+   "technology_id": "arsr_lband",
+   "name": "Long-range air route surveillance radar ARSR-4 / ARSR-1,2,3 (L-band 1215-1400 MHz)",
+   "category": "radar",
+   "tier": 1,
+   "renderer": "pulsed_radar",
+   "modulation_family": "pulse",
+   "activity_default": {
+    "kind": "always_on"
+   },
+   "eirp_dbm": {
+    "min": 75,
+    "typical": 85,
+    "max": 90
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     1215.0,
+     1400.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [],
+   "notes": "ARSR-4 pulse compression; legacy ARSR unmodulated.",
+   "unverified_fields": [
+    "arsr_1_2_3 power",
+    "arsr_4 pulse widths"
+   ]
+  },
+  "tdwr": {
+   "technology_id": "tdwr",
+   "name": "Terminal Doppler Weather Radar (TDWR, C-band)",
+   "category": "radar",
+   "tier": 1,
+   "renderer": "pulsed_radar",
+   "modulation_family": "pulse",
+   "activity_default": {
+    "kind": "always_on"
+   },
+   "eirp_dbm": {
+    "min": 70,
+    "typical": 82,
+    "max": 86
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     5600.0,
+     5650.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [],
+   "notes": "Unmodulated pulses, 5600-5650 MHz; Wi-Fi DFS interferer of record.",
+   "unverified_fields": [
+    "prf_hz",
+    "n_sites_us"
+   ]
+  },
+  "nxdn": {
+   "technology_id": "nxdn",
+   "name": "NXDN digital land mobile",
+   "category": "land_mobile_waveform",
+   "tier": 2,
+   "renderer": "generic_fsk",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 9.0,
+    "mean_off_s": 240.0
+   },
+   "eirp_dbm": {
+    "min": 27,
+    "typical": 43,
+    "max": 50
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     136.0,
+     174.0,
+     null
+    ],
+    [
+     400.0,
+     512.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    6.25,
+    12.5
+   ],
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "90"
+   ],
+   "notes": "4FSK FDMA, 6.25/12.5 kHz.",
+   "unverified_fields": []
+  },
+  "plmr_vhf_low": {
+   "technology_id": "plmr_vhf_low",
+   "name": "Private land mobile, VHF low band (Part 90)",
+   "category": "land_mobile",
+   "tier": 2,
+   "renderer": "generic_fm",
+   "modulation_family": "analog_fm",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 8.0,
+    "mean_off_s": 400.0
+   },
+   "eirp_dbm": {
+    "min": 27,
+    "typical": 43,
+    "max": 50
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     30.56,
+     32.0,
+     null
+    ],
+    [
+     33.0,
+     34.0,
+     null
+    ],
+    [
+     35.0,
+     36.0,
+     null
+    ],
+    [
+     37.0,
+     38.0,
+     null
+    ],
+    [
+     39.0,
+     40.0,
+     null
+    ],
+    [
+     42.0,
+     46.6,
+     null
+    ],
+    [
+     47.0,
+     49.6,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": 20,
+   "channel_raster_khz": 20,
+   "rule_parts": [
+    "90"
+   ],
+   "notes": null,
+   "unverified_fields": []
+  },
+  "plmr_vhf_high": {
+   "technology_id": "plmr_vhf_high",
+   "name": "Private land mobile, VHF high band (Part 90)",
+   "category": "land_mobile",
+   "tier": 2,
+   "renderer": "generic_fm",
+   "modulation_family": "analog_fm",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 8.0,
+    "mean_off_s": 300.0
+   },
+   "eirp_dbm": {
+    "min": 27,
+    "typical": 43,
+    "max": 50
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     150.8,
+     156.2475,
+     null
+    ],
+    [
+     157.45,
+     161.575,
+     null
+    ],
+    [
+     162.0375,
+     174.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    11.25,
+    12.5
+   ],
+   "channel_raster_khz": 7.5,
+   "rule_parts": [
+    "90"
+   ],
+   "notes": null,
+   "unverified_fields": []
+  },
+  "plmr_uhf": {
+   "technology_id": "plmr_uhf",
+   "name": "Private land mobile, UHF 450-470 MHz and T-band 470-512 MHz (Part 90)",
+   "category": "land_mobile",
+   "tier": 2,
+   "renderer": "generic_fm",
+   "modulation_family": "analog_fm",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 8.0,
+    "mean_off_s": 300.0
+   },
+   "eirp_dbm": {
+    "min": 27,
+    "typical": 43,
+    "max": 50
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     450.0,
+     470.0,
+     null
+    ],
+    [
+     470.0,
+     512.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    11.25,
+    12.5
+   ],
+   "channel_raster_khz": 6.25,
+   "rule_parts": [
+    "90"
+   ],
+   "notes": null,
+   "unverified_fields": []
+  },
+  "plmr_220": {
+   "technology_id": "plmr_220",
+   "name": "220-222 MHz land mobile (Part 90 Subpart T)",
+   "category": "land_mobile",
+   "tier": 2,
+   "renderer": "generic_fsk",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 8.0,
+    "mean_off_s": 600.0
+   },
+   "eirp_dbm": {
+    "min": 27,
+    "typical": 40,
+    "max": 47
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     220.0,
+     222.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": 4,
+   "channel_raster_khz": 5,
+   "rule_parts": [
+    "90"
+   ],
+   "notes": null,
+   "unverified_fields": []
+  },
+  "plmr_700_ps": {
+   "technology_id": "plmr_700_ps",
+   "name": "700 MHz public safety narrowband and broadband",
+   "category": "land_mobile",
+   "tier": 2,
+   "renderer": "generic_fsk",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 9.0,
+    "mean_off_s": 200.0
+   },
+   "eirp_dbm": {
+    "min": 30,
+    "typical": 45,
+    "max": 52
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     769.0,
+     775.0,
+     "base/downlink"
+    ],
+    [
+     799.0,
+     805.0,
+     "mobile/uplink"
+    ],
+    [
+     758.0,
+     768.0,
+     "downlink"
+    ],
+    [
+     788.0,
+     798.0,
+     "uplink"
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    6.25,
+    12.5
+   ],
+   "channel_raster_khz": 6.25,
+   "rule_parts": [
+    "90R",
+    "90S",
+    "27"
+   ],
+   "notes": null,
+   "unverified_fields": []
+  },
+  "plmr_800": {
+   "technology_id": "plmr_800",
+   "name": "800 MHz land mobile (806-824 / 851-869 MHz)",
+   "category": "land_mobile",
+   "tier": 2,
+   "renderer": "generic_fm",
+   "modulation_family": "analog_fm",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 8.0,
+    "mean_off_s": 240.0
+   },
+   "eirp_dbm": {
+    "min": 30,
+    "typical": 45,
+    "max": 52
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     806.0,
+     824.0,
+     "mobile/uplink"
+    ],
+    [
+     851.0,
+     869.0,
+     "base/downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": 20,
+   "channel_raster_khz": 25,
+   "rule_parts": [
+    "90S"
+   ],
+   "notes": null,
+   "unverified_fields": [
+    "channel_raster_khz (25 kHz base grid per 90.613; interleaved 12.5 kHz offsets exist in NPSPAC)"
+   ]
+  },
+  "plmr_900": {
+   "technology_id": "plmr_900",
+   "name": "900 MHz land mobile and 900 MHz broadband segment (896-901 / 935-940 MHz)",
+   "category": "land_mobile",
+   "tier": 2,
+   "renderer": "generic_fsk",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 8.0,
+    "mean_off_s": 300.0
+   },
+   "eirp_dbm": {
+    "min": 27,
+    "typical": 43,
+    "max": 50
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     896.0,
+     901.0,
+     "mobile/uplink"
+    ],
+    [
+     935.0,
+     940.0,
+     "base/downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": 13.6,
+   "channel_raster_khz": 12.5,
+   "rule_parts": [
+    "90"
+   ],
+   "notes": null,
+   "unverified_fields": []
+  },
+  "gmrs_frs": {
+   "technology_id": "gmrs_frs",
+   "name": "GMRS / FRS (Part 95 Subparts E and B)",
+   "category": "personal_radio",
+   "tier": 2,
+   "renderer": "generic_fm",
+   "modulation_family": "analog_fm",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 5.0,
+    "mean_off_s": 900.0
+   },
+   "eirp_dbm": {
+    "min": 17,
+    "typical": 33,
+    "max": 37
+   },
+   "hardware_quality": "cheap",
+   "bands_mhz": [
+    [
+     462.55,
+     462.725,
+     null
+    ],
+    [
+     467.55,
+     467.725,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    12.5,
+    20
+   ],
+   "channel_raster_khz": 25,
+   "rule_parts": [
+    "95"
+   ],
+   "notes": null,
+   "unverified_fields": []
+  },
+  "murs": {
+   "technology_id": "murs",
+   "name": "MURS (Part 95 Subpart J)",
+   "category": "personal_radio",
+   "tier": 2,
+   "renderer": "generic_fm",
+   "modulation_family": "analog_fm",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 5.0,
+    "mean_off_s": 1200.0
+   },
+   "eirp_dbm": {
+    "min": 17,
+    "typical": 30,
+    "max": 33
+   },
+   "hardware_quality": "cheap",
+   "bands_mhz": [
+    [
+     151.82,
+     154.6,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "95"
+   ],
+   "notes": null,
+   "unverified_fields": []
+  },
+  "amateur": {
+   "technology_id": "amateur",
+   "name": "Amateur Radio Service (Part 97) bands 30 MHz - 6 GHz",
+   "category": "amateur",
+   "tier": 2,
+   "renderer": "generic_mixed",
+   "modulation_family": "mixed",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 30.0,
+    "mean_off_s": 600.0
+   },
+   "eirp_dbm": {
+    "min": 20,
+    "typical": 40,
+    "max": 60
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     50.0,
+     54.0,
+     null
+    ],
+    [
+     144.0,
+     148.0,
+     null
+    ],
+    [
+     219.0,
+     220.0,
+     null
+    ],
+    [
+     222.0,
+     225.0,
+     null
+    ],
+    [
+     420.0,
+     450.0,
+     null
+    ],
+    [
+     902.0,
+     928.0,
+     null
+    ],
+    [
+     1240.0,
+     1300.0,
+     null
+    ],
+    [
+     2300.0,
+     2310.0,
+     null
+    ],
+    [
+     2390.0,
+     2450.0,
+     null
+    ],
+    [
+     3300.0,
+     3450.0,
+     null
+    ],
+    [
+     5650.0,
+     5925.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "97"
+   ],
+   "notes": "CW, SSB, FM, and digital modes; wide spread of power and bandwidth.",
+   "unverified_fields": [
+    "3300-3450 MHz status as of a later date"
+   ]
+  },
+  "dect_6_0": {
+   "technology_id": "dect_6_0",
+   "name": "DECT 6.0 (UPCS 1920-1930 MHz)",
+   "category": "unlicensed",
+   "tier": 2,
+   "renderer": "generic_fsk",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "duty_cycle",
+    "duty": 0.04,
+    "period_s": 0.01
+   },
+   "eirp_dbm": {
+    "min": 10,
+    "typical": 20,
+    "max": 24
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     1920.0,
+     1930.0,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": 1728,
+   "channel_raster_khz": 1728,
+   "rule_parts": [
+    "15"
+   ],
+   "notes": "GFSK 1.152 Mbit/s, 24-slot TDMA per 10 ms frame.",
+   "unverified_fields": [
+    "carrier_centers_mhz (computed from 1728 kHz spacing; not checked against a US DECT 6.0 profile document)"
+   ]
+  },
+  "ism_915_other": {
+   "technology_id": "ism_915_other",
+   "name": "902-928 MHz ISM: other unlicensed systems (Z-Wave, IEEE 802.15.4g, UHF RFID, FHSS data)",
+   "category": "unlicensed",
+   "tier": 2,
+   "renderer": "generic_fsk",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "poisson",
+    "rate_hz": 0.5,
+    "burst_duration_s": 0.02
+   },
+   "eirp_dbm": {
+    "min": 7,
+    "typical": 20,
+    "max": 30
+   },
+   "hardware_quality": "cheap",
+   "bands_mhz": [
+    [
+     902.0,
+     928.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "15"
+   ],
+   "notes": "FHSS and digitally modulated 15.247 devices.",
+   "unverified_fields": [
+    "ieee_802_15_4g_sun_fsk.channel_plan",
+    "rfid channel count (regulatory FHSS practice, not fixed by the standard)"
+   ]
+  },
+  "uat_978": {
+   "technology_id": "uat_978",
+   "name": "UAT ADS-B (978 MHz)",
+   "category": "aviation_surveillance",
+   "tier": 2,
+   "renderer": "generic_fsk",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "poisson",
+    "rate_hz": 1.0,
+    "burst_duration_s": 0.00042
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 48,
+    "max": 54
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     978.0,
+     978.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": 1300,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "87"
+   ],
+   "notes": "978 MHz UAT continuous-phase binary FSK.",
+   "unverified_fields": [
+    "channel_bandwidth_khz (occupied bandwidth figure not confirmed against DO-282B)"
+   ]
+  },
+  "dme_tacan": {
+   "technology_id": "dme_tacan",
+   "name": "DME / TACAN",
+   "category": "aviation_navaid",
+   "tier": 2,
+   "renderer": "generic_pulse",
+   "modulation_family": "pulse",
+   "activity_default": {
+    "kind": "poisson",
+    "rate_hz": 2700.0,
+    "burst_duration_s": 3.6e-06
+   },
+   "eirp_dbm": {
+    "min": 55,
+    "typical": 62,
+    "max": 66
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     1025.0,
+     1150.0,
+     "interrogation (airborne)"
+    ],
+    [
+     962.0,
+     1213.0,
+     "reply (ground)"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 1000,
+   "rule_parts": [
+    "87"
+   ],
+   "notes": "Gaussian pulse pairs, pulse-position interrogate/reply.",
+   "unverified_fields": []
+  },
+  "vor_ils": {
+   "technology_id": "vor_ils",
+   "name": "VOR, ILS localizer, ILS glide slope, marker beacon",
+   "category": "aviation_navaid",
+   "tier": 2,
+   "renderer": "generic_am",
+   "modulation_family": "analog_am",
+   "activity_default": {
+    "kind": "always_on"
+   },
+   "eirp_dbm": {
+    "min": 30,
+    "typical": 40,
+    "max": 47
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     108.0,
+     117.975,
+     null
+    ],
+    [
+     328.6,
+     335.4,
+     null
+    ],
+    [
+     74.8,
+     75.2,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 50,
+   "rule_parts": [
+    "87"
+   ],
+   "notes": "AM with 30 Hz reference and 9960 Hz FM subcarrier.",
+   "unverified_fields": []
+  },
+  "elt_cospas_sarsat": {
+   "technology_id": "elt_cospas_sarsat",
+   "name": "Emergency beacons (ELT/EPIRB/PLB) 406 MHz and 121.5 MHz homing",
+   "category": "aviation",
+   "tier": 2,
+   "renderer": "generic_psk",
+   "modulation_family": "psk",
+   "activity_default": {
+    "kind": "duty_cycle",
+    "duty": 0.0088,
+    "period_s": 50.0
+   },
+   "eirp_dbm": {
+    "min": 30,
+    "typical": 37,
+    "max": 40
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     406.0,
+     406.1,
+     null
+    ],
+    [
+     121.5,
+     121.5,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 3,
+   "rule_parts": [
+    "87",
+    "80",
+    "95"
+   ],
+   "notes": "406 MHz biphase-L PSK, 400 bit/s, 440 ms bursts every 50 s.",
+   "unverified_fields": []
+  },
+  "sdars": {
+   "technology_id": "sdars",
+   "name": "Satellite Digital Audio Radio Service (SiriusXM), 2320-2345 MHz",
+   "category": "satellite",
+   "tier": 2,
+   "renderer": "generic_ofdm",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "always_on"
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 55,
+    "max": 70
+   },
+   "hardware_quality": "broadcast",
+   "bands_mhz": [
+    [
+     2320.0,
+     2345.0,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "25"
+   ],
+   "notes": "Satellite QPSK TDM plus terrestrial COFDM repeaters.",
+   "unverified_fields": [
+    "carrier bandwidths and exact carrier centre frequencies"
+   ]
+  },
+  "mss_lband_iridium_globalstar_inmarsat": {
+   "technology_id": "mss_lband_iridium_globalstar_inmarsat",
+   "name": "L-band / S-band mobile-satellite systems (Iridium, Globalstar, Inmarsat, Ligado)",
+   "category": "satellite",
+   "tier": 2,
+   "renderer": "generic_psk",
+   "modulation_family": "psk",
+   "activity_default": {
+    "kind": "duty_cycle",
+    "duty": 0.1,
+    "period_s": 0.09
+   },
+   "eirp_dbm": {
+    "min": 0,
+    "typical": 20,
+    "max": 40
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     1525.0,
+     1559.0,
+     "downlink"
+    ],
+    [
+     1610.0,
+     1618.725,
+     "uplink"
+    ],
+    [
+     1616.0,
+     1626.5,
+     "tdd"
+    ],
+    [
+     1626.5,
+     1660.5,
+     "uplink"
+    ],
+    [
+     2483.5,
+     2500.0,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "25"
+   ],
+   "notes": "Iridium 50 ms bursts in a 90 ms frame; Globalstar and Inmarsat carriers.",
+   "unverified_fields": [
+    "iridium n_channels",
+    "globalstar channel bandwidth",
+    "inmarsat.channel_plan"
+   ]
+  },
+  "leo_vhf_uhf_sat": {
+   "technology_id": "leo_vhf_uhf_sat",
+   "name": "VHF/UHF satellite links (NOAA POES APT/HRPT, Orbcomm, GOES DCS, radiosondes)",
+   "category": "satellite",
+   "tier": 2,
+   "renderer": "generic_fsk",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "poisson",
+    "rate_hz": 0.1,
+    "burst_duration_s": 1.0
+   },
+   "eirp_dbm": {
+    "min": 20,
+    "typical": 33,
+    "max": 44
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     137.0,
+     138.0,
+     "downlink"
+    ],
+    [
+     148.0,
+     150.05,
+     "uplink"
+    ],
+    [
+     400.15,
+     406.0,
+     null
+    ],
+    [
+     1675.0,
+     1710.0,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "25"
+   ],
+   "notes": null,
+   "unverified_fields": [
+    "orbcomm modulation and rate"
+   ]
+  },
+  "uhf_milair_satcom": {
+   "technology_id": "uhf_milair_satcom",
+   "name": "UHF military aeronautical mobile (225-400 MHz) and UHF SATCOM (243-270 / 292-318 MHz)",
+   "category": "federal",
+   "tier": 2,
+   "renderer": "generic_mixed",
+   "modulation_family": "mixed",
+   "activity_default": {
+    "kind": "ptt",
+    "mean_on_s": 6.0,
+    "mean_off_s": 300.0
+   },
+   "eirp_dbm": {
+    "min": 30,
+    "typical": 45,
+    "max": 55
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     225.0,
+     400.0,
+     null
+    ],
+    [
+     243.0,
+     270.0,
+     "downlink"
+    ],
+    [
+     292.0,
+     318.0,
+     "uplink"
+    ]
+   ],
+   "channel_bandwidth_khz": [
+    5,
+    25
+   ],
+   "channel_raster_khz": 25,
+   "rule_parts": [],
+   "notes": "AM voice, FM, HAVE QUICK hopping, UHF SATCOM.",
+   "unverified_fields": [
+    "MUOS carrier centre frequencies",
+    "HAVE QUICK parameters"
+   ]
+  },
+  "wmts": {
+   "technology_id": "wmts",
+   "name": "Wireless Medical Telemetry Service (WMTS)",
+   "category": "medical",
+   "tier": 2,
+   "renderer": "generic_fsk",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "duty_cycle",
+    "duty": 0.2,
+    "period_s": 1.0
+   },
+   "eirp_dbm": {
+    "min": -10,
+    "typical": 5,
+    "max": 17
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     608.0,
+     614.0,
+     null
+    ],
+    [
+     1395.0,
+     1400.0,
+     null
+    ],
+    [
+     1427.0,
+     1432.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "95"
+   ],
+   "notes": "Low-power medical telemetry, no fixed channelization.",
+   "unverified_fields": []
+  },
+  "medradio": {
+   "technology_id": "medradio",
+   "name": "MedRadio (401-406 MHz) and MICS core 402-405 MHz",
+   "category": "medical",
+   "tier": 2,
+   "renderer": "generic_fsk",
+   "modulation_family": "fsk",
+   "activity_default": {
+    "kind": "poisson",
+    "rate_hz": 0.1,
+    "burst_duration_s": 0.05
+   },
+   "eirp_dbm": {
+    "min": -40,
+    "typical": -25,
+    "max": -16
+   },
+   "hardware_quality": "consumer",
+   "bands_mhz": [
+    [
+     401.0,
+     406.0,
+     null
+    ]
+   ],
+   "channel_bandwidth_khz": {
+    "402-405 MHz": 300,
+    "401-402 / 405-406 MHz": [
+     100,
+     300
+    ]
+   },
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "95"
+   ],
+   "notes": "Implant/body-worn telemetry, at most 25 uW EIRP in 402-405 MHz.",
+   "unverified_fields": []
+  },
+  "3gpp_band_2": {
+   "technology_id": "3gpp_band_2",
+   "name": "3GPP band 2 / n2 (PCS 1900)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     1850,
+     1910,
+     "uplink"
+    ],
+    [
+     1930,
+     1990,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_4": {
+   "technology_id": "3gpp_band_4",
+   "name": "3GPP band 4 (AWS-1)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     1710,
+     1755,
+     "uplink"
+    ],
+    [
+     2110,
+     2155,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_5": {
+   "technology_id": "3gpp_band_5",
+   "name": "3GPP band 5 / n5 (Cellular 850)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     824,
+     849,
+     "uplink"
+    ],
+    [
+     869,
+     894,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_8": {
+   "technology_id": "3gpp_band_8",
+   "name": "3GPP band 8 / n8 (900 MHz (E-GSM))",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     880,
+     915,
+     "uplink"
+    ],
+    [
+     925,
+     960,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "90"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_12": {
+   "technology_id": "3gpp_band_12",
+   "name": "3GPP band 12 / n12 (Lower 700 MHz A/B/C)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     699,
+     716,
+     "uplink"
+    ],
+    [
+     729,
+     746,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_13": {
+   "technology_id": "3gpp_band_13",
+   "name": "3GPP band 13 / n13 (Upper 700 MHz C)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     777,
+     787,
+     "uplink"
+    ],
+    [
+     746,
+     756,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_14": {
+   "technology_id": "3gpp_band_14",
+   "name": "3GPP band 14 / n14 (Upper 700 MHz D / public safety)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     788,
+     798,
+     "uplink"
+    ],
+    [
+     758,
+     768,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_17": {
+   "technology_id": "3gpp_band_17",
+   "name": "3GPP band 17 (Lower 700 MHz B/C)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     704,
+     716,
+     "uplink"
+    ],
+    [
+     734,
+     746,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_25": {
+   "technology_id": "3gpp_band_25",
+   "name": "3GPP band 25 / n25 (PCS + G block)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     1850,
+     1915,
+     "uplink"
+    ],
+    [
+     1930,
+     1995,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_26": {
+   "technology_id": "3gpp_band_26",
+   "name": "3GPP band 26 / n26 (Extended 850 (Cellular + SMR))",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     814,
+     849,
+     "uplink"
+    ],
+    [
+     859,
+     894,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_29": {
+   "technology_id": "3gpp_band_29",
+   "name": "3GPP band 29 / n29 (Lower 700 MHz D/E (SDL))",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     717,
+     728,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_30": {
+   "technology_id": "3gpp_band_30",
+   "name": "3GPP band 30 / n30 (WCS 2.3 GHz)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     2305,
+     2315,
+     "uplink"
+    ],
+    [
+     2350,
+     2360,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_41": {
+   "technology_id": "3gpp_band_41",
+   "name": "3GPP band 41 / n41 (BRS/EBS 2.5 GHz)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     2496,
+     2690,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_46": {
+   "technology_id": "3gpp_band_46",
+   "name": "3GPP band 46 (LAA 5 GHz unlicensed)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     5150,
+     5925,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "15"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_48": {
+   "technology_id": "3gpp_band_48",
+   "name": "3GPP band 48 / n48 (CBRS 3.5 GHz)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     3550,
+     3700,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "96"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_53": {
+   "technology_id": "3gpp_band_53",
+   "name": "3GPP band 53 / n53 (Globalstar 2.4 GHz (TDD))",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     2483.5,
+     2495,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": [
+    "us deployment status"
+   ]
+  },
+  "3gpp_band_66": {
+   "technology_id": "3gpp_band_66",
+   "name": "3GPP band 66 / n66 (AWS-1 + AWS-3 (extended AWS))",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     1710,
+     1780,
+     "uplink"
+    ],
+    [
+     2110,
+     2200,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_70": {
+   "technology_id": "3gpp_band_70",
+   "name": "3GPP band 70 / n70 (AWS-3 uplink + AWS-4/H block downlink)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     1695,
+     1710,
+     "uplink"
+    ],
+    [
+     1995,
+     2020,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_71": {
+   "technology_id": "3gpp_band_71",
+   "name": "3GPP band 71 / n71 (600 MHz)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     663,
+     698,
+     "uplink"
+    ],
+    [
+     617,
+     652,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_85": {
+   "technology_id": "3gpp_band_85",
+   "name": "3GPP band 85 / n85 (Extended Lower 700 MHz)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "lte_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     698,
+     716,
+     "uplink"
+    ],
+    [
+     728,
+     746,
+     "downlink"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": 100,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": [
+    "us deployment status"
+   ]
+  },
+  "3gpp_band_n77": {
+   "technology_id": "3gpp_band_n77",
+   "name": "3GPP NR band n77 (3.3-4.2 GHz TDD; US C-band and 3.45 GHz)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "nr_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     3300,
+     4200,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_n78": {
+   "technology_id": "3gpp_band_n78",
+   "name": "3GPP NR band n78",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "nr_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     3300,
+     3800,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "27"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  },
+  "3gpp_band_n96": {
+   "technology_id": "3gpp_band_n96",
+   "name": "3GPP NR-U band n96 (5925-7125 MHz, unlicensed)",
+   "category": "cellular_3gpp",
+   "tier": 1,
+   "renderer": "nr_downlink",
+   "modulation_family": "ofdm",
+   "activity_default": {
+    "kind": "diurnal",
+    "base": {
+     "kind": "always_on"
+    }
+   },
+   "eirp_dbm": {
+    "min": 40,
+    "typical": 56,
+    "max": 65
+   },
+   "hardware_quality": "commercial",
+   "bands_mhz": [
+    [
+     5925,
+     7125,
+     "tdd"
+    ]
+   ],
+   "channel_bandwidth_khz": null,
+   "channel_raster_khz": null,
+   "rule_parts": [
+    "15"
+   ],
+   "notes": "Downlink carrier: sync signals plus scheduled traffic. Uplink is modelled as a separate emitter.",
+   "unverified_fields": []
+  }
+ }
+}
