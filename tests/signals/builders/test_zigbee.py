@@ -230,3 +230,40 @@ def test_zigbee_occupied_bandwidth_matches_annotation(bandwidth, sample_rate):
     ratio = (high - low) / bandwidth
 
     assert 0.8 < ratio < 1.8, f"99% occupied bandwidth is {ratio:.2f}x the annotated bandwidth ({(high - low) / 1e6:.2f} MHz vs {bandwidth / 1e6:.2f} MHz)"
+
+
+def test_zigbee_chip_seq_symbol_zero_matches_standard():
+    """Symbol 0 is the 2450 MHz O-QPSK symbol-to-chip mapping's first row, c0 first."""
+    expected = [int(c) for c in "11011001110000110101001000101110"]
+    np.testing.assert_array_equal(ZIGBEE_CHIP_SEQS[0], expected)
+
+
+@pytest.mark.parametrize("symbol", range(1, 8))
+def test_zigbee_chip_seqs_are_cyclic_shifts_of_symbol_zero(symbol):
+    """Symbols 1-7 are symbol 0 rotated right (towards later chips) by 4 chips per symbol."""
+    np.testing.assert_array_equal(ZIGBEE_CHIP_SEQS[symbol], np.roll(ZIGBEE_CHIP_SEQS[0], 4 * symbol))
+
+
+@pytest.mark.parametrize("symbol", range(8))
+def test_zigbee_chip_seqs_upper_half_inverts_odd_chips(symbol):
+    """Symbols 8-15 are symbols 0-7 with every odd-indexed (Q-rail) chip inverted."""
+    expected = ZIGBEE_CHIP_SEQS[symbol].copy()
+    expected[1::2] ^= 1
+    np.testing.assert_array_equal(ZIGBEE_CHIP_SEQS[symbol + 8], expected)
+
+
+def test_zigbee_shaper_puts_even_chips_on_i_and_odd_chips_on_q():
+    """Even chips drive I, odd chips drive Q one chip later, and a chip of 1 is a positive pulse.
+
+    Each rail's half-sine peaks one chip period after it starts, so I peaks at
+    the start of every odd chip slot and Q, delayed by one chip, at the start of
+    every even slot after the first.
+    """
+    osr = 8
+    chips = ZIGBEE_CHIP_SEQS[0]
+    iq = _oqpsk_half_sine(chips, osr)
+    bipolar = 2 * chips.astype(np.float64) - 1
+    i_peaks = iq.real[osr :: 2 * osr]
+    q_peaks = iq.imag[2 * osr :: 2 * osr]
+    np.testing.assert_allclose(i_peaks, bipolar[0::2], atol=1e-6)
+    np.testing.assert_allclose(q_peaks, bipolar[1::2][: len(q_peaks)], atol=1e-6)

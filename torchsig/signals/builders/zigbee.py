@@ -9,7 +9,7 @@ Physical layer (IEEE 802.15.4-2015, 2.4 GHz):
     * Chip rate  : 2 Mchips/s
     * Data rate  : 250 kbps (4 bits per 32-chip symbol)
     * Modulation : O-QPSK, half-sine pulse shape (MSK-equivalent envelope)
-    * Spreading  : each 4-bit nibble → 32-chip sequence (Table 70)
+    * Spreading  : each 4-bit nibble → 32-chip sequence (2450 MHz symbol-to-chip mapping)
 
 Packet structure:
     4-byte preamble (0x00) | 1-byte SFD (0xA7) | 1-byte PHR (length) | PSDU
@@ -33,25 +33,32 @@ from torchsig.utils.dsp import (
     slice_tail_to_length,
 )
 
-# 16 chip sequences from IEEE 802.15.4-2015 Table 70 (2.4 GHz, chip 0 = first)
+# 2450 MHz O-QPSK symbol-to-chip mapping, IEEE 802.15.4 (row = data symbol, column = chip c0..c31,
+# c0 transmitted first). Verified against two sources that agree bit for bit:
+#   * TI CC2420 datasheet SWRS041c, Table 3 "IEEE 802.15.4 symbol-to-chip mapping", p. 24
+#     (https://www.ti.com/lit/ds/symlink/cc2420.pdf), citing IEEE 802.15.4-2003;
+#   * gr-ieee802-15-4, examples/ieee802_15_4_OQPSK_PHY.grc, chunks_to_symbols symbol_table
+#     (https://github.com/bastibl/gr-ieee802-15-4), whose rows are indexed by the bit-reversed nibble.
+# Symbols 1-7 are symbol 0 cyclically shifted right by 4, 8, ..., 28 chips; symbols 8-15 are
+# symbols 0-7 with every odd-indexed chip inverted.
 ZIGBEE_CHIP_SEQS: np.ndarray = np.array(
     [
-        [1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0],
-        [1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1],
-        [0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1],
-        [0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1],
-        [0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0],
-        [0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1],
-        [1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0],
-        [1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0],
-        [1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0],
-        [1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1],
-        [0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0],
-        [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1],
-        [1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0],
-        [0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1],
-        [1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0],
-        [0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1],
+        [1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0],
+        [1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0],
+        [0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+        [0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1],
+        [0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1],
+        [0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0],
+        [1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1],
+        [1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1],
+        [1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1],
+        [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+        [0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0],
+        [0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0],
+        [1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0],
     ],
     dtype=np.int8,
 )
@@ -99,7 +106,8 @@ def _oqpsk_half_sine(chips: np.ndarray, osr: int) -> np.ndarray:
 
     Each rail's half-sine pulse spans two chip periods (2*osr samples) and the
     Q rail is delayed by one full chip period (osr samples), per IEEE 802.15.4.
-    Output length is exactly len(chips) * osr.
+    Even-indexed chips (c0, c2, ...) go on I and odd-indexed chips on Q; a chip
+    of 1 is a positive pulse. Output length is exactly len(chips) * osr.
 
     Args:
         chips: Binary chip stream, values in {0, 1}.
@@ -108,7 +116,8 @@ def _oqpsk_half_sine(chips: np.ndarray, osr: int) -> np.ndarray:
     Returns:
         np.ndarray: Complex baseband IQ.
     """
-    bipolar = 1.0 - 2.0 * chips.astype(np.float32)  # {0,1} → {+1,-1}
+    # Chip 1 is a positive pulse, as drawn in CC2420 datasheet Figure 7 and mapped by gr-ieee802-15-4
+    bipolar = 2.0 * chips.astype(np.float32) - 1.0  # {0,1} → {-1,+1}
 
     # Half-sine pulse
     samples_per_rail_symbol = 2 * osr
