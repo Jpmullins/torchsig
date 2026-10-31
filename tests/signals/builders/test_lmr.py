@@ -4,9 +4,11 @@ import numpy as np
 import pytest
 
 from torchsig.signals.builders.lmr import (
+    _P25_SYNC_LEVELS,
     DMR_LEVEL_BY_DIBIT,
     DMR_SYMBOLS_PER_BURST,
     DMR_SYNC_PATTERNS,
+    P25_FRAME_SYNC_HEX,
     P25_MOD_INDEX,
     DMRSignalGenerator,
     P25SignalGenerator,
@@ -155,6 +157,13 @@ def test_p25_symbol_stream_starts_with_sync():
     stream = build_p25_symbol_stream(200, rng)
     assert len(stream) == 200
     np.testing.assert_array_equal(stream[:P25_SYNC_SYMBOLS], _P25_SYNC_LEVELS)
+
+
+def test_p25_frame_sync_matches_standard():
+    """The frame sync is 0x5575F5FF77FF: 24 outer (+/-3) symbols, dibit 01 -> +3 and 11 -> -3."""
+    assert P25_FRAME_SYNC_HEX.upper() == "5575F5FF77FF"
+    expected = [+1 if c == "1" else -1 for c in "111113113311333313133333"]
+    np.testing.assert_array_equal(_P25_SYNC_LEVELS, expected)
 
 
 def test_p25_modulator_output():
