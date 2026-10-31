@@ -30,6 +30,11 @@ interleaver, real FCS) is intentionally skipped -- the coded subcarrier values
 are drawn at random. This captures the spectral/temporal *structure* needed for
 RF-ML while staying lightweight.
 
+The SIGNAL field is always one BPSK OFDM symbol with the standard's pilots,
+whatever the DATA constellation, as the standard sends it at BPSK rate 1/2. Its
+48 BPSK values are random and uncoded: no RATE/LENGTH bits and no convolutional
+code.
+
 Frame types
 -----------
     * "data" : a generic data frame; fills the requested duration.
@@ -141,6 +146,15 @@ WIFI_N_DBPS: dict[str, int] = {"bpsk": 24, "qpsk": 48, "16qam": 96, "64qam": 192
 
 # PSDU length in bytes for the supported MAC control frames.
 WIFI_CONTROL_FRAME_BYTES: dict[str, int] = {"rts": 20, "cts": 14, "ack": 14}
+
+# The SIGNAL field is sent BPSK, rate 1/2, regardless of the DATA rate. Sources that agree:
+#   * IEEE Std 802.11-2012 18.3.4 (802.11-2016 17.3.4), as cited by MathWorks wlanLSIG
+#     (https://www.mathworks.com/help/wlan/ref/wlanlsig.html): "BPSK modulation with rate 1/2 BCC";
+#   * gr-ieee802-11 (github.com/bastibl/gr-ieee802-11), lib/signal_field_impl.cc:
+#     ofdm_param signal_ofdm(BPSK_1_2).
+# Its pilots are WIFI_PILOT_VALUES times polarity p_0 = +1 (gr-ieee802-11 examples/wifi_tx.grc,
+# pilot_symbols[0] = (1, 1, 1, -1)).
+WIFI_SIGNAL_FIELD_CONSTELLATION: str = "bpsk"
 
 # SERVICE field (16 bits) + TAIL (6 bits) overhead added before the PSDU.
 _WIFI_SERVICE_TAIL_BITS: int = 16 + 6
@@ -296,7 +310,7 @@ def wifi_80211a_modulator_baseband(
     # Preamble + PHY header
     stf = build_stf(ifft_size)
     ltf = build_ltf(ifft_size)
-    signal_field = _make_payload_symbol(constellation_name, ifft_size, cp_len, rng)
+    signal_field = _make_payload_symbol(WIFI_SIGNAL_FIELD_CONSTELLATION, ifft_size, cp_len, rng)
     preamble_len = len(stf) + len(ltf) + len(signal_field)
 
     # Number of DATA OFDM symbols

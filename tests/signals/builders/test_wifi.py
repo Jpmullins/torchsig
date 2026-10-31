@@ -8,6 +8,7 @@ from torchsig.signals.builders.wifi import (
     WIFI_NUM_SUBCARRIERS,
     WIFI_OVERSAMPLING_NOMINAL,
     WIFI_PILOT_SUBCARRIERS,
+    WIFI_PILOT_VALUES,
     Wifi80211aSignalGenerator,
     build_ltf,
     build_stf,
@@ -133,3 +134,22 @@ def test_wifi_in_signal_lists():
     assert "wifi" in TorchSigSignalLists.family_list
     lists = TorchSigSignalLists()
     assert lists.wifi_signals == ["80211a"]
+
+
+@pytest.mark.parametrize("constellation_name", ["bpsk", "qpsk", "16qam", "64qam"])
+def test_wifi_signal_field_is_bpsk_with_standard_pilots(constellation_name):
+    """The SIGNAL symbol is BPSK on every data subcarrier, whatever the DATA constellation."""
+    osr = WIFI_OVERSAMPLING_NOMINAL
+    ifft_size = osr * WIFI_NUM_SUBCARRIERS
+    cp_len = osr * 16
+    rng = np.random.default_rng(3)
+    frame = wifi_80211a_modulator_baseband("data", constellation_name, 20_000, osr, rng)
+
+    signal_start = 2 * 160 * osr + cp_len  # after STF, LTF and the SIGNAL cyclic prefix
+    spectrum = np.fft.fft(frame[signal_start : signal_start + ifft_size])
+    data = spectrum[np.array(WIFI_DATA_SUBCARRIERS) % ifft_size]
+    pilots = spectrum[np.array(WIFI_PILOT_SUBCARRIERS) % ifft_size]
+
+    np.testing.assert_allclose(np.abs(data.real), 1.0, atol=1e-5)
+    np.testing.assert_allclose(data.imag, 0.0, atol=1e-5)
+    np.testing.assert_allclose(pilots, [WIFI_PILOT_VALUES[k] for k in WIFI_PILOT_SUBCARRIERS], atol=1e-5)
