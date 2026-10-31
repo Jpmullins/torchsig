@@ -367,8 +367,13 @@ P25_MOD_INDEX: float = 2.0 * P25_OUTER_DEVIATION_HZ / P25_SYMBOL_RATE  # 0.75
 # dibit 11 → -1800 Hz → -1.0
 P25_LEVEL_BY_DIBIT: np.ndarray = np.array([1.0 / 3.0, 1.0, -1.0 / 3.0, -1.0])
 
-# Frame sync: 48-bit / 24-symbol pattern (TIA-102.BAAA)
-P25_FRAME_SYNC_HEX: str = "5575F5FF7FF5"
+# Frame sync: 48-bit / 24-symbol pattern (TIA-102.BAAA), all outer symbols:
+# +3 +3 +3 +3 +3 -3 +3 +3 -3 -3 +3 +3 -3 -3 -3 -3 +3 -3 +3 -3 -3 -3 -3 -3.
+# The standard's text was not reachable; three independent decoders agree on the value:
+#   * OP25, op25/gr-op25_repeater/lib/frame_sync_magics.h: P25_FRAME_SYNC_MAGIC = 0x5575F5FF77FF
+#   * SDRTrunk, module/decode/p25/phase1/sync/P25P1SyncDetector.java: SYNC_PATTERN = 0x5575F5FF77FFL
+#   * DSD, include/dsd.h: P25P1_SYNC = "111113113311333313133333" ('1' = +3, '3' = -3)
+P25_FRAME_SYNC_HEX: str = "5575F5FF77FF"
 
 P25_SYNC_SYMBOLS: int = 24
 P25_NID_SYMBOLS: int = 32
