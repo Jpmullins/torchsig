@@ -11,7 +11,8 @@ Physical layer (Semtech SX127x / LoRaWAN 1.1):
     * Each symbol value s ∈ [0, M) produces a chirp whose instantaneous
       frequency starts at f = s/M (normalized) and sweeps up by BW,
       wrapping around at the band edge.
-    * Preamble: 8 base up-chirps, 2 sync-word chirps, 2.25 down-chirps
+    * Preamble: 8 base up-chirps, 2 sync-word chirps, then the SFD of 2.25
+      base down-chirps (two full down-chirps and the first quarter of a third)
 
 Toy simplifications:
     * No spreading code, no FEC, no whitening; payload chirp values are random.
@@ -36,8 +37,14 @@ from torchsig.utils.dsp import (
 LORA_SF_VALUES: tuple[int, ...] = (7, 8, 9, 10, 11, 12)
 LORA_PREAMBLE_UPCHIRPS: int = 8
 LORA_SYNC_CHIRPS: int = 2  # encode network sync word
+# SFD: 2.25 base down-chirps. Sources that agree:
+#   * gr-lora_sdr (github.com/tapparelj/gr-lora_sdr), lib/modulate_impl.cc: two full down-chirps,
+#     then m_samples_per_symbol / 4 samples of the same down-chirp;
+#   * RIOT-OS sys/net/lora/Kconfig, LORA_PREAMBLE_LENGTH_DEFAULT: "The sync word is followed by two
+#     and a quarter downchirps, for a duration of 2.25 symbols.";
+#   * Tapparel et al., "An Open-Source LoRa Physical Layer Prototype on GNU Radio", arXiv:2002.08208, Sec. II.
 LORA_SFD_DOWNCHIRPS: int = 2
-LORA_SFD_QUARTER_CHIPS: int = 1  # +0.25 up-chirp after down-chirps
+LORA_SFD_QUARTER_CHIPS: int = 1  # +0.25 down-chirp after the full down-chirps
 
 
 def _upchirp(s: int, m: int, osr: int) -> np.ndarray:
@@ -90,7 +97,7 @@ def build_lora_symbol_stream(
         [_upchirp(0, m, osr)] * LORA_PREAMBLE_UPCHIRPS
         + [_upchirp(s, m, osr) for s in sync_s]
         + [_downchirp(m, osr)] * LORA_SFD_DOWNCHIRPS
-        + [_upchirp(0, m, osr)[: samples_per_sym // 4]]  # 0.25 up-chirp
+        + [_downchirp(m, osr)[: samples_per_sym // 4]]  # 0.25 down-chirp completes the 2.25-symbol SFD
     )
 
     num_data_syms = max(1, int(np.ceil((num_samples - len(preamble)) / samples_per_sym)))

@@ -4,8 +4,11 @@ import numpy as np
 import pytest
 
 from torchsig.signals.builders.lora import (
+    LORA_PREAMBLE_UPCHIRPS,
     LORA_SF_VALUES,
+    LORA_SYNC_CHIRPS,
     LoraSignalGenerator,
+    _downchirp,
     build_lora_symbol_stream,
     lora_modulator,
 )
@@ -35,6 +38,20 @@ def test_lora_symbol_stream_has_preamble():
     stream = build_lora_symbol_stream(2000, sf, osr, rng)
     assert len(stream) >= 2000
     assert np.all(np.isfinite(stream))
+
+
+@pytest.mark.parametrize("sf", [7, 9, 12])
+def test_lora_sfd_is_two_and_a_quarter_downchirps(sf):
+    """After the up-chirps and sync word, the SFD is two full down-chirps and a quarter down-chirp."""
+    rng = np.random.default_rng(0)
+    osr = 2
+    samples_per_sym = 2**sf * osr
+    stream = build_lora_symbol_stream(1, sf, osr, rng)
+
+    sfd_start = (LORA_PREAMBLE_UPCHIRPS + LORA_SYNC_CHIRPS) * samples_per_sym
+    downchirp = _downchirp(2**sf, osr)
+    expected = np.concatenate([downchirp, downchirp, downchirp[: samples_per_sym // 4]])
+    np.testing.assert_allclose(stream[sfd_start : sfd_start + len(expected)], expected, atol=1e-9)
 
 
 def test_lora_modulator_output():
