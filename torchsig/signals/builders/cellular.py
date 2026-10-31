@@ -23,22 +23,46 @@ structure. The distinctive feature is a known 26-bit Training Sequence Code
 (TSC) embedded in the middle of each burst, giving the waveform a periodic
 autocorrelation peak that differentiates it from generic GMSK.
 
-Physical layer (ETSI TS 45.001/45.002):
-    * Modulation    : GMSK, BT = 0.3, modulation index h = 0.5
-    * Symbol rate   : 270 833.333 Bd (13/48 MHz)
+The builder models a base station (BTS) downlink carrier transmitting normal
+bursts with random payload on every timeslot, as the BCCH carrier (C0) of a
+cell does. A BTS is not required to ramp down and up between adjacent bursts
+(3GPP TS 45.002 subclause 5.2.8), so the carrier stays on with constant
+envelope and continuous phase across burst boundaries.
+
+Physical layer (3GPP TS 45.002, 45.004):
+    * Modulation    : GMSK, BT = 0.3, modulation index h = 0.5, with the
+      differential encoding and sign convention of TS 45.004 subclause 2.3
+      (alpha_i = 1 - 2 * (d_i XOR d_{i-1}); alpha_i = +1 raises the phase).
+    * Symbol rate   : 270 833.333 Bd (13/48 MHz) nominal; like the other
+      builders, the waveform is resampled to the drawn bandwidth, so the bit
+      rate scales with it.
     * Channel BW    : 200 kHz
-    * Burst length  : 156.25 bits (148 active + 8.25 guard)
+    * Timeslot      : 156.25 bits on average, as 157 bits on timeslots 0 and 4
+      and 156 bits on the others (TS 45.002 subclause 5.2.2 integral option).
 
-Normal burst layout (148 active bits):
-    3 tail | 57 data | 1 steal | 26 TSC | 1 steal | 57 data | 3 tail
+Normal burst layout (148 active bits, TS 45.002 subclause 5.2.3):
+    3 tail | 57 data | 1 steal | 26 TSC | 1 steal | 57 data | 3 tail | 8 or 9 guard
 
-Toy simplifications:
-    * No encryption, FEC, or frequency-hopping; data bits are random.
-    * Guard bits are modeled as zeros (off-air silence).
-    * The burst is repeated continuously to fill the requested duration.
+Modeling choices:
+    * One TSC from TSC Set 1, drawn once per signal (one cell) and used on
+      every burst.
+    * Data and stealing bits are random: no channel coding, interleaving or
+      encryption.
+    * The guard bits are modulated as the dummy bits d_i = 1 that define the
+      modulator state before and after a burst (TS 45.004 subclause 2.2).
+      osmo-trx and gr-gsm, which modulate each burst on its own, leave the
+      guard unmodulated instead.
+    * The first timeslot number is random.
+
+Not modeled:
+    * FCCH, SCH and dummy bursts, and the 51/26-multiframe structure.
+    * Frequency hopping.
+    * Handset (uplink) bursts, which ramp down and up in the guard period
+      following the TS 45.005 power-time template.
 """
 
-# Eight standard Training Sequence Codes (ETSI TS 45.002, Table 5.2.3a)
+# Eight Training Sequence Codes of TSC Set 1 (3GPP TS 45.002 V15.1.0 Table 5.2.3a;
+# identical to osmo-trx GSM/GSMCommon.cpp gTrainingSequence)
 GSM_TSC: tuple[tuple[int, ...], ...] = (
     (0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1),
     (0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1),
@@ -50,39 +74,62 @@ GSM_TSC: tuple[tuple[int, ...], ...] = (
     (1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0),
 )
 
-_GSM_TAIL: np.ndarray = np.zeros(3, dtype=np.float64)
-_GSM_GUARD: np.ndarray = np.zeros(9, dtype=np.float64)  # 8.25 guard → 9 zeros
+_GSM_TAIL: np.ndarray = np.zeros(3, dtype=np.int8)
+_GSM_DUMMY_BIT: int = 1  # TS 45.004 subclause 2.2: modulator state outside a burst
 
 
-def build_gsm_burst(tsc_idx: int, rng: np.random.Generator) -> np.ndarray:
-    """Builds one 157-bit GSM Normal Burst (148 active + 9 guard bits).
+def gsm_timeslot_guard_bits(timeslot_number: int) -> int:
+    """Number of guard bits after the burst in a timeslot.
+
+    Timeslots 0 and 4 are 157 bits long and the others 156, giving the
+    156.25-bit average timeslot (3GPP TS 45.002 subclause 5.2.2; osmo-trx
+    Transceiver52M/Transceiver.cpp uses 8 + (TN % 4 == 0) guard bits).
 
     Args:
-        tsc_idx: Index 0–7 selecting the Training Sequence Code.
-        rng: Random number generator.
+        timeslot_number: Timeslot number TN, 0-7.
 
     Returns:
-        np.ndarray: Bipolar {-1, +1} bit stream, length 157.
+        int: 9 for timeslots 0 and 4, 8 otherwise.
     """
-    data_pre = rng.integers(0, 2, 57).astype(np.float64)
-    data_post = rng.integers(0, 2, 57).astype(np.float64)
-    steal_pre = rng.integers(0, 2, 1).astype(np.float64)
-    steal_post = rng.integers(0, 2, 1).astype(np.float64)
-    tsc = np.array(GSM_TSC[tsc_idx], dtype=np.float64)
+    return 8 if timeslot_number % 4 else 9
 
-    bits = np.concatenate([_GSM_TAIL, data_pre, steal_pre, tsc, steal_post, data_post, _GSM_TAIL, _GSM_GUARD])
-    return 2.0 * bits - 1.0  # {0,1} → {-1,+1}
+
+def build_gsm_burst(tsc_idx: int, rng: np.random.Generator, num_guard_bits: int = 8) -> np.ndarray:
+    """Builds the data bits of one GSM timeslot: a Normal Burst and its guard bits.
+
+    Args:
+        tsc_idx: Index 0-7 selecting the Training Sequence Code from TSC Set 1.
+        rng: Random number generator.
+        num_guard_bits: Guard bits after the 148 burst bits (8 or 9).
+
+    Returns:
+        np.ndarray: Data bits d_i in {0, 1}, length 148 + num_guard_bits. The
+        guard bits are the dummy bits d_i = 1 of TS 45.004 subclause 2.2.
+    """
+    data_pre = rng.integers(0, 2, 57)
+    data_post = rng.integers(0, 2, 57)
+    steal_pre = rng.integers(0, 2, 1)
+    steal_post = rng.integers(0, 2, 1)
+    tsc = np.array(GSM_TSC[tsc_idx])
+    guard = np.full(num_guard_bits, _GSM_DUMMY_BIT)
+
+    bits = np.concatenate([_GSM_TAIL, data_pre, steal_pre, tsc, steal_post, data_post, _GSM_TAIL, guard])
+    return bits.astype(np.int8)
 
 
 def build_gsm_bit_stream(num_bits: int, rng: np.random.Generator) -> np.ndarray:
-    """Builds a continuous stream of GSM Normal Bursts.
+    """Builds the data bits of consecutive timeslots on one BTS carrier.
+
+    One TSC is drawn for the whole stream, as a cell uses one training
+    sequence. The stream starts at the beginning of a random timeslot and
+    timeslots are 157 bits (TN 0 and 4) or 156 bits (other TN) long.
 
     Args:
-        num_bits: Total bipolar symbols to produce.
+        num_bits: Total data bits to produce.
         rng: Random number generator.
 
     Returns:
-        np.ndarray: Bipolar {-1, +1} stream, length num_bits.
+        np.ndarray: Data bits d_i in {0, 1}, length num_bits.
 
     Raises:
         ValueError: If num_bits is not positive.
@@ -90,10 +137,37 @@ def build_gsm_bit_stream(num_bits: int, rng: np.random.Generator) -> np.ndarray:
     if num_bits <= 0:
         raise ValueError("num_bits must be positive")
 
-    burst_len = 157  # 148 active + 9 guard
-    num_bursts = int(np.ceil(num_bits / burst_len))
-    bursts = [build_gsm_burst(int(rng.integers(0, 8)), rng) for _ in range(num_bursts)]
+    tsc_idx = int(rng.integers(0, len(GSM_TSC)))
+    timeslot_number = int(rng.integers(0, 8))
+    bursts = []
+    total = 0
+    while total < num_bits:
+        burst = build_gsm_burst(tsc_idx, rng, gsm_timeslot_guard_bits(timeslot_number))
+        bursts.append(burst)
+        total += len(burst)
+        timeslot_number = (timeslot_number + 1) % 8
     return np.concatenate(bursts)[:num_bits]
+
+
+def gsm_differential_encode(bits: np.ndarray) -> np.ndarray:
+    """Maps GSM data bits to GMSK modulating values (3GPP TS 45.004 subclause 2.3).
+
+    d_hat_i = d_i XOR d_{i-1} and alpha_i = 1 - 2 * d_hat_i, with d_{-1} = 1, the
+    dummy bit that precedes a burst (subclause 2.2). gr-gsm's GSM GMSK
+    modulator applies the same mapping (diff_decoder_bb, then
+    chunks_to_symbols with table [1, -1]). osmo-trx reaches the same signal
+    without explicit differential encoding by rotating 2 * d_i - 1 by +pi/2 per
+    bit (sigProcLib.cpp, GMSKRotate), its linearized form.
+
+    Args:
+        bits: Data bits d_i in {0, 1}.
+
+    Returns:
+        np.ndarray: Modulating values alpha_i in {-1.0, +1.0}, same length as bits.
+    """
+    bits = np.asarray(bits, dtype=np.int8)
+    previous = np.concatenate([[_GSM_DUMMY_BIT], bits[:-1]]).astype(np.int8)
+    return 1.0 - 2.0 * np.bitwise_xor(bits, previous)
 
 
 def _gaussian_pulse(samples_per_symbol: int, bt: float) -> np.ndarray:
@@ -102,6 +176,34 @@ def _gaussian_pulse(samples_per_symbol: int, bt: float) -> np.ndarray:
     n = np.arange(-m * samples_per_symbol, m * samples_per_symbol + 1)
     p = np.exp(-2 * np.pi**2 * bt**2 / np.log(2) * (n / samples_per_symbol) ** 2)
     return p / np.sum(p)
+
+
+def _gsm_frequency_pulse(samples_per_bit: int) -> np.ndarray:
+    """GMSK frequency pulse g(t): BT = 0.3 Gaussian convolved with a one-bit rect (TS 45.004 subclause 2.4)."""
+    return sp.convolve(_gaussian_pulse(samples_per_bit, bt=0.3), np.ones(samples_per_bit))
+
+
+def gsm_gmsk_modulate(bits: np.ndarray, samples_per_bit: int) -> np.ndarray:
+    """GMSK-modulates GSM data bits at complex baseband (3GPP TS 45.004).
+
+    The bits are differentially encoded, filtered with a BT = 0.3 Gaussian
+    frequency pulse and integrated to phase with h = 0.5, so alpha_i = +1
+    advances the phase by pi/2 over the bit (positive frequency).
+
+    Args:
+        bits: Data bits d_i in {0, 1}.
+        samples_per_bit: Samples per bit.
+
+    Returns:
+        np.ndarray: Unit-amplitude complex baseband, the full filter output of
+        length (len(bits) - 1) * samples_per_bit + 7 * samples_per_bit.
+        The frequency pulse of alpha_i peaks at sample (i + 3.5) * samples_per_bit - 0.5.
+    """
+    pulse_shape = _gsm_frequency_pulse(samples_per_bit)
+    freq = sp.upfirdn(pulse_shape, gsm_differential_encode(bits), up=samples_per_bit, down=1)
+    # h=0.5 MSK: scale so one symbol-period of rectangular freq = pi/2 phase
+    phase = np.cumsum(freq) * (np.pi * 0.5 / samples_per_bit)
+    return np.exp(1j * phase)
 
 
 def gsm_modulator_baseband(
@@ -131,18 +233,11 @@ def gsm_modulator_baseband(
         rng = np.random.default_rng()
 
     sps = oversampling_rate_nominal
-    rect = np.ones(sps)
-    gauss = _gaussian_pulse(sps, bt=0.3)
-    pulse_shape = sp.convolve(gauss, rect)
-
-    max_minus_filter = max_num_samples - len(pulse_shape) + 1
+    max_minus_filter = max_num_samples - len(_gsm_frequency_pulse(sps)) + 1
     num_bits = max(1, int(np.floor(max_minus_filter / sps)))
 
-    symbols = build_gsm_bit_stream(num_bits, rng)
-    freq = sp.upfirdn(pulse_shape, symbols, up=sps, down=1)
-    # h=0.5 MSK: scale so one symbol-period of rectangular freq = pi/2 phase
-    phase = np.cumsum(freq) * (np.pi * 0.5 / np.sum(rect))
-    modulated = np.exp(1j * phase)
+    bits = build_gsm_bit_stream(num_bits, rng)
+    modulated = gsm_gmsk_modulate(bits, sps)
 
     if len(modulated) > max_num_samples:
         modulated = slice_tail_to_length(modulated, max_num_samples)
@@ -201,8 +296,10 @@ def gsm_modulator(
 class GSMSignalGenerator(BaseSignalGenerator):
     """GSM Signal Generator.
 
-    Builds a structured GSM GMSK waveform: Normal Bursts with standard
-    Training Sequence Codes interleaved with random data bits.
+    Builds a GSM base station downlink carrier: back-to-back GMSK Normal
+    Bursts on every timeslot, with random data bits around one standard
+    Training Sequence Code per signal. See the GSM notes above for what is
+    and is not modeled.
     """
 
     def __init__(self, **kwargs: dict[str, str | float | int]) -> None:
